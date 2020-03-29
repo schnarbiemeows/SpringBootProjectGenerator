@@ -18,6 +18,7 @@ class Table:
         self.projectresourcesfolder = ''
         self.topmainpackage = ''
         self.toptestpackage = ''
+        self.rootpackage = ''
         self.configure_names()
 
 
@@ -63,3 +64,4 @@ class Table:
         print("Table - projectresourcesfolder = " + self.projectresourcesfolder)
         print("Table - topmainpackage = " + self.topmainpackage)
         print("Table - toptestpackage = " + self.toptestpackage)
+        print("Table - rootpackage = " + self.rootpackage)

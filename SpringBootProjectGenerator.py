@@ -97,6 +97,7 @@ class SpringBootProjectDemo:
         # set the Table object's main java and test package roots
         table.topmainpackage = projectmainfolder + topmainpackage
         table.toptestpackage = projecttestfolder + toptestpackage
+        table.rootpackage = topmainpackage.replace("/",".")
         
 
     def create_application_resources_file(self,table):
@@ -104,7 +105,18 @@ class SpringBootProjectDemo:
         resources_file.close()
 
     def create_main_method_file(self,table):
-        None
+        filename = table.topmainpackage + "/" + table.camelcasejavaname + "Application.java"
+        resources_file = open( filename, "w")
+        resources_file.write("package " + table.rootpackage +";\n\n")
+        resources_file.write("import org.springframework.boot.SpringApplication;\n")
+        resources_file.write("import org.springframework.boot.autoconfigure.SpringBootApplication;\n\n")
+        resources_file.write("@SpringBootApplication\n")
+        resources_file.write("public class " + table.camelcasejavaname + "Application {\n\n")
+        resources_file.write("\tpublic static void main(String[] args) {\n")
+        resources_file.write("\t\tSpringApplication.run(" + table.camelcasejavaname + "Application.class, args);\n")
+        resources_file.write("\t}\n\n")
+        resources_file.write("}")
+        resources_file.close()
     
     
     def run(self):
@@ -114,7 +126,7 @@ class SpringBootProjectDemo:
         self.create_base_project_folders(currenttable)
         currenttable.properties()
         self.create_application_resources_file(currenttable)
-
+        self.create_main_method_file(currenttable)
 
 if __name__ == '__main__':
     executable = SpringBootProjectDemo()
