@@ -9,7 +9,7 @@ class Table:
     """
         initialization
     """
-    def __init__(self,name):
+    def __init__(self,name,createtablestring):
         print("initializing table object : " + name)
         self.tablename = name
         self.pomname = ''
@@ -19,8 +19,14 @@ class Table:
         self.topmainpackage = ''
         self.toptestpackage = ''
         self.rootpackage = ''
+        self.fieldnames = []
+        self.fielddata = {}
+        self.hasprimary = False
+        self.primary_name = None
+        self.hasunique = False
+        self.unique_name = None
+        self.createtablestring = createtablestring
         self.configure_names()
-
 
 
     """

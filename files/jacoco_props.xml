@@ -1,0 +1,2 @@
+<sonar.jacoco.reportPath>target/jacoco.exec</sonar.jacoco.reportPath>
+<jacoco-agent.destFile>target/jacoco.exec</jacoco-agent.destFile>

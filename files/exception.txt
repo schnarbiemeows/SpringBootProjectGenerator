@@ -1,0 +1,60 @@
+import java.util.Date;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+/**
+ *
+ * @author ^
+ *
+ */
+public class ExceptionResponse extends ResponseEntityExceptionHandler {
+
+	/**
+	 * time the exception occurred
+	 */
+	private Date timestamp;
+	/**
+	 * exception message
+	 */
+	private String message;
+	/**
+	 * detailed message
+	 */
+	private String details;
+
+	/**
+	 *
+	 * @param timestamp
+	 * @param message
+	 * @param details
+	 */
+	public ExceptionResponse(Date timestamp, String message, String details) {
+		super();
+		this.timestamp = timestamp;
+		this.message = message;
+		this.details = details;
+	}
+
+	/**
+	 *
+	 * @return Date
+	 */
+	public Date getTimestamp() {
+		return timestamp;
+	}
+
+	/**
+	 *
+	 * @return String
+	 */
+	public String getMessage() {
+		return message;
+	}
+
+	/**
+	 *
+	 * @return String
+	 */
+	public String getDetails() {
+		return details;
+	}
+}
