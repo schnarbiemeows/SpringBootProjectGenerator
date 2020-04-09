@@ -1,0 +1,122 @@
+
+{
+	"info": {
+		"_postman_id": "4d1f6947-c501-48b0-bee6-a8712b64b783",
+		"name": "action-type",
+		"description": "this is for the action-type project, located in the C:\\eclipse_workspaces\\nutrition_microservices_workspace workspace.\nIt is part of the nutrition microservices program",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "getAllActionType",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{l8080}}/actiontype/all",
+					"host": [
+						"{{l8080}}"
+					],
+					"path": [
+						"actiontype",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "findActionTypeById",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{l8080}}/actiontype/findById/1",
+					"host": [
+						"{{l8080}}"
+					],
+					"path": [
+						"actiontype",
+						"findById",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteActionType",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{l8080}}/actiontype/delete/7",
+					"host": [
+						"{{l8080}}"
+					],
+					"path": [
+						"actiontype",
+						"delete",
+						"7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createActionType",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"actionType\": \"X\",\r\n    \"actionTypeDesc\": \"poop\",\r\n    \"actv\": \"N\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{l8080}}/actiontype/create",
+					"host": [
+						"{{l8080}}"
+					],
+					"path": [
+						"actiontype",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateActionType",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"actionTypeId\": 7,\r\n    \"actionType\": \"X\",\r\n    \"actionTypeDesc\": \"poop\",\r\n    \"actv\": \"Y\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{l8080}}/actiontype/update",
+					"host": [
+						"{{l8080}}"
+					],
+					"path": [
+						"actiontype",
+						"update"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
