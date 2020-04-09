@@ -15,6 +15,7 @@ class Table:
         self.pomname = ''
         self.camelcasejavaname = ''
         self.lowercasename = ''
+        self.dtoname = ''
         self.projectresourcesfolder = ''
         self.topmainpackage = ''
         self.toptestpackage = ''
@@ -56,6 +57,7 @@ class Table:
         else:
             self.camelcasejavaname = utilities.capitalize(self.tablename)
             self.lowercasename = self.tablename.lower()
+        self.dtoname = self.camelcasejavaname + "DTO"
         print("converting tablename : " + self.tablename + " to java name = " + self.camelcasejavaname)
         print("converting tablename : " + self.tablename + " to lower name = " + self.lowercasename)
 

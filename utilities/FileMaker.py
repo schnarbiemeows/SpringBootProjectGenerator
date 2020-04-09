@@ -18,6 +18,15 @@ class FileMaker:
         utilities.mkdir(destinationroot + "/" + table.pomname)
         utilities.mkdir(destinationroot + "/" + table.pomname + "/" + table.pomname)
         utilities.mkdir(destinationroot + "/" + table.pomname + "/" + table.pomname + "/.mvn")
+        utilities.mkdir(destinationroot + "/" + table.pomname + "/" + table.pomname + "/.mvn/wrapper")
+
+        utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.mvn/wrapper/maven-wrapper.jar",
+                      destinationroot + "/" + table.pomname + "/" + table.pomname + "/.mvn/wrapper/maven-wrapper.jar")
+        utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.mvn/wrapper/maven-wrapper.properties",
+                      destinationroot + "/" + table.pomname + "/" + table.pomname + "/.mvn/wrapper/maven-wrapper.properties")
+        utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.mvn/wrapper/MavenWrapperDownloader.java",
+                      destinationroot + "/" + table.pomname + "/" + table.pomname + "/.mvn/wrapper/MavenWrapperDownloader.java")
+
         utilities.mkdir(destinationroot + "/" + table.pomname + "/" + table.pomname + "/src")
         utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.gitIgnore",
                       destinationroot + "/" + table.pomname + "/" + table.pomname + "/.gitIgnore")
@@ -59,6 +68,7 @@ class FileMaker:
         utilities.mkdir(projectmainfolder + topmainpackage + "/config")
         utilities.mkdir(projectmainfolder + topmainpackage + "/controllers")
         utilities.mkdir(projectmainfolder + topmainpackage + "/exceptions")
+        utilities.mkdir(projectmainfolder + topmainpackage + "/dtos")
         utilities.mkdir(projectmainfolder + topmainpackage + "/pojos")
         utilities.mkdir(projectmainfolder + topmainpackage + "/services")
         utilities.mkdir(projectmainfolder + topmainpackage + "/utilities")
@@ -68,6 +78,7 @@ class FileMaker:
         utilities.mkdir(projecttestfolder + toptestpackage + "/config")
         utilities.mkdir(projecttestfolder + toptestpackage + "/controllers")
         utilities.mkdir(projecttestfolder + toptestpackage + "/exceptions")
+        utilities.mkdir(projecttestfolder + toptestpackage + "/dtos")
         utilities.mkdir(projecttestfolder + toptestpackage + "/pojos")
         utilities.mkdir(projecttestfolder + toptestpackage + "/services")
         utilities.mkdir(projecttestfolder + toptestpackage + "/utilities")
@@ -84,11 +95,16 @@ class FileMaker:
     """
     def create_application_resources_file(self, table):
         resources_file = open(table.projectresourcesfolder + "/application.properties", "w")
-        resources_file.write(Constants.prop_log + "\n")
-        resources_file.write(Constants.prop_jpa_true + "\n")
-        resources_file.write(Constants.prop_sec_usr + "\n")
-        resources_file.write(Constants.prop_sec_pwd + "\n")
-        resources_file.write(Constants.prop_actuator + "\n")
+        resources_file.write(Configuration.app_log + "\n")
+        resources_file.write(Configuration.app_jpa + "\n")
+        resources_file.write(Configuration.app_jpa_show + "\n")
+        resources_file.write(Configuration.app_hib_seq + "\n")
+        resources_file.write(Configuration.app_mysql_conn + "\n")
+        resources_file.write(Configuration.app_mysql_usr + "\n")
+        resources_file.write(Configuration.app_mysql_pwd + "\n")
+        resources_file.write(Configuration.app_actu_conf + "\n")
+        resources_file.write(Configuration.app_sec_usr + "\n")
+        resources_file.write(Configuration.app_sec_pwd + "\n")
         resources_file.close()
 
     """

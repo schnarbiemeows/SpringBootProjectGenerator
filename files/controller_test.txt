@@ -5,13 +5,22 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.sql.Timestamp;
+import java.math.*;
+import java.util.*;
+import org.junit.BeforeClass;
+import org.junit.AfterClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
@@ -20,10 +29,12 @@ import XXX;
 
 /**
  * this class tests the %Controller class
+ * these tests we want to run in order
  * @author ^
  *
  */
 @RunWith(SpringRunner.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class %ControllerTest {
 
@@ -33,20 +44,62 @@ public class %ControllerTest {
 	@LocalServerPort
 	int randomServerPort;
 
+    private static %DTO &;
+
+    /**
+	 * create a shared instance of our Entity Bean
+	 * @throws Exception
+	 */
+    @BeforeClass
+	public static void setUp() throws Exception {
+		& = generateRandom%();
+	}
+
+    /**
+	 * clear our Entity Bean for garbage collection
+	 * @throws Exception
+	 */
+	@AfterClass
+	public static void tearDown() throws Exception {
+		& = null;
+	}
 
 	/**
+	 * test creating a new %
+	 * @throws URISyntaxException
+	 */
+	@Test
+	public void testA_Create%() throws URISyntaxException
+	{
+		RestTemplate restTemplate = new RestTemplate();
+		System.out.println("RANDOM SERVER PORT = " + randomServerPort);
+		System.out.println(&.toString());
+		final String createUrl = "http://localhost:" + randomServerPort + "/&/create";
+		URI uri = new URI(createUrl);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<%DTO> request = new HttpEntity<>(&,headers);
+		ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.POST, request, String.class);
+		// Verify request succeed
+		System.out.println("FINISHED testCreate + " + result.getBody().toString());
+		assertEquals(201, result.getStatusCodeValue());
+        & = %DTO.fromJson(result.getBody().toString());
+	}
+
+    /**
 	 * test getting all %
 	 * @throws URISyntaxException
 	 */
 	@Test
-	public void testGetAll%() throws URISyntaxException
+	public void testB_GetAll%() throws URISyntaxException
 	{
 		RestTemplate restTemplate = new RestTemplate();
 		System.out.println("RANDOM SERVER PORT = " + randomServerPort);
 		final String baseUrl = "http://localhost:" + randomServerPort + "/&/all";
 		URI uri = new URI(baseUrl);
 		HttpEntity<String> request = new HttpEntity<>(new String());
-		ResponseEntity<Object> result = restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
+		ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
 		// Verify request succeed
 		assertEquals(200, result.getStatusCodeValue());
 	}
@@ -56,48 +109,55 @@ public class %ControllerTest {
 	 * @throws URISyntaxException
 	 */
 	@Test
-	public void testGet%() throws URISyntaxException
+	public void testC_Get%() throws URISyntaxException
 	{
 		RestTemplate restTemplate = new RestTemplate();
 		System.out.println("RANDOM SERVER PORT = " + randomServerPort);
-		final String baseUrl = "http://localhost:" + randomServerPort + "/&/findById/1";
+		QQQ
+		final String baseUrl = "http://localhost:" + randomServerPort + "/&/findById/" + num;
 		URI uri = new URI(baseUrl);
 		HttpEntity<String> request = new HttpEntity<>(new String());
-		ResponseEntity<Object> result = restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
+		ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
 		// Verify request succeed
 		assertEquals(200, result.getStatusCodeValue());
 	}
 
-	/**
-	 * test creating, updating, and then delting a new %
+    /**
+	 * test updating a %
 	 * @throws URISyntaxException
 	 */
 	@Test
-	public void testCreateUpdateAndDelete%() throws URISyntaxException
+	public void testD_Update%() throws URISyntaxException
 	{
 		RestTemplate restTemplate = new RestTemplate();
-		System.out.println("RANDOM SERVER PORT = " + randomServerPort);
-		final String createUrl = "http://localhost:" + randomServerPort + "/&/create";
-		YYY
-		URI uri = new URI(createUrl);
-		HttpEntity<%> request = new HttpEntity<>(&);
-		ResponseEntity<Object> result = restTemplate.exchange(uri, HttpMethod.POST, request, String.class);
-		// Verify request succeed
-		assertEquals(201, result.getStatusCodeValue());
-
-		restTemplate = new RestTemplate();
 		final String updateUrl = "http://localhost:" + randomServerPort + "/&/update";
-		uri = new URI(updateUrl);
-		request = new HttpEntity<>(&);
-		result = restTemplate.exchange(uri, HttpMethod.POST, request, String.class);
+		URI uri = new URI(updateUrl);
+		HttpEntity<%DTO> request = new HttpEntity<>(&);
+		ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.POST, request, String.class);
 		// Verify request succeed
-		assertEquals(201, result.getStatusCodeValue())
-		restTemplate = new RestTemplate();
-		final String deleteUrl = "http://localhost:" + randomServerPort + "/&/delete/1";
-		uri = new URI(deleteUrl);
-		request = new HttpEntity<>(&);
-		result = restTemplate.exchange(uri, HttpMethod.DELETE, request, String.class);
+		System.out.println("FINISHED testUpdate + " + result.getBody().toString());
+		assertEquals(200, result.getStatusCodeValue());
+	}
+
+	/**
+	 * test deleting a %
+	 * @throws URISyntaxException
+	 */
+	@Test
+	public void testE_Delete%() throws URISyntaxException
+	{
+		RestTemplate restTemplate = new RestTemplate();
+		QQQ
+		final String deleteUrl = "http://localhost:" + randomServerPort + "/&/delete/" + num;
+		URI uri = new URI(deleteUrl);
+		HttpEntity<%DTO> request = new HttpEntity<>(&);
+		ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, String.class);
+		System.out.println("FINISHED testDelete");
 		// Verify request succeed
 		assertEquals(200, result.getStatusCodeValue());
+	}
+
+	public static %DTO generateRandom%() {
+		ZZZ
 	}
 }

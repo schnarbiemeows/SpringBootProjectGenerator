@@ -1,0 +1,100 @@
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import javax.validation.Valid;
+import java.util.*;
+
+
+XXX
+
+/**
+ * this class is the main REST controller
+ * @author ^
+ *
+ */
+@RestController
+@RequestMapping(path="/&")
+public class %Controller {
+
+	/**
+	 * JPA Repository handle
+	 */
+	@Autowired
+	private %Repository service;
+
+	/**
+	 * get all % records
+	 * @return Iterable<%>
+	 */
+	@GetMapping(path = "/all")
+	public ResponseEntity<Object> getAll%() throws Exception {
+		Iterable<%> & = service.findAll();
+		return ResponseEntity.status(HttpStatus.OK).body(&);
+	}
+
+	/**
+	 * get % by primary key
+	 * @param id
+	 * @return %
+	 */
+	@GetMapping(path = "/findById/{id}")
+	public ResponseEntity<Object> find%ById(@PathVariable int id) throws Exception {
+		Optional<%> &Optional = service.findById(id);
+		if(&Optional.isPresent()) {
+			% results = &Optional.get();
+			return ResponseEntity.status(HttpStatus.OK).body(results);
+		} else {
+			throw new ResourceNotFoundException("id = " + id + " not found");
+		}
+	}
+
+	/**
+	 * create a new %
+	 * @param %DTO
+	 * @return %
+	 */
+	@PostMapping(path = "/create")
+	public ResponseEntity<Object> create%(@Valid @RequestBody %DTO data) {
+		try {
+		    % createdData = data.toEntity();
+		    createdData = service.save(createdData);
+		    return ResponseEntity.status(HttpStatus.CREATED).body(createdData);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	/**
+	 * update a %
+	 * @param %DTO
+	 * @return %
+	 */
+	@PostMapping(path = "/update")
+	public ResponseEntity<Object> update%(@Valid @RequestBody %DTO data) throws Exception {
+		Optional<%> &Optional = service.findById(data.QQQ);
+		if(&Optional.isPresent()) {
+		    % updatedData = data.toEntity();
+			updatedData = service.save(updatedData);
+			return ResponseEntity.status(HttpStatus.OK).body(updatedData);
+		} else {
+			throw new ResourceNotFoundException("id = " + data.QQQ + " not found");
+		}
+	}
+
+	/**
+	 * delete a % by primary key
+	 * @param id
+	 */
+	@DeleteMapping(path = "/delete/{id}")
+	public ResponseEntity<Object> delete%(@PathVariable int id) throws Exception {
+		Optional<%> &Optional = service.findById(id);
+		if(&Optional.isPresent()) {
+			service.deleteById(id);
+			return ResponseEntity.status(HttpStatus.OK).body("Successfully Deleted");
+		} else {
+			throw new ResourceNotFoundException("id = " + id + " not found");
+		}
+	}
+
+}

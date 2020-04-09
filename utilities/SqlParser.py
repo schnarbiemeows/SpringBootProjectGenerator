@@ -121,6 +121,7 @@ class SqlParser:
             else:
                 # discard the line for now
                 lines_that_arenot_fields.append(item)
+                print("discarded line = " + item)
 
 
 

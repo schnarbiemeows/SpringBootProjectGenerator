@@ -19,6 +19,13 @@ class Constants:
     import_bd = "import java.math.BigDecimal;"
     import_bi = "import java.math.BigInteger;"
 
+# utilities classes
+
+    pckg_util = "utilities"
+
+# exceptions classes
+    pckg_exc = "exceptions"
+
 
 # javadoc constants
 
@@ -51,9 +58,10 @@ class Constants:
     prop_sec_pwd = "spring.security.user.password=password"
     prop_jpa_true = "spring.jpa.show-sql=true"
 
-# pojos
+# pojos and dtos
 
     pckg_pojos = "pojos"
+    pckg_dtos = "dtos"
     import_entity = "import javax.persistence.Entity;"
     import_genval = "import javax.persistence.GeneratedValue;"
     import_gentype = "import javax.persistence.GenerationType;"
@@ -93,7 +101,7 @@ class Constants:
     ann_getmapping = '@GetMapping(path = "/*")'
     ann_getsinglemapping = '@GetMapping(path = "/findById/{id}")'
     ann_postmapping = '@PostMapping(path = "/*")'
-    ann_delmapping = '@DeleteMapping(path = "/*/{id})'
+    ann_delmapping = '@DeleteMapping(path = "/*/{id}")'
     ann_pathvar = "@PathVariable"
     ann_reqbody = "@RequestBody"
 

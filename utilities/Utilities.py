@@ -13,7 +13,7 @@ class Utilities:
     def mkdir(self,path):
         if not os.path.exists(path):
             os.mkdir(path)
-            print("making directory : " + path)
+            #print("making directory : " + path)
         else:
             print(path+ " already exists")
 
@@ -23,7 +23,7 @@ class Utilities:
     def cpy(self,srcpath,destpath):
         if not os.path.exists(destpath):
             shutil.copy(srcpath,destpath)
-            print("copying file from : " + srcpath + " to : " + destpath)
+           # print("copying file from : " + srcpath + " to : " + destpath)
         else:
             print(destpath+ " already exists")
 
