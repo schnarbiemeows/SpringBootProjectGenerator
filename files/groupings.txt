@@ -1,3 +1,4 @@
 # grouping format is:
 # <project name> : <comma separated list of sql table names>
-group-test-project: groups,group_hist
+groups-test: groups,groups_hist
+group-user-test:grp_user,grp_user_hist

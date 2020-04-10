@@ -9,20 +9,20 @@ import sys
 """
 class TestFileMaker:
 
-    def create_main_test_class(self, table):
+    def create_main_test_class(self, project):
         """
         this method creates the main Java file in the project
-        :param table:
+        :param project:
         :return:
         """
-        filename = table.toptestpackage + "/" + table.camelcasejavaname + "ApplicationTests.java"
+        filename = project.toptestpackage + "/" + project.camelcasejavaname + "ApplicationTests.java"
         resources_file = open(filename, "w")
-        resources_file.write("package " + table.rootpackage + ";\n\n")
+        resources_file.write("package " + project.rootpackage + ";\n\n")
         resources_file.write("import org.junit.jupiter.api.Test;\n")
         resources_file.write("import org.springframework.boot.test.context.SpringBootTest;\n\n")
         resources_file.write("@SpringBootTest\n")
         resources_file.write(Constants.doc_main_class.replace("^", Configuration.author) + "\n")
-        resources_file.write("class " + table.camelcasejavaname + "ApplicationTests {\n\n")
+        resources_file.write("class " + project.camelcasejavaname + "ApplicationTests {\n\n")
         resources_file.write("\t@Test\n")
         resources_file.write("\tvoid contextLoads() {\n")
         resources_file.write("\t}\n\n")

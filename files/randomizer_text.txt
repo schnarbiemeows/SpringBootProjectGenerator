@@ -110,16 +110,16 @@ public class Randomizer {
 	 * generate a random Timestamp
 	 * @return
 	 */
-	public static Timestamp randomTimestamp() {
-		return new Timestamp(randomLong(1000));
+	public static Timestamp randomTimestamp(int input) {
+		return new Timestamp(randomLong(input));
 	}
 
 	/**
 	 * generate a random Time
 	 * @return
 	 */
-	public static Time randomTime() {
-		return new Time(randomLong(1000));
+	public static Time randomTime(int input) {
+		return new Time(randomLong(input));
 	}
 
 	/**

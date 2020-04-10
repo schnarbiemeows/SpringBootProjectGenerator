@@ -27,8 +27,8 @@ public class RandomizerTest {
 		assertNotNull(Randomizer.randomBigDecimal("10"));
 		assertNotNull(Randomizer.randomBigInteger("10"));
 		assertNotNull(Randomizer.randomDate()) ;
-		assertNotNull(Randomizer.randomTimestamp()) ;
-		assertNotNull(Randomizer.randomTime()) ;
+		assertNotNull(Randomizer.randomTimestamp(1000)) ;
+		assertNotNull(Randomizer.randomTime(1000)) ;
 		assertNotNull(Randomizer.randomBytes(10)) ;
 	}
 }

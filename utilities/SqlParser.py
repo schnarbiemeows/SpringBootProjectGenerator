@@ -18,20 +18,24 @@ class SqlParser:
     mysqldatetypes = set(["date" , "datetime" , "timestamp", "time", "year"])
     mysqlstringtypes = set(["varchar" , "char" , "binary" , "varbinary" , "blob" , "text" , "enum" , "set"])
 
-    """
-        initialization
-    """
     def __init__(self,tablenames,tabledata):
+        """
+        initialization
+        :param tablenames:
+        :param tabledata:
+        """
         self.tablenames = tablenames
         self.tabledata = tabledata
 
-    """
+    def parseSqlFileToExtractTableData(self, filelocation):
+        """
         this main method will parse the SQL file and return a list of the tablenames, as well as
-        the entire "create table" statement for each table
-        @self.tablesnames = list of the table names
-        @self.tabledata = Map("tablename" ->  "String of the entire create table statement"
-    """
-    def parseSqlFile(self, filelocation):
+            the entire "create table" statement for each table
+            @self.tablesnames = list of the table names
+            @self.tabledata = Map("tablename" ->  "String of the entire create table statement"
+        :param filelocation:
+        :return:
+        """
         parsetabledata = False
         tablestring = ''
         tablename = ''
@@ -67,12 +71,14 @@ class SqlParser:
         print("\n")
         return (self.tablenames,self.tabledata)
 
-    """
+    def create_table_properties(self,table):
+        """
         this method will parse the "create table" statement for a given table into a list of field names and a HashMap of
         these names as keys with FieldProperties objects as values.
         The FieldProperties objects will have the info inside then needed to create the POJO object for that table
-    """
-    def create_table_properties(self,table):
+        :param table:
+        :return:
+        """
         utilities = Utilities()
         # some lines in our statement wont be fields
         lines_that_arenot_fields = []

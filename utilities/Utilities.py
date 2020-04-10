@@ -7,30 +7,37 @@ import xml.etree.ElementTree as ET
 """
 class Utilities:
 
-    """
-        utility for creating a directory
-    """
     def mkdir(self,path):
+        """
+        utility for creating a directory
+        :param path:
+        :return:
+        """
         if not os.path.exists(path):
             os.mkdir(path)
             #print("making directory : " + path)
         else:
             print(path+ " already exists")
 
-    """
-        utility for copying a file
-    """
     def cpy(self,srcpath,destpath):
+        """
+        utility for copying a file
+        :param srcpath:
+        :param destpath:
+        :return:
+        """
         if not os.path.exists(destpath):
             shutil.copy(srcpath,destpath)
            # print("copying file from : " + srcpath + " to : " + destpath)
         else:
             print(destpath+ " already exists")
 
-    """
-        utility to make a Java name from a database name
-    """
     def makejavanames(self,dbname):
+        """
+        utility to make a Java name from a database name
+        :param dbname:
+        :return:
+        """
         javaname = ''
         gettername = ''
         if (dbname.find("_") > -1):
@@ -54,10 +61,12 @@ class Utilities:
         print("making javaname = " + javaname + " getter name = " + gettername + " from db name = " + dbname)
         return (javaname, gettername)
 
-    """
-    
-    """
     def parse_source_pom(self,sourceprojectfolder):
+        """
+        parse the source pom of the demo project so that we can retrieve the artifactId
+        :param sourceprojectfolder:
+        :return:
+        """
         pomfile = open(sourceprojectfolder + "/demo/pom.xml")
         tree = ET.parse(pomfile)
         root = tree.getroot()
@@ -70,18 +79,17 @@ class Utilities:
         pomfile.close()
         return artifactId
 
-    """
-        small function to capitalize the first letter of the javaname
-    """
     def capitalize(self,word):
+        """
+        small function to capitalize the first letter of the javaname
+        :param word:
+        :return:
+        """
         letter = word[0].upper()
         restofword = word[1:len(word)]
         totalword = letter + restofword
         return totalword
 
-    """
-       see below 
-    """
     def handleFieldsWithCommas(self,inputstring):
         """
         the input file tha we get may include records that have fields with commas in them
@@ -126,9 +134,6 @@ class Utilities:
                     temp_array[i] = item
             return temp_array
 
-    """
-       see below 
-    """
     def handleFieldsWithCommasAndParens(self, inputstring):
         """
         the input file tha we get may include records that have fields with commas in them
@@ -179,3 +184,17 @@ class Utilities:
                 item = item.replace("@#$", ",").replace('"', '')
                 temp_array[i] = item
         return temp_array
+
+    def parseGroupingsTextFile(self):
+        inputfile = open("files/groupings.txt")
+        projectnames = []
+        projecttables = {}
+        for line in inputfile:
+            linestr = str(line)
+            if linestr.find("#")==-1:
+                projectname = linestr.split(":")[0].strip()
+                tablesstr = linestr.split(":")[1].strip()
+                tables = tablesstr.split(",")
+                projectnames.append(projectname)
+                projecttables[projectname] = tables
+        return (projectnames,projecttables)

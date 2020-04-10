@@ -12,37 +12,37 @@ import shutil
 """
 class JavaFileMaker:
 
-    def create_main_method_class(self, table):
+    def create_main_method_class(self, project):
         """
         this method creates the main Application class for the project
-        :param table:
+        :param project:
         :return:
         """
-        filename = table.topmainpackage + "/" + table.camelcasejavaname + "Application.java"
+        filename = project.topmainpackage + "/" + project.camelcasejavaname + "Application.java"
         main_file = open("files/main.txt", "r")
         resources_file = open(filename, "w")
-        resources_file.write("package " + table.rootpackage + ";\n\n")
+        resources_file.write("package " + project.rootpackage + ";\n\n")
         for line in main_file:
             linestr = str(line)
             if (linestr.find("^") > -1):
                 resources_file.write(linestr.replace("^", Configuration.author))
             elif (linestr.find("%") > -1):
-                resources_file.write(linestr.replace("%", table.camelcasejavaname))
+                resources_file.write(linestr.replace("%", project.camelcasejavaname))
             else:
                 resources_file.write(linestr)
         resources_file.close()
         main_file.close()
 
-    def make_base_exc_class(self, table):
+    def make_base_exc_class(self, project):
         """
         this method will make the base Exception class
-        :param table:
+        :param project:
         :return:
         """
-        filename = table.topmainpackage + "/" + Constants.pckg_exc + "/ExceptionResponse.java"
+        filename = project.topmainpackage + "/" + Constants.pckg_exc + "/ExceptionResponse.java"
         exception_file = open("files/exception.txt", "r")
         resources_file = open(filename, "w")
-        resources_file.write("package " + table.rootpackage + "." + Constants.pckg_exc + ";\n\n")
+        resources_file.write("package " + project.rootpackage + "." + Constants.pckg_exc + ";\n\n")
         for line in exception_file:
             linestr = str(line)
             if (linestr.find("^") > -1):
@@ -127,16 +127,16 @@ class JavaFileMaker:
         resources_file.write("}\n")
         resources_file.close()
 
-    def create_randomizer_class(self, table):
+    def create_randomizer_class(self, project):
         """
         this creates a class called Randomizer in the utilities package
-        :param table:
+        :param project:
         :return:
         """
-        filename = table.topmainpackage + "/" + Constants.pckg_util + "/" + "Randomizer.java"
+        filename = project.topmainpackage + "/" + Constants.pckg_util + "/" + "Randomizer.java"
         randomizer_file = open("files/randomizer_text.txt", "r")
         resources_file = open(filename, "w")
-        resources_file.write("package " + table.rootpackage + "." + Constants.pckg_util + ";\n\n")
+        resources_file.write("package " + project.rootpackage + "." + Constants.pckg_util + ";\n\n")
         for line in randomizer_file:
             linestr = str(line).replace("^", Configuration.author)
             resources_file.write(linestr)
@@ -158,16 +158,16 @@ class JavaFileMaker:
         resources_file.write(Constants.class_decl_repo.replace("*",table.camelcasejavaname) + "\n")
         resources_file.close()
 
-    def create_swagger_class(self,table):
+    def create_swagger_class(self, project):
         """
         this method will make the swagger2 config file
-        :param table:
+        :param project:
         :return:
         """
-        filename = table.topmainpackage + "/" + "SwaggerConfig.java"
+        filename = project.topmainpackage + "/" + "SwaggerConfig.java"
         resources_file = open(filename, "w")
         swagger_file = open("files/swagger_text.txt","r")
-        resources_file.write("package " + table.rootpackage + ";\n\n")
+        resources_file.write("package " + project.rootpackage + ";\n\n")
         for line in swagger_file:
             linestr = str(line)
             if(linestr.find("^")>-1):

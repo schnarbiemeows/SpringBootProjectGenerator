@@ -46,7 +46,7 @@ class Constants:
     xml_grp = "<groupId>*</groupId>"
     xml_art = "<artifactId>*</artifactId>"
     xml_name = "<name>*</name>"
-    xml_desc = "<description>CRUD application for the * table</description>"
+    xml_desc = "<description>CRUD application for the * project</description>"
 
 # main application file
 # Swagger file

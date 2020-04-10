@@ -10,40 +10,46 @@ import shutil
 
 class FileMaker:
 
-    """
+    def create_base_project_folders(self, project, sourceprojectfolder, destinationroot, artifactid, groupid):
+        """
         this method will create the basic folder structure of a SB project
-    """
-    def create_base_project_folders(self, table, sourceprojectfolder, destinationroot, artifactid, groupid):
+        :param project:
+        :param sourceprojectfolder:
+        :param destinationroot:
+        :param artifactid:
+        :param groupid:
+        :return:
+        """
         utilities = Utilities()
-        utilities.mkdir(destinationroot + "/" + table.pomname)
-        utilities.mkdir(destinationroot + "/" + table.pomname + "/" + table.pomname)
-        utilities.mkdir(destinationroot + "/" + table.pomname + "/" + table.pomname + "/.mvn")
-        utilities.mkdir(destinationroot + "/" + table.pomname + "/" + table.pomname + "/.mvn/wrapper")
+        utilities.mkdir(destinationroot + "/" + project.pomname)
+        utilities.mkdir(destinationroot + "/" + project.pomname + "/" + project.pomname)
+        utilities.mkdir(destinationroot + "/" + project.pomname + "/" + project.pomname + "/.mvn")
+        utilities.mkdir(destinationroot + "/" + project.pomname + "/" + project.pomname + "/.mvn/wrapper")
 
         utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.mvn/wrapper/maven-wrapper.jar",
-                      destinationroot + "/" + table.pomname + "/" + table.pomname + "/.mvn/wrapper/maven-wrapper.jar")
+                      destinationroot + "/" + project.pomname + "/" + project.pomname + "/.mvn/wrapper/maven-wrapper.jar")
         utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.mvn/wrapper/maven-wrapper.properties",
-                      destinationroot + "/" + table.pomname + "/" + table.pomname + "/.mvn/wrapper/maven-wrapper.properties")
+                      destinationroot + "/" + project.pomname + "/" + project.pomname + "/.mvn/wrapper/maven-wrapper.properties")
         utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.mvn/wrapper/MavenWrapperDownloader.java",
-                      destinationroot + "/" + table.pomname + "/" + table.pomname + "/.mvn/wrapper/MavenWrapperDownloader.java")
+                      destinationroot + "/" + project.pomname + "/" + project.pomname + "/.mvn/wrapper/MavenWrapperDownloader.java")
 
-        utilities.mkdir(destinationroot + "/" + table.pomname + "/" + table.pomname + "/src")
+        utilities.mkdir(destinationroot + "/" + project.pomname + "/" + project.pomname + "/src")
         utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.gitIgnore",
-                      destinationroot + "/" + table.pomname + "/" + table.pomname + "/.gitIgnore")
+                      destinationroot + "/" + project.pomname + "/" + project.pomname + "/.gitIgnore")
         utilities.cpy(sourceprojectfolder + "/" + artifactid + "/HELP.md",
-                      destinationroot + "/" + table.pomname + "/" + table.pomname + "/HELP.md")
+                      destinationroot + "/" + project.pomname + "/" + project.pomname + "/HELP.md")
         utilities.cpy(sourceprojectfolder + "/" + artifactid + "/mvnw",
-                      destinationroot + "/" + table.pomname + "/" + table.pomname + "/mvnw")
+                      destinationroot + "/" + project.pomname + "/" + project.pomname + "/mvnw")
         utilities.cpy(sourceprojectfolder + "/" + artifactid + "/mvnw.cmd",
-                      destinationroot + "/" + table.pomname + "/" + table.pomname + "/mvnw.cmd")
-        projectrootpackage = destinationroot + "/" + table.pomname + "/" + table.pomname + "/src/"
+                      destinationroot + "/" + project.pomname + "/" + project.pomname + "/mvnw.cmd")
+        projectrootpackage = destinationroot + "/" + project.pomname + "/" + project.pomname + "/src/"
         utilities.mkdir(projectrootpackage + "main")
         utilities.mkdir(projectrootpackage + "test")
         utilities.mkdir(projectrootpackage + "main/java")
         utilities.mkdir(projectrootpackage + "main/resources")
         utilities.mkdir(projectrootpackage + "test/java")
         projectmainfolder = projectrootpackage + "main/java/"
-        table.projectresourcesfolder = projectrootpackage + "main/resources/"
+        project.projectresourcesfolder = projectrootpackage + "main/resources/"
         projecttestfolder = projectrootpackage + "test/java/"
         # how far we have to go into the source folder depends on if the groupId has any periods in it, which each
         # represent its own sub-folder
@@ -61,8 +67,8 @@ class FileMaker:
                 utilities.mkdir(projectmainfolder + topmainpackage)
                 utilities.mkdir(projecttestfolder + toptestpackage)
         # now have to add the artifactID folder to these roots
-        topmainpackage += "/" + table.lowercasename
-        toptestpackage += "/" + table.lowercasename
+        topmainpackage += "/" + project.lowercasename
+        toptestpackage += "/" + project.lowercasename
         utilities.mkdir(projectmainfolder + topmainpackage)
         # make subpackages
         utilities.mkdir(projectmainfolder + topmainpackage + "/config")
@@ -84,17 +90,20 @@ class FileMaker:
         utilities.mkdir(projecttestfolder + toptestpackage + "/utilities")
 
         # set the Table object's main java and test package roots
-        table.topmainpackage = projectmainfolder + topmainpackage
-        table.toptestpackage = projecttestfolder + toptestpackage
+        project.topmainpackage = projectmainfolder + topmainpackage
+        project.toptestpackage = projecttestfolder + toptestpackage
         # rootpackage is for the individual Java files' "package ..." statement
-        table.rootpackage = topmainpackage.replace("/", ".")
-        self.create_pom_file(table,sourceprojectfolder,artifactid,destinationroot)
+        project.rootpackage = topmainpackage.replace("/", ".")
+        self.create_pom_file(project, sourceprojectfolder, artifactid, destinationroot)
 
-    """
+    def create_application_resources_file(self, project):
+        """
         this method creates the application.properties file for the project
-    """
-    def create_application_resources_file(self, table):
-        resources_file = open(table.projectresourcesfolder + "/application.properties", "w")
+        :param project:
+        :return:
+        """
+        resources_file = open(project.projectresourcesfolder + "/application.properties", "w")
+        resources_file.write("server.port="+str(project.portnum)+"\n")
         resources_file.write(Configuration.app_log + "\n")
         resources_file.write(Configuration.app_jpa + "\n")
         resources_file.write(Configuration.app_jpa_show + "\n")
@@ -107,16 +116,21 @@ class FileMaker:
         resources_file.write(Configuration.app_sec_pwd + "\n")
         resources_file.close()
 
-    """
+    def create_pom_file(self, project, sourceroot, artifactId, destinationroot):
+        """
         this method will copy the pom.xml while changing some things
         - it needs to change the groupId, artifactId, description, and name fields
         - it needs to add in the swagger2 dependencies(from dependencies.xml file)
         - it needs to add in the com.fasterxml.jackson.dataformat dependency(from dependencies.xml file)
-        - it needs to add in the sonarqube and jacoco stuff(from jacoco_props.xml file and sonar_jacoco.xml file)  
-    """
-    def create_pom_file(self,table,sourceroot,artifactId,destinationroot):
+        - it needs to add in the sonarqube and jacoco stuff(from jacoco_props.xml file and sonar_jacoco.xml file)
+        :param project:
+        :param sourceroot:
+        :param artifactId:
+        :param destinationroot:
+        :return:
+        """
         oldpom = open(sourceroot + "/" + artifactId + "/pom.xml","r")
-        newpom = open(destinationroot + "/" + table.pomname + "/" + table.pomname + "/pom.xml","w")
+        newpom = open(destinationroot + "/" + project.pomname + "/" + project.pomname + "/pom.xml", "w")
         parentpassed = False
         groupIdadded = False
         artifactIdadded = False
@@ -137,19 +151,19 @@ class FileMaker:
                         newpom.write(itemstr)
                 elif (itemstr.find("</artifactId>") > -1):
                     if (artifactIdadded == False):
-                        newpom.write(Constants.xml_art.replace("*",table.lowercasename)+"\n")
+                        newpom.write(Constants.xml_art.replace("*", project.lowercasename) + "\n")
                         artifactIdadded = True
                     else:
                         newpom.write(itemstr)
                 elif (itemstr.find("</name>") > -1):
                     if (nameadded == False):
-                        newpom.write(Constants.xml_name.replace("*",table.pomname)+"\n")
+                        newpom.write(Constants.xml_name.replace("*", project.pomname) + "\n")
                         nameadded = True
                     else:
                         newpom.write(itemstr)
                 elif (itemstr.find("</description>") > -1):
                     if (desc_added == False):
-                        newpom.write(Constants.xml_desc.replace("*",table.tablename))
+                        newpom.write(Constants.xml_desc.replace("*", project.pomname))
                         desc_added = True
                     else:
                         newpom.write(itemstr)
