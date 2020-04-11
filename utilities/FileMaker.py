@@ -99,22 +99,46 @@ class FileMaker:
     def create_application_resources_file(self, project):
         """
         this method creates the application.properties file for the project
+        *** Note: if they chose Configuration.use_config_server = True(chose to use a Spring CLoud config server)
+        this method will instead put these properties into a default config file called <pom name>.txt for the config server
+        to deploy to GIT. It will also create a file bootstrap.properties, that contains the needed confugration to point to
+        the uri of this config server, specified with Configuration.spring_cloud_config_uri
         :param project:
         :return:
         """
-        resources_file = open(project.projectresourcesfolder + "/application.properties", "w")
-        resources_file.write("server.port="+str(project.portnum)+"\n")
-        resources_file.write(Configuration.app_log + "\n")
-        resources_file.write(Configuration.app_jpa + "\n")
-        resources_file.write(Configuration.app_jpa_show + "\n")
-        resources_file.write(Configuration.app_hib_seq + "\n")
-        resources_file.write(Configuration.app_mysql_conn + "\n")
-        resources_file.write(Configuration.app_mysql_usr + "\n")
-        resources_file.write(Configuration.app_mysql_pwd + "\n")
-        resources_file.write(Configuration.app_actu_conf + "\n")
-        resources_file.write(Configuration.app_sec_usr + "\n")
-        resources_file.write(Configuration.app_sec_pwd + "\n")
-        resources_file.close()
+        if(Configuration.use_config_server == True):
+            resources_file = open(project.projectresourcesfolder + "/bootstrap.properties", "w")
+            resources_file.write(Configuration.app_name + project.pomname + "\n")
+            resources_file.write(Configuration.app_port + str(project.portnum) + "\n")
+            resources_file.write(Configuration.spring_cloud_config_uri+"\n")
+            resources_file.close()
+            resources_file = open(project.projectresourcesfolder + "/"+project.pomname+".properties", "w")
+            resources_file.write(Configuration.app_log + "\n")
+            resources_file.write(Configuration.app_jpa + "\n")
+            resources_file.write(Configuration.app_jpa_show + "\n")
+            resources_file.write(Configuration.app_hib_seq + "\n")
+            resources_file.write(Configuration.app_mysql_conn + "\n")
+            resources_file.write(Configuration.app_mysql_usr + "\n")
+            resources_file.write(Configuration.app_mysql_pwd + "\n")
+            resources_file.write(Configuration.app_actu_conf + "\n")
+            resources_file.write(Configuration.app_sec_usr + "\n")
+            resources_file.write(Configuration.app_sec_pwd + "\n")
+            resources_file.close()
+        else:
+            resources_file = open(project.projectresourcesfolder + "/application.properties", "w")
+            resources_file.write("spring.application.name=" + project.pomname)
+            resources_file.write("server.port="+str(project.portnum)+"\n")
+            resources_file.write(Configuration.app_log + "\n")
+            resources_file.write(Configuration.app_jpa + "\n")
+            resources_file.write(Configuration.app_jpa_show + "\n")
+            resources_file.write(Configuration.app_hib_seq + "\n")
+            resources_file.write(Configuration.app_mysql_conn + "\n")
+            resources_file.write(Configuration.app_mysql_usr + "\n")
+            resources_file.write(Configuration.app_mysql_pwd + "\n")
+            resources_file.write(Configuration.app_actu_conf + "\n")
+            resources_file.write(Configuration.app_sec_usr + "\n")
+            resources_file.write(Configuration.app_sec_pwd + "\n")
+            resources_file.close()
 
     def create_pom_file(self, project, sourceroot, artifactId, destinationroot):
         """
@@ -168,11 +192,20 @@ class FileMaker:
                     else:
                         newpom.write(itemstr)
                 elif (itemstr.find("</properties>") > -1):
-                    jacocoprops = open("files/jacoco_props.xml","r")
-                    for prop in jacocoprops:
-                        propstr = str(prop)
-                        newpom.write(propstr)
-                    jacocoprops.close()
+                    # jaccoco properties
+                    if(Configuration.use_sonar_jacoco == True):
+                        jacocoprops = open("files/jacoco_props.xml","r")
+                        for prop in jacocoprops:
+                            propstr = str(prop)
+                            newpom.write(propstr)
+                        jacocoprops.close()
+                    # cloud config client properties
+                    if (Configuration.use_config_server == True):
+                        configclientprop = open("files/config_client_prop.xml", "r")
+                        for prop in configclientprop:
+                            propstr = str(prop)
+                            newpom.write(propstr)
+                        configclientprop.close()
                     newpom.write("\n")
                     newpom.write(itemstr)
                 elif (itemstr.find("</dependencies>") > -1):
@@ -181,14 +214,30 @@ class FileMaker:
                         depstr = str(dep)
                         newpom.write(depstr)
                     dependencies.close()
+                    # cloud config client dependency
+                    if (Configuration.use_config_server == True):
+                        configclientdep = open("files/config_client_dep.xml", "r")
+                        for prop in configclientdep:
+                            propstr = str(prop)
+                            newpom.write(propstr)
+                        configclientdep.close()
                     newpom.write("\n")
                     newpom.write(itemstr)
+                    # cloud config client dependency management
+                    if (Configuration.use_config_server == True):
+                        configclientdepmngmt = open("files/cloud_conf_dep_mngmt.xml", "r")
+                        for prop in configclientdepmngmt:
+                            propstr = str(prop)
+                            newpom.write(propstr)
+                        configclientdepmngmt.close()
+                        newpom.write("\n")
                 elif (itemstr.find("</plugins>") > -1):
-                    sonarjacoco = open("files/sonar_jacoco.xml","r")
-                    for line in sonarjacoco:
-                        linestr = str(line)
-                        newpom.write(linestr)
-                    sonarjacoco.close()
+                    if (Configuration.use_sonar_jacoco == True):
+                        sonarjacoco = open("files/sonar_jacoco.xml","r")
+                        for line in sonarjacoco:
+                            linestr = str(line)
+                            newpom.write(linestr)
+                        sonarjacoco.close()
                     newpom.write("\n")
                     newpom.write(itemstr)
                 else:
