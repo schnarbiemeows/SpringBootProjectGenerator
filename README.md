@@ -18,11 +18,9 @@ created within it, and will also generate json file that can be imported into <b
 	<p>3. Does not generate any foreign key functionality in the Java code</p>
 
 <p><b>How to configure the program:</b></p>
-<p>1. In a file called <b>files/SQL_file.sql</b>, you want to put in your MySQL definitions. These</p>
-<p>will be table creation statements.</p>There can be other stuff in there, but the program will only</p>
-<p>look for the words "create table" to figure out all of your tables.</p>
-<p>2. in a file called <b>configuration/Configuration.py</b> : this file really just a configuration file.</p>
-<p>Here you will specify what you want the program to generate for you.</p>
+<p>1. In a file called <b>files/SQL_file.sql</b>, you want to put in your MySQL definitions. These will be table creation statements.
+There can be other stuff in there, but the program will only look for the words "create table" to figure out all of your tables.</p>
+<p>2. in a file called <b>configuration/Configuration.py</b> : this file really just a configuration file. Here you will specify what you want the program to generate for you.</p>
 
 <p>Some options currently available are:</p>
 
