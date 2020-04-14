@@ -12,17 +12,18 @@ off of a MySQL schema.
 				service will also have <strong>Junit</strong> test cases created within it, and will also generate
 				json file that can be imported into <strong>Postman</strong> as a collection for testing as well.
 
-A couple of assumptions:<br/>
-	1. Only works with <strong>MySQL</strong> database at the moment, I use version 5.7
-	2. Every table must have a primary key in it that is auto generated(auto_generated)
-	3. Does not generate any foreign key functionality in the Java code
+<strong>A couple of assumptions:</strong><br/>
+	1. Only works with <strong>MySQL</strong> database at the moment, I use version 5.7<br/>
+	2. Every table must have a primary key in it that is auto generated(auto_generated)<br/>
+	3. Does not generate any foreign key functionality in the Java code<br/>
 
-1. In a file called files/SQL_file.sql, you want to put in your MySQL definitions. These
-will be table creation statements. There can be other stuff in there, but the program will only
+1. In a file called <strong>files/SQL_file.sql</strong>, you want to put in your MySQL definitions. These
+will be table creation statements.<br/>There can be other stuff in there, but the program will only
 look for the words "create table" to figure out all of your tables.
-2. in a file called configuration/Configuration.py : this file really just a configuration file.
-Here you will specify what you want the program to generate for you. Some options currently 
-avaiable are:
+2. in a file called <strong>configuration/Configuration.py</strong> : this file really just a configuration file.
+Here you will specify what you want the program to generate for you.<br/>
+
+Some options currently available are:
 
 <strong>use_sonar_jacoco</strong> : gives your program sonarQube analysis and jacoco code coverage functionality.
 
