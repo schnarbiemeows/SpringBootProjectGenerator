@@ -17,9 +17,12 @@ look for the words "create table" to figure out all of your tables.
 2. in a file called configuration/Configuration.py : this file really just a configuration file.
 Here you will specify what you want the program to generate for you. Some options currently 
 avaiable are:
+
 use_sonar_jacoco : gives your program sonarQube analysis and jacoco code coverage functionality.
+
 use_config_server : if you know how to use Spring cloud configuration server, this will alter your 
 					services to use a config server
+					
 use_naming_server : if you know how to use Spring cloud naming server, this will alter your 
 					services to use openFeign, Ribbon, and Eureka to use a Eureka naming server
 			
