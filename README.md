@@ -1,4 +1,4 @@
-<h2>Welcome to the SpringBootProjectGenerator!</h2>
+<p style="text-align:center;"><h2>Welcome to the </h2><h2 style="color:blue">SpringBootProjectGenerator!</h2></p>
 
 This program will generate a series of templated SpringBoot microservices for you, based
 off of a MySQL schema.
@@ -7,15 +7,13 @@ off of a MySQL schema.
 
 <p><b>Basic premise:</b></p>
 
-	The basic functionality that this program offers is to create some basic
-	CRUD REST microservices for each of your tables. It can generate a seperate
-	service for each table, 1 service for all of the tables, or you can use a file
-	called files/grouping.txt to specify groupings of tables into services. Each 
-	service will also have <b>Junit</b> test cases created within it, and will also generate
-	json file that can be imported into <b>Postman</b> as a collection for testing as well.
+<p>The basic functionality that this program offers is to create some basic CRUD REST microservices for each of your tables. 
+It can generate a seperate service for each table, 1 service for all of the tables, or you can use a file called 
+<b>files/grouping.txt</b> to specify groupings of tables into services. Each service will also have <b>Junit</b> test cases 
+created within it, and will also generate json file that can be imported into <b>Postman</b> as a collection for testing as well.</p>
 
 <p><b>A couple of assumptions:</b></p>
-	<p>1. Only works with <b>MySQL</b> database at the moment, I use version 5.7</p>
+<div text-indent: 50px;><p>1. Only works with <b>MySQL</b> database at the moment, I use version 5.7</p></div>
 	<p>2. Every table must have a primary key in it that is auto generated(auto_generated)</p>
 	<p>3. Does not generate any foreign key functionality in the Java code</p>
 
