@@ -191,6 +191,15 @@ class SpringBootProjectGenerator:
         """
         self.javafilemaker.create_repository_class(table)
 
+    def create_proxy_classes(self, table, projectnames, projectdata):
+        """
+        this method will create a GenericProxy Java file in the project
+        :param table:
+        :return:
+        """
+        None
+        self.javafilemaker.create_proxy_class(table, projectnames, projectdata)
+
     def create_pojo_class(self, table):
         """
         this method creates the POJO Java file in the project
@@ -213,7 +222,15 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        self.javafilemaker.new_create_controller_class(table)
+        self.javafilemaker.create_controller_class(table)
+
+    def create_business_class(self, table):
+        """
+        this method creates the Business class in the project
+        :param table:
+        :return:
+        """
+        self.javafilemaker.create_business_class(table)
 
     def create_pojo_test_file(self, table):
         """
@@ -296,15 +313,19 @@ class SpringBootProjectGenerator:
             # for each table found for this project, do:
             for name in currentproject.tablenames:
                 currenttable = currentproject.tabledata[name]
+                currenttable.projectname = currentproject.pomname
                 currenttable.rootpackage = currentproject.rootpackage
                 currenttable.topmainpackage = currentproject.topmainpackage
                 currenttable.toptestpackage = currentproject.toptestpackage
                 self.create_table_properties(currenttable)
                 #currenttable.properties()
                 self.create_repository_file(currenttable)
+                if(Configuration.use_naming_server == True):
+                    self.create_proxy_classes(currenttable, self.projectsnames, self.projectdata)
                 self.create_pojo_class(currenttable)
                 self.create_dto_class(currenttable)
                 self.create_controller_class(currenttable)
+                self.create_business_class(currenttable)
                 self.create_pojo_test_file(currenttable)
                 self.create_dto_test_file(currenttable)
                 self.create_controller_test_file(currenttable)

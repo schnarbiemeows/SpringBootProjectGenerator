@@ -14,6 +14,7 @@ class Table:
         """
         print("initializing table object : " + name)
         self.tablename = name
+        self.projectname = ''
         self.pomname = ''
         self.camelcasejavaname = ''
         self.lowercasename = ''

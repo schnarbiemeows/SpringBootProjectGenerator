@@ -74,6 +74,7 @@ class FileMaker:
         utilities.mkdir(projectmainfolder + topmainpackage + "/config")
         utilities.mkdir(projectmainfolder + topmainpackage + "/controllers")
         utilities.mkdir(projectmainfolder + topmainpackage + "/exceptions")
+        utilities.mkdir(projectmainfolder + topmainpackage + "/business")
         utilities.mkdir(projectmainfolder + topmainpackage + "/dtos")
         utilities.mkdir(projectmainfolder + topmainpackage + "/pojos")
         utilities.mkdir(projectmainfolder + topmainpackage + "/services")
@@ -84,6 +85,7 @@ class FileMaker:
         utilities.mkdir(projecttestfolder + toptestpackage + "/config")
         utilities.mkdir(projecttestfolder + toptestpackage + "/controllers")
         utilities.mkdir(projecttestfolder + toptestpackage + "/exceptions")
+        utilities.mkdir(projecttestfolder + toptestpackage + "/business")
         utilities.mkdir(projecttestfolder + toptestpackage + "/dtos")
         utilities.mkdir(projecttestfolder + toptestpackage + "/pojos")
         utilities.mkdir(projecttestfolder + toptestpackage + "/services")
@@ -123,6 +125,8 @@ class FileMaker:
             resources_file.write(Configuration.app_actu_conf + "\n")
             resources_file.write(Configuration.app_sec_usr + "\n")
             resources_file.write(Configuration.app_sec_pwd + "\n")
+            if(Configuration.use_naming_server == True):
+                resources_file.write(Configuration.naming_server_url + "\n")
             resources_file.close()
         else:
             resources_file = open(project.projectresourcesfolder + "/application.properties", "w")
@@ -138,6 +142,8 @@ class FileMaker:
             resources_file.write(Configuration.app_actu_conf + "\n")
             resources_file.write(Configuration.app_sec_usr + "\n")
             resources_file.write(Configuration.app_sec_pwd + "\n")
+            if (Configuration.use_naming_server == True):
+                resources_file.write(Configuration.naming_server_url + "\n")
             resources_file.close()
 
     def create_pom_file(self, project, sourceroot, artifactId, destinationroot):
@@ -214,6 +220,14 @@ class FileMaker:
                         depstr = str(dep)
                         newpom.write(depstr)
                     dependencies.close()
+                    # cloud naming server dependencies
+                    if (Configuration.use_naming_server == True):
+                        naming_server_config = open("files/feign_dep.xml", "r")
+                        for prop in naming_server_config:
+                            propstr = str(prop)
+                            newpom.write(propstr)
+                        naming_server_config.close()
+                        newpom.write("\n")
                     # cloud config client dependency
                     if (Configuration.use_config_server == True):
                         configclientdep = open("files/config_client_dep.xml", "r")

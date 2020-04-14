@@ -24,12 +24,14 @@ class JavaFileMaker:
         resources_file.write("package " + project.rootpackage + ";\n\n")
         for line in main_file:
             linestr = str(line)
-            if (linestr.find("^") > -1):
-                resources_file.write(linestr.replace("^", Configuration.author))
-            elif (linestr.find("%") > -1):
-                resources_file.write(linestr.replace("%", project.camelcasejavaname))
+            if (linestr.find("YYY") > -1):
+                if(Configuration.use_naming_server == True):
+                    resources_file.write(Constants.import_feign+"\n")
+            elif (linestr.find("XXX") > -1):
+                if (Configuration.use_naming_server == True):
+                    resources_file.write(Constants.ann_feign.replace("XXX", project.rootpackage)+"\n")
             else:
-                resources_file.write(linestr)
+                resources_file.write(linestr.replace("^", Configuration.author).replace("%", project.camelcasejavaname))
         resources_file.close()
         main_file.close()
 
@@ -143,15 +145,47 @@ class JavaFileMaker:
         resources_file.close()
         randomizer_file.close()
 
-    def create_repository_class(self, table):
+    def create_proxy_class(self, table, projectnames, projectdata):
         """
-        this method will create the Repositry class file
+        this method will create the Repository class file
         :param table:
         :return:
         """
-        filename = table.topmainpackage + "/" + Constants.pckg_repo + "/" + table.camelcasejavaname + "Repository.java"
+        if(Configuration.naming_server_proxy_mode == 2):
+            for projectname in projectnames:
+                currentproject = projectdata[projectname]
+                if(table.projectname != currentproject.pomname):
+                    for tablename in currentproject.tablenames:
+                        proxytable = currentproject.tabledata[tablename]
+                        filename = table.topmainpackage + "/" + Constants.pckg_services + "/" + proxytable.camelcasejavaname + "ServiceProxy.java"
+                        resources_file = open(filename, "w")
+                        resources_file.write("package " + table.rootpackage + "." + Constants.pckg_services + ";\n\n")
+                        proxy_file = open("files/specific_proxy.txt", "r")
+                        for line in proxy_file:
+                            linestr = str(line)
+                            resources_file.write(linestr.replace("^", Configuration.author).replace("%", proxytable.camelcasejavaname).replace("XXX",currentproject.pomname))
+                        resources_file.close()
+                        proxy_file.close()
+        else:
+            filename = table.topmainpackage + "/" + Constants.pckg_services + "/" + "GenericServiceProxy.java"
+            resources_file = open(filename, "w")
+            resources_file.write("package " + table.rootpackage + "." + Constants.pckg_services + ";\n\n")
+            proxy_file = open("files/generic_proxy.txt", "r")
+            for line in proxy_file:
+                linestr = str(line)
+                resources_file.write(linestr.replace("^",Configuration.author))
+            resources_file.close()
+            proxy_file.close()
+
+    def create_repository_class(self, table):
+        """
+        this method will create the Repository class file
+        :param table:
+        :return:
+        """
+        filename = table.topmainpackage + "/" + Constants.pckg_services + "/" + table.camelcasejavaname + "Repository.java"
         resources_file = open(filename, "w")
-        resources_file.write("package " + table.rootpackage + "." + Constants.pckg_repo + ";\n\n")
+        resources_file.write("package " + table.rootpackage + "." + Constants.pckg_services + ";\n\n")
         resources_file.write(Constants.import_repo + "\n")
         resources_file.write(Constants.import_pojo.replace("%",table.rootpackage+".pojos."+table.camelcasejavaname)+"\n")
         resources_file.write(Constants.doc_main_class.replace("^", Configuration.author) + "\n")
@@ -179,7 +213,28 @@ class JavaFileMaker:
         resources_file.close()
         swagger_file.close()
 
-    def new_create_controller_class(self,table):
+    def create_business_class(self,table):
+        """
+        this method will create a business class for the project
+        :param table:
+        :return:
+        """
+        # create the file and open
+        filename = table.topmainpackage + "/" + Constants.pckg_bus + "/" + table.camelcasejavaname + "Business.java"
+        resources_file = open(filename, "w")
+        business_file = open("files/business.txt")
+        resources_file.write("package " + table.rootpackage + "." + Constants.pckg_bus + ";\n\n")
+        for line in business_file:
+            linestr = str(line)
+            if (linestr.find("XXX")) > -1:
+                text = self.create_get_pk_stmt(table)
+                resources_file.write(linestr.replace("%", table.camelcasejavaname).replace("&", table.lowercasename).replace("XXX",text))
+            else:
+                resources_file.write(linestr.replace("%", table.camelcasejavaname).replace("&", table.lowercasename).replace("^",Configuration.author))
+        resources_file.close()
+        business_file.close()
+
+    def create_controller_class(self, table):
         """
         this method will create the RestController for the project
         the rest controller will have methods to
@@ -204,15 +259,15 @@ class JavaFileMaker:
                 resources_file.write(
                     "import " + table.rootpackage + "." + Constants.pckg_dtos + "." + table.dtoname + ";\n")
                 resources_file.write(
-                    "import " + table.rootpackage + "." + Constants.pckg_repo + "." + table.camelcasejavaname + "Repository;\n")
+                    "import " + table.rootpackage + "." + Constants.pckg_services + "." + table.camelcasejavaname + "Repository;\n")
                 resources_file.write("import " + table.rootpackage + "." + Constants.pckg_exc + "." + "ResourceNotFoundException;\n")
             elif linestr.find("QQQ") > -1:
                 text = self.create_get_pk_stmt(table)
                 resources_file.write(linestr.replace("%", table.camelcasejavaname).replace("&", table.lowercasename).replace("QQQ",text))
             else:
-                resources_file.write(
-                    linestr.replace("%", table.camelcasejavaname).replace("&", table.lowercasename).replace("^",Configuration.author))
+                resources_file.write(linestr.replace("%", table.camelcasejavaname).replace("&", table.lowercasename).replace("^",Configuration.author))
         resources_file.close()
+        test_controller.close()
 
     def create_get_pk_stmt(self,table):
         """

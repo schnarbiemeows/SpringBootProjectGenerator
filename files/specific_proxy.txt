@@ -1,0 +1,13 @@
+import org.springframework.cloud.netflix.ribbon.RibbonClient;
+import org.springframework.cloud.openfeign.FeignClient;
+
+/**
+ *
+ * @author ^
+ *
+ */
+@FeignClient(name="XXX")
+@RibbonClient(name="XXX")
+public interface %ServiceProxy {
+
+}

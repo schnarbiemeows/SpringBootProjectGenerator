@@ -49,7 +49,10 @@ class Constants:
     xml_desc = "<description>CRUD application for the * project</description>"
 
 # main application file
+    import_feign = "org.springframework.cloud.openfeign.EnableFeignClients;"
+    ann_feign = '@EnableFeignClients("XXX")'
 # Swagger file
+
 # application.properties
 
     prop_log = "logging.level.org.springframework = info"
@@ -58,7 +61,7 @@ class Constants:
     prop_sec_pwd = "spring.security.user.password=password"
     prop_jpa_true = "spring.jpa.show-sql=true"
 
-# pojos and dtos
+# pojos and dtos classes
 
     pckg_pojos = "pojos"
     pckg_dtos = "dtos"
@@ -81,7 +84,7 @@ class Constants:
     str_tostring = "public String toString() "
     str_super = "super();"
 
-# controllers
+# controllers classes
 
     pckg_contr = "controllers"
     import_ctrl_anns = "import org.springframework.web.bind.annotation.*;"
@@ -105,9 +108,19 @@ class Constants:
     ann_pathvar = "@PathVariable"
     ann_reqbody = "@RequestBody"
 
-# repository
+# business classes
 
-    pckg_repo = "services"
+    pckg_bus = "business"
+    import_comp = "import org.springframework.stereotype.Component;"
+    ann_comp = "@Component"
+
+# repository classes
+
+    pckg_services = "services"
     import_repo = "import org.springframework.data.repository.CrudRepository;"
     import_pojo = "import %;"
     class_decl_repo = "public interface *Repository extends CrudRepository<*, Integer>{\n\n}"
+
+# feign/Ribbon proxy class
+
+

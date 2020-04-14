@@ -1,0 +1,99 @@
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import com.schnarbiesnmeowers.&.exceptions.ResourceNotFoundException;
+
+import com.schnarbiesnmeowers.&.dtos.%DTO;
+import com.schnarbiesnmeowers.&.pojos.%;
+import com.schnarbiesnmeowers.&.services.%Repository;
+
+/**
+ * this class retrieves data from the controller class
+ * most business logic should be put in this class
+ * @author ^
+ *
+ */
+@Component
+public class %Business {
+
+	/**
+	 * JPA Repository handle
+	 */
+	@Autowired
+	private %Repository service;
+
+	/**
+	 * get all % records
+	 * @return
+	 * @throws Exception
+	 */
+	public Iterable<%> getAll%() throws Exception {
+		Iterable<%> & = service.findAll();
+		return &;
+	}
+
+	/**
+	 * get % by primary key
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public % find%ById(int id) throws Exception {
+		Optional<%> &Optional = service.findById(id);
+		if(&Optional.isPresent()) {
+			% results = &Optional.get();
+			return results;
+		} else {
+			throw new ResourceNotFoundException("id = " + id + " not found");
+		}
+	}
+
+	/**
+	 * create a new %
+	 * @param data
+	 * @return
+	 */
+	public % create%(%DTO data) {
+		try {
+		    % createdData = data.toEntity();
+		    createdData = service.save(createdData);
+		    return createdData;
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	/**
+	 * update a %
+	 * @param data
+	 * @return
+	 * @throws Exception
+	 */
+	public % update%(%DTO data) throws Exception {
+		Optional<%> &Optional = service.findById(data.XXX);
+		if(&Optional.isPresent()) {
+		    % updatedData = data.toEntity();
+			updatedData = service.save(updatedData);
+			return updatedData;
+		} else {
+			throw new ResourceNotFoundException("id = " + data.XXX + " not found");
+		}
+	}
+
+	/**
+	 * delete a % by primary key
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public String delete%(int id) throws Exception {
+		Optional<%> &Optional = service.findById(id);
+		if(&Optional.isPresent()) {
+			service.deleteById(id);
+			return "Successfully Deleted";
+		} else {
+			throw new ResourceNotFoundException("id = " + id + " not found");
+		}
+	}
+	
+}
