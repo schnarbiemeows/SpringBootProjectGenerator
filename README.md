@@ -9,7 +9,13 @@ Basic premise - the basic functionality that this program offers is to create so
 				CRUD REST microservices for each of your tables. It can generate a seperate
 				service for each table, 1 service for all of the tables, or you can use a file
 				called files/grouping.txt to specify groupings of tables into services. Each 
-				service will also have Junit test cases created within it.
+				service will also have Junit test cases created within it, and will also generate
+				json file that can be imported into Postman as a collection for testing as well.
+
+A couple of assumptions:
+	1. Only works with MySQL database at the moment, I use version 5.7
+	2. Every table must have a primary key in it that is auto generated(auto_generated)
+	3. Does not generate any foreign key functionality in the Java code
 
 1. In a file called files/SQL_file.sql, you want to put in your MySQL definitions. These
 will be table creation statements. There can be other stuff in there, but the program will only
@@ -18,7 +24,7 @@ look for the words "create table" to figure out all of your tables.
 Here you will specify what you want the program to generate for you. Some options currently 
 avaiable are:
 
-use_sonar_jacoco : gives your program sonarQube analysis and jacoco code coverage functionality.
+<strong>use_sonar_jacoco</strong> : gives your program sonarQube analysis and jacoco code coverage functionality.
 
 use_config_server : if you know how to use Spring cloud configuration server, this will alter your 
 					services to use a config server
