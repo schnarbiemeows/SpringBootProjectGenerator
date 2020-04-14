@@ -1,19 +1,19 @@
-Welcome to the SpringBootProjectGenerator!
+<h2>Welcome to the SpringBootProjectGenerator!</h2>
 
 This program will generate a series of templated SpringBoot microservices for you, based
 off of a MySQL schema.
 
-Here is how it works:
+<strong>Here is how it works:</strong><br/>
 
-Basic premise - the basic functionality that this program offers is to create some basic
+<strong>Basic premise</strong> - the basic functionality that this program offers is to create some basic
 				CRUD REST microservices for each of your tables. It can generate a seperate
 				service for each table, 1 service for all of the tables, or you can use a file
 				called files/grouping.txt to specify groupings of tables into services. Each 
-				service will also have Junit test cases created within it, and will also generate
-				json file that can be imported into Postman as a collection for testing as well.
+				service will also have <strong>Junit</strong> test cases created within it, and will also generate
+				json file that can be imported into <strong>Postman</strong> as a collection for testing as well.
 
-A couple of assumptions:
-	1. Only works with MySQL database at the moment, I use version 5.7
+A couple of assumptions:<br/>
+	1. Only works with <strong>MySQL</strong> database at the moment, I use version 5.7
 	2. Every table must have a primary key in it that is auto generated(auto_generated)
 	3. Does not generate any foreign key functionality in the Java code
 
@@ -26,15 +26,15 @@ avaiable are:
 
 <strong>use_sonar_jacoco</strong> : gives your program sonarQube analysis and jacoco code coverage functionality.
 
-use_config_server : if you know how to use Spring cloud configuration server, this will alter your 
+<strong>use_config_server</strong> : if you know how to use Spring cloud configuration server, this will alter your 
 					services to use a config server
 					
-use_naming_server : if you know how to use Spring cloud naming server, this will alter your 
+<strong>use_naming_server</strong> : if you know how to use Spring cloud naming server, this will alter your 
 					services to use openFeign, Ribbon, and Eureka to use a Eureka naming server
 			
 more details can be found in this Configuration.py file
 
-The main class that kicks off the program is SpringBootProjectGenerator.py
+The main class that kicks off the program is <strong>SpringBootProjectGenerator.py</strong>
 
 More functionality to come!
 
