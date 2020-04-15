@@ -147,7 +147,7 @@ class JavaFileMaker:
 
     def create_proxy_class(self, table, projectnames, projectdata):
         """
-        this method will create the Repository class file
+        this method will create the proxy interfaces to the other projects' REST controllers
         :param table:
         :return:
         """
@@ -157,25 +157,63 @@ class JavaFileMaker:
                 if(table.projectname != currentproject.pomname):
                     for tablename in currentproject.tablenames:
                         proxytable = currentproject.tabledata[tablename]
-                        filename = table.topmainpackage + "/" + Constants.pckg_services + "/" + proxytable.camelcasejavaname + "ServiceProxy.java"
+                        filename = table.topmainpackage + "/" + Constants.path_proxy_services + "/" + proxytable.camelcasejavaname + "ServiceProxy.java"
                         resources_file = open(filename, "w")
-                        resources_file.write("package " + table.rootpackage + "." + Constants.pckg_services + ";\n\n")
+                        resources_file.write("package " + table.rootpackage + "." + Constants.pckg_proxy_services + ";\n\n")
                         proxy_file = open("files/specific_proxy.txt", "r")
                         for line in proxy_file:
                             linestr = str(line)
-                            resources_file.write(linestr.replace("^", Configuration.author).replace("%", proxytable.camelcasejavaname).replace("XXX",currentproject.pomname))
+                            if(linestr.find("YYY"))>-1:
+                                resources_file.write("import "+table.rootpackage + "." + Constants.pckg_proxy_dtos+"."+proxytable.dtoname+";\n")
+                            else:
+                                resources_file.write(linestr.replace("^", Configuration.author).replace("%", proxytable.camelcasejavaname).replace("&", proxytable.lowercasename).replace("XXX",currentproject.pomname))
                         resources_file.close()
                         proxy_file.close()
         else:
-            filename = table.topmainpackage + "/" + Constants.pckg_services + "/" + "GenericServiceProxy.java"
+            filename = table.topmainpackage + "/" + Constants.path_proxy_services + "/" + "GenericServiceProxy.java"
             resources_file = open(filename, "w")
-            resources_file.write("package " + table.rootpackage + "." + Constants.pckg_services + ";\n\n")
+            resources_file.write("package " + table.rootpackage + "." + Constants.pckg_proxy_services + ";\n\n")
             proxy_file = open("files/generic_proxy.txt", "r")
             for line in proxy_file:
                 linestr = str(line)
                 resources_file.write(linestr.replace("^",Configuration.author))
             resources_file.close()
             proxy_file.close()
+
+    def create_proxy_dtos(self, destinationroot, table, projectnames, projectdata):
+        """
+        this method will create the DTOs needed for the proxies
+        :param table:
+        :return:
+        """
+        if(Configuration.naming_server_proxy_mode == 2):
+            for projectname in projectnames:
+                currentproject = projectdata[projectname]
+                if(table.projectname != currentproject.pomname):
+                    for tablename in currentproject.tablenames:
+                        proxytable = currentproject.tabledata[tablename]
+                        filename = table.topmainpackage + "/" + Constants.path_proxy_dtos + "/" + proxytable.dtoname + ".java"
+                        resources_file = open(filename, "w")
+                        resources_file.write("package " + table.rootpackage + "." + Constants.pckg_proxy_dtos + ";\n")
+                        source_file = open(destinationroot + "/" + currentproject.pomname + "/" + currentproject.pomname + "/src/main/java/" + Configuration.groupid.replace(".","/") + "/" + currentproject.lowercasename + "/dtos/" + proxytable.dtoname + ".java", "r")
+                        count = 0
+                        toentityfound = False
+                        proxytablename = proxytable.camelcasejavaname+";"
+                        for line in source_file:
+                            if count > 0 and toentityfound == False:
+                                linestr = str(line)
+                                if(linestr.find("toEntity"))>-1:
+                                    toentityfound = True
+                                else:
+                                    if (linestr.find(proxytablename)) == -1:
+                                        resources_file.write(linestr)
+                            else:
+                                count += 1
+                        resources_file.write("}\n")
+                        resources_file.close()
+                        source_file.close()
+        else:
+            None
 
     def create_repository_class(self, table):
         """

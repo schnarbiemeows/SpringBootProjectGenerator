@@ -1,5 +1,10 @@
 import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import javax.validation.Valid;
+
+YYY
 
 /**
  *
@@ -10,4 +15,18 @@ import org.springframework.cloud.openfeign.FeignClient;
 @RibbonClient(name="XXX")
 public interface %ServiceProxy {
 
+    @GetMapping(path = "/&/all")
+	public ResponseEntity<Object> getAll%() throws Exception;
+
+	@GetMapping(path = "/&/findById/{id}")
+	public ResponseEntity<Object> find%ById(@PathVariable int id) throws Exception;
+
+	@PostMapping(path = "/&/create")
+	public ResponseEntity<Object> create%(@Valid @RequestBody %DTO data);
+
+	@PostMapping(path = "/&/update")
+	public ResponseEntity<Object> update%(@Valid @RequestBody %DTO data) throws Exception;
+
+	@DeleteMapping(path = "/&/delete/{id}")
+	public ResponseEntity<Object> delete%(@PathVariable int id) throws Exception;
 }

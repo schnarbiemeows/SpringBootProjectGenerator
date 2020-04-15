@@ -49,7 +49,7 @@ class Constants:
     xml_desc = "<description>CRUD application for the * project</description>"
 
 # main application file
-    import_feign = "org.springframework.cloud.openfeign.EnableFeignClients;"
+    import_feign = "import org.springframework.cloud.openfeign.EnableFeignClients;"
     ann_feign = '@EnableFeignClients("XXX")'
 # Swagger file
 
@@ -123,4 +123,8 @@ class Constants:
 
 # feign/Ribbon proxy class
 
+    path_proxy_services = "proxy/services"
+    pckg_proxy_services = "proxy.services"
+    path_proxy_dtos = "proxy/dtos"
+    pckg_proxy_dtos = "proxy.dtos"
 
