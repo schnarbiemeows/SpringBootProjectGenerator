@@ -209,6 +209,15 @@ class SpringBootProjectGenerator:
         None
         self.javafilemaker.create_proxy_dtos(self.destinationroot, table, projectnames, projectdata)
 
+    def create_proxy_pojos(self, table, projectnames, projectdata):
+        """
+        this method will create a GenericProxy Java file in the project
+        :param table:
+        :return:
+        """
+        None
+        self.javafilemaker.create_proxy_pojos(self.destinationroot, table, projectnames, projectdata)
+
     def create_pojo_class(self, table):
         """
         this method creates the POJO Java file in the project
@@ -345,6 +354,7 @@ class SpringBootProjectGenerator:
                 for name in currentproject.tablenames:
                     currenttable = currentproject.tabledata[name]
                     self.create_proxy_dtos(currenttable, self.projectsnames, self.projectdata)
+                    self.create_proxy_pojos(currenttable, self.projectsnames, self.projectdata)
 
 """
     main executable of this program

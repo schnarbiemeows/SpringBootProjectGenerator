@@ -127,4 +127,6 @@ class Constants:
     pckg_proxy_services = "proxy.services"
     path_proxy_dtos = "proxy/dtos"
     pckg_proxy_dtos = "proxy.dtos"
+    path_proxy_pojos = "proxy/pojos"
+    pckg_proxy_pojos = "proxy.pojos"
 

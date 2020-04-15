@@ -197,19 +197,49 @@ class JavaFileMaker:
                         resources_file.write("package " + table.rootpackage + "." + Constants.pckg_proxy_dtos + ";\n")
                         source_file = open(destinationroot + "/" + currentproject.pomname + "/" + currentproject.pomname + "/src/main/java/" + Configuration.groupid.replace(".","/") + "/" + currentproject.lowercasename + "/dtos/" + proxytable.dtoname + ".java", "r")
                         count = 0
-                        toentityfound = False
                         proxytablename = proxytable.camelcasejavaname+";"
                         for line in source_file:
-                            if count > 0 and toentityfound == False:
+                            if count > 0:
                                 linestr = str(line)
-                                if(linestr.find("toEntity"))>-1:
-                                    toentityfound = True
+                                if (linestr.find(proxytablename))>-1:
+                                    resources_file.write(
+                                        "import " + table.rootpackage + "." + Constants.pckg_proxy_pojos + "." + proxytable.camelcasejavaname + ";\n")
                                 else:
-                                    if (linestr.find(proxytablename)) == -1:
-                                        resources_file.write(linestr)
+                                    resources_file.write(linestr)
                             else:
                                 count += 1
-                        resources_file.write("}\n")
+                        resources_file.close()
+                        source_file.close()
+        else:
+            None
+
+    def create_proxy_pojos(self, destinationroot, table, projectnames, projectdata):
+        """
+        this method will create the DTOs needed for the proxies
+        :param table:
+        :return:
+        """
+        if(Configuration.naming_server_proxy_mode == 2):
+            for projectname in projectnames:
+                currentproject = projectdata[projectname]
+                if(table.projectname != currentproject.pomname):
+                    for tablename in currentproject.tablenames:
+                        proxytable = currentproject.tabledata[tablename]
+                        filename = table.topmainpackage + "/" + Constants.path_proxy_pojos + "/" + proxytable.camelcasejavaname + ".java"
+                        resources_file = open(filename, "w")
+                        resources_file.write("package " + table.rootpackage + "." + Constants.pckg_proxy_pojos + ";\n")
+                        source_file = open(destinationroot + "/" + currentproject.pomname + "/" + currentproject.pomname + "/src/main/java/" + Configuration.groupid.replace(".","/") + "/" + currentproject.lowercasename + "/pojos/" + proxytable.camelcasejavaname + ".java", "r")
+                        count = 0
+                        proxytablename = proxytable.dtoname+";"
+                        for line in source_file:
+                            if count > 0 :
+                                linestr = str(line)
+                                if (linestr.find(proxytablename))>-1:
+                                    resources_file.write("import " + table.rootpackage + "." + Constants.pckg_proxy_dtos + "." + proxytable.dtoname +";\n")
+                                else:
+                                    resources_file.write(linestr)
+                            else:
+                                count += 1
                         resources_file.close()
                         source_file.close()
         else:
