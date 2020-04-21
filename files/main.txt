@@ -11,7 +11,7 @@ XXX
 public class %Application {
 
 	/**
-	 *
+	 * this is the main class for our % application
 	 * @param args
 	 */
 	public static void main(String[] args) {

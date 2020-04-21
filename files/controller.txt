@@ -5,9 +5,9 @@ import org.springframework.http.HttpStatus;
 import javax.validation.Valid;
 import java.util.*;
 
-import com.schnarbiesnmeowers.&.business.%Business;
-import com.schnarbiesnmeowers.&.dtos.%DTO;
-import com.schnarbiesnmeowers.&.pojos.%;
+import $.business.%Business;
+import $.dtos.%DTO;
+import $.pojos.%;
 
 /**
  * this class is the main REST controller

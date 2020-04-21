@@ -102,7 +102,7 @@ class SpringBootProjectGenerator:
             self.projectdata[Configuration.project_name] = project
         elif(setting == 3):
             utilities = Utilities()
-            projectnames,projectttables = utilities.parseGroupingsTextFile()
+            projectnames,projectttables = utilities.parseGroupingsTextFile("files/groupings.txt")
             for name in projectnames:
                 self.projectsnames.append(name)
                 project = Project(name,portnum)
@@ -117,6 +117,26 @@ class SpringBootProjectGenerator:
                 self.projectdata[name] = project
         else:
             None
+
+    def parseMidLevelFile(self):
+        """
+
+        :return:
+        """
+        utilities = Utilities()
+        mid_lvl_projects, lwr_lvl_projects = utilities.parseGroupingsTextFile("files/mid_level.txt")
+        portnum = int(Configuration.mid_lvl_port_num)
+        localprojectsnames = []
+        localprojectdata = {}
+        for mid_lvl_proj in mid_lvl_projects:
+            localprojectsnames.append(mid_lvl_proj)
+            project = Project(mid_lvl_proj, portnum)
+            portnum += 1
+            lwr_lvl_projs = lwr_lvl_projects[mid_lvl_proj]
+            for lwr_lvl_proj in lwr_lvl_projs:
+                project.tablenames.append(lwr_lvl_proj)
+            localprojectdata[mid_lvl_proj] = project
+        return (localprojectsnames,localprojectdata)
 
 
     def create_application_resources_file(self, project):
@@ -191,32 +211,57 @@ class SpringBootProjectGenerator:
         """
         self.javafilemaker.create_repository_class(table)
 
-    def create_proxy_classes(self, table, projectnames, projectdata):
+    def create_proxy_classes(self, currentproject, projectnames, projectdata):
         """
         this method will create a GenericProxy Java file in the project
         :param table:
         :return:
         """
-        None
-        self.javafilemaker.create_proxy_class(table, projectnames, projectdata)
+        self.javafilemaker.create_proxy_class(currentproject, projectnames, projectdata)
 
-    def create_proxy_dtos(self, table, projectnames, projectdata):
+    def create_proxy_classes_for_mid_levels(self, mid_level_proj):
         """
-        this method will create a GenericProxy Java file in the project
-        :param table:
+        this method will create proxy classes for a mid_level project
+        :param mid_level_proj:
         :return:
         """
-        None
-        self.javafilemaker.create_proxy_dtos(self.destinationroot, table, projectnames, projectdata)
+        self.javafilemaker.create_proxy_classes_for_mid_levels(mid_level_proj, self.projectsnames, self.projectdata)
 
-    def create_proxy_pojos(self, table, projectnames, projectdata):
+    def create_proxy_dtos(self, currentproject, projectnames, projectdata):
         """
-        this method will create a GenericProxy Java file in the project
+        this method will create the DTOs needed for the proxy interfaces
         :param table:
         :return:
         """
         None
-        self.javafilemaker.create_proxy_pojos(self.destinationroot, table, projectnames, projectdata)
+        self.javafilemaker.create_proxy_dtos(self.destinationroot, currentproject, projectnames, projectdata)
+
+    def create_proxy_dtos_for_mid_lvl(self, currentproject):
+        """
+        this method will create the DTOs needed for the proxies for the mid-level projects
+        :param table:
+        :return:
+        """
+        None
+        self.javafilemaker.create_proxy_dtos_for_mid_lvl(self.destinationroot, currentproject, self.projectsnames, self.projectdata)
+
+    def create_proxy_pojos(self, currentproject, projectnames, projectdata):
+        """
+        this method will create the POJOs needed for the proxy interfaces
+        :param table:
+        :return:
+        """
+        None
+        self.javafilemaker.create_proxy_pojos(self.destinationroot, currentproject, projectnames, projectdata)
+
+    def create_proxy_pojos_for_mid_lvl(self, currentproject):
+        """
+        this method will create the POJOs needed for the proxies for the mid-level projects
+        :param table:
+        :return:
+        """
+        None
+        self.javafilemaker.create_proxy_pojos_for_mid_lvl(self.destinationroot, currentproject, self.projectsnames, self.projectdata)
 
     def create_pojo_class(self, table):
         """
@@ -236,11 +281,19 @@ class SpringBootProjectGenerator:
 
     def create_controller_class(self, table):
         """
-        this method creates the POJO Java file in the project
+        this method creates the controller class for the project
         :param table:
         :return:
         """
         self.javafilemaker.create_controller_class(table)
+
+    def create_controller_class_for_mid_lvl(self, project):
+        """
+        this method creates the controller class for the mid-lvl projects
+        :param project:
+        :return:
+        """
+        self.javafilemaker.create_controller_class_for_mid_lvl(project)
 
     def create_business_class(self, table):
         """
@@ -249,6 +302,14 @@ class SpringBootProjectGenerator:
         :return:
         """
         self.javafilemaker.create_business_class(table)
+
+    def create_business_class_for_mid_lvl(self, project):
+        """
+        this method creates the Business class in the mid-level project
+        :param table:
+        :return:
+        """
+        self.javafilemaker.create_business_class_for_mid_lvl(project)
 
     def create_pojo_test_file(self, table):
         """
@@ -306,6 +367,14 @@ class SpringBootProjectGenerator:
         """
         self.jsonutility.createPostmanCollection(project)
 
+    def backup_project(self, project):
+        """
+
+        :param project:
+        :return:
+        """
+        self.filemaker.backup_project(project, self.destinationroot)
+
     def run(self):
         """
         main method of this program
@@ -317,6 +386,8 @@ class SpringBootProjectGenerator:
         self.parsesqlfileToGroupProjects()
         for project in self.projectsnames:
             currentproject = self.projectdata[project]
+            if(Configuration.backup_all_projects == True):
+                self.backup_project(currentproject)
             self.create_base_project_folders(currentproject)
             self.create_application_resources_file(currentproject)
             self.create_main_method_file(currentproject)
@@ -336,26 +407,46 @@ class SpringBootProjectGenerator:
                 currenttable.topmainpackage = currentproject.topmainpackage
                 currenttable.toptestpackage = currentproject.toptestpackage
                 self.create_table_properties(currenttable)
-                #currenttable.properties()
                 self.create_repository_file(currenttable)
-                if(Configuration.use_naming_server == True):
-                    self.create_proxy_classes(currenttable, self.projectsnames, self.projectdata)
                 self.create_pojo_class(currenttable)
                 self.create_dto_class(currenttable)
-                self.create_controller_class(currenttable)
-                self.create_business_class(currenttable)
+                if(Configuration.bypass_controllers != True):
+                    self.create_controller_class(currenttable)
+                if (Configuration.bypass_business != True):
+                    self.create_business_class(currenttable)
                 self.create_pojo_test_file(currenttable)
                 self.create_dto_test_file(currenttable)
-                self.create_controller_test_file(currenttable)
+                if (Configuration.bypass_controllers != True):
+                    self.create_controller_test_file(currenttable)
             self.create_postman_collection(currentproject)
         if (Configuration.use_naming_server == True):
             for project in self.projectsnames:
                 currentproject = self.projectdata[project]
-                for name in currentproject.tablenames:
-                    currenttable = currentproject.tabledata[name]
-                    self.create_proxy_dtos(currenttable, self.projectsnames, self.projectdata)
-                    self.create_proxy_pojos(currenttable, self.projectsnames, self.projectdata)
-
+                self.create_proxy_classes(currentproject, self.projectsnames, self.projectdata)
+                self.create_proxy_dtos(currentproject, self.projectsnames, self.projectdata)
+                self.create_proxy_pojos(currentproject, self.projectsnames, self.projectdata)
+        if(Configuration.make_mid_lvl_services==True):
+            localprojectsnames, localprojectdata = self.parseMidLevelFile()
+            for projectname in localprojectsnames:
+                currentproject = localprojectdata[projectname]
+                if (Configuration.backup_all_projects == True):
+                    self.backup_project(currentproject)
+                self.create_base_project_folders(currentproject)
+                self.create_application_resources_file(currentproject)
+                self.create_main_method_file(currentproject)
+                self.create_main_test_file(currentproject)
+                self.create_randomizer_class(currentproject)
+                self.create_swagger_file(currentproject)
+                self.create_exceptions_file(currentproject)
+                self.make_rnf_exc_class(currentproject)
+                self.make_spec_eh_class(currentproject)
+                self.create__exceptions_test_class(currentproject)
+                self.create_randomizer_test_class(currentproject)
+                self.create_proxy_classes_for_mid_levels(currentproject)
+                #self.create_proxy_dtos_for_mid_lvl(currentproject)
+                #self.create_proxy_pojos_for_mid_lvl(currentproject)
+                self.create_business_class_for_mid_lvl(currentproject)
+                self.create_controller_class_for_mid_lvl(currentproject)
 """
     main executable of this program
 """

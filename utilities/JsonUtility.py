@@ -17,7 +17,8 @@ class JsonUtility:
             currenttable = project.tabledata[name]
             jsonstr += self.add_table_json(currenttable, project.portnum)
         jsonstr = jsonstr[0:-2] + '\n' + tabs + '],\n' + tabs + '"protocolProfileBehavior": {}\n}'
-        postmanfile = open(project.projectresourcesfolder+project.pomname+".postman_collection.json","w")
+        postmanfile = open("/nms-postman-collections/" + project.pomname + ".postman_collection.json", "w")
+        #postmanfile = open(project.projectresourcesfolder+project.pomname+".postman_collection.json","w")
         postmanfile.write(jsonstr)
         postmanfile.close()
 

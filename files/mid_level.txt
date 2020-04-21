@@ -1,0 +1,20 @@
+# grouping format is:
+# <project name> : <comma separated list of lower level project names>
+#
+# create a new account
+#create-account:action_type,users,users_hist,groups,groups_hist,
+# login to application
+#login-action:
+# determine a user's permissions
+#roles-service:users,
+# add daily weight measurement and retrieve weight data
+#use-daily-weight:daily_weight,
+# view everything eaten on a given day
+#view-daily-totals:
+# add an item to a daily totals
+#add-item-to-daily:action_type,
+# find a recipe/ingredient
+#find-food-item:
+# add a dietary note and retrieve notes
+#use-dietary-notes:
+diet-and-notes:daily-weight,daily-dietary-notes,user-date

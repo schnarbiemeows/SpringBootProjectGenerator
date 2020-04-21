@@ -1,0 +1,15 @@
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import com.schnarbiesnmeowers.&.exceptions.ResourceNotFoundException;
+
+/**
+ * this class retrieves data from the controller class
+ * most business logic should be put in this class
+ * @author ^
+ *
+ */
+@Component
+public class %Business {
+
+}

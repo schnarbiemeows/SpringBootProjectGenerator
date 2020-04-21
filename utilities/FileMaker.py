@@ -1,14 +1,43 @@
 from popos.Table import *
 from utilities.Utilities import *
+from utilities.JsonUtility import *
 from utilities.Constants import *
 from configuration.Configuration import *
 import os
 import sys
 import xml.etree.ElementTree as ET
 import shutil
-
+from distutils.dir_util import *
 
 class FileMaker:
+    
+    def init(self):
+        """
+        initilization
+        :return: 
+        """
+        utilities = Utilities()
+        jsonutility = JsonUtility()
+    
+    def createPostmanCollection(self, project):
+        """
+        redirecting to JsonUtility.py createPostmanCollection method
+        :param project: 
+        :return: 
+        """
+        self.jsonutility.createPostmanCollection(project)
+
+    def backup_project(self, project, destinationroot):
+        """
+        this method will backup a project that has already been generated before, so that the user can retrieve the various files
+        that will get overwritten with the current generation
+        :param project:
+        :param destinationroot:
+        :return:
+        """
+        if os.path.exists(destinationroot+"/"+project.pomname):
+            print("backing up project " + project.pomname)
+            copy_tree(destinationroot+"/"+project.pomname, destinationroot+"/backup/"+project.pomname)
 
     def create_base_project_folders(self, project, sourceprojectfolder, destinationroot, artifactid, groupid):
         """
@@ -20,34 +49,33 @@ class FileMaker:
         :param groupid:
         :return:
         """
-        utilities = Utilities()
-        utilities.mkdir(destinationroot + "/" + project.pomname)
-        utilities.mkdir(destinationroot + "/" + project.pomname + "/" + project.pomname)
-        utilities.mkdir(destinationroot + "/" + project.pomname + "/" + project.pomname + "/.mvn")
-        utilities.mkdir(destinationroot + "/" + project.pomname + "/" + project.pomname + "/.mvn/wrapper")
+        self.utilities.mkdir(destinationroot + "/" + project.pomname)
+        self.utilities.mkdir(destinationroot + "/" + project.pomname + "/" + project.pomname)
+        self.utilities.mkdir(destinationroot + "/" + project.pomname + "/" + project.pomname + "/.mvn")
+        self.utilities.mkdir(destinationroot + "/" + project.pomname + "/" + project.pomname + "/.mvn/wrapper")
 
-        utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.mvn/wrapper/maven-wrapper.jar",
+        self.utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.mvn/wrapper/maven-wrapper.jar",
                       destinationroot + "/" + project.pomname + "/" + project.pomname + "/.mvn/wrapper/maven-wrapper.jar")
-        utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.mvn/wrapper/maven-wrapper.properties",
+        self.utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.mvn/wrapper/maven-wrapper.properties",
                       destinationroot + "/" + project.pomname + "/" + project.pomname + "/.mvn/wrapper/maven-wrapper.properties")
-        utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.mvn/wrapper/MavenWrapperDownloader.java",
+        self.utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.mvn/wrapper/MavenWrapperDownloader.java",
                       destinationroot + "/" + project.pomname + "/" + project.pomname + "/.mvn/wrapper/MavenWrapperDownloader.java")
 
-        utilities.mkdir(destinationroot + "/" + project.pomname + "/" + project.pomname + "/src")
-        utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.gitIgnore",
+        self.utilities.mkdir(destinationroot + "/" + project.pomname + "/" + project.pomname + "/src")
+        self.utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.gitIgnore",
                       destinationroot + "/" + project.pomname + "/" + project.pomname + "/.gitIgnore")
-        utilities.cpy(sourceprojectfolder + "/" + artifactid + "/HELP.md",
+        self.utilities.cpy(sourceprojectfolder + "/" + artifactid + "/HELP.md",
                       destinationroot + "/" + project.pomname + "/" + project.pomname + "/HELP.md")
-        utilities.cpy(sourceprojectfolder + "/" + artifactid + "/mvnw",
+        self.utilities.cpy(sourceprojectfolder + "/" + artifactid + "/mvnw",
                       destinationroot + "/" + project.pomname + "/" + project.pomname + "/mvnw")
-        utilities.cpy(sourceprojectfolder + "/" + artifactid + "/mvnw.cmd",
+        self.utilities.cpy(sourceprojectfolder + "/" + artifactid + "/mvnw.cmd",
                       destinationroot + "/" + project.pomname + "/" + project.pomname + "/mvnw.cmd")
         projectrootpackage = destinationroot + "/" + project.pomname + "/" + project.pomname + "/src/"
-        utilities.mkdir(projectrootpackage + "main")
-        utilities.mkdir(projectrootpackage + "test")
-        utilities.mkdir(projectrootpackage + "main/java")
-        utilities.mkdir(projectrootpackage + "main/resources")
-        utilities.mkdir(projectrootpackage + "test/java")
+        self.utilities.mkdir(projectrootpackage + "main")
+        self.utilities.mkdir(projectrootpackage + "test")
+        self.utilities.mkdir(projectrootpackage + "main/java")
+        self.utilities.mkdir(projectrootpackage + "main/resources")
+        self.utilities.mkdir(projectrootpackage + "test/java")
         projectmainfolder = projectrootpackage + "main/java/"
         project.projectresourcesfolder = projectrootpackage + "main/resources/"
         projecttestfolder = projectrootpackage + "test/java/"
@@ -57,47 +85,47 @@ class FileMaker:
         packageslength = len(packages)
         topmainpackage = packages[0]
         toptestpackage = packages[0]
-        utilities.mkdir(projectmainfolder + topmainpackage)
-        utilities.mkdir(projecttestfolder + toptestpackage)
+        self.utilities.mkdir(projectmainfolder + topmainpackage)
+        self.utilities.mkdir(projecttestfolder + toptestpackage)
         if packageslength > 1:
             x = range(1, packageslength)
             for n in x:
                 topmainpackage += "/" + packages[n]
                 toptestpackage += "/" + packages[n]
-                utilities.mkdir(projectmainfolder + topmainpackage)
-                utilities.mkdir(projecttestfolder + toptestpackage)
+                self.utilities.mkdir(projectmainfolder + topmainpackage)
+                self.utilities.mkdir(projecttestfolder + toptestpackage)
         # now have to add the artifactID folder to these roots
         topmainpackage += "/" + project.lowercasename
         toptestpackage += "/" + project.lowercasename
-        utilities.mkdir(projectmainfolder + topmainpackage)
+        self.utilities.mkdir(projectmainfolder + topmainpackage)
         # make subpackages
-        utilities.mkdir(projectmainfolder + topmainpackage + "/config")
-        utilities.mkdir(projectmainfolder + topmainpackage + "/controllers")
-        utilities.mkdir(projectmainfolder + topmainpackage + "/exceptions")
-        utilities.mkdir(projectmainfolder + topmainpackage + "/business")
-        utilities.mkdir(projectmainfolder + topmainpackage + "/dtos")
-        utilities.mkdir(projectmainfolder + topmainpackage + "/proxy")
-        utilities.mkdir(projectmainfolder + topmainpackage + "/proxy/dtos")
-        utilities.mkdir(projectmainfolder + topmainpackage + "/proxy/pojos")
-        utilities.mkdir(projectmainfolder + topmainpackage + "/proxy/services")
-        utilities.mkdir(projectmainfolder + topmainpackage + "/pojos")
-        utilities.mkdir(projectmainfolder + topmainpackage + "/services")
-        utilities.mkdir(projectmainfolder + topmainpackage + "/utilities")
+        self.utilities.mkdir(projectmainfolder + topmainpackage + "/config")
+        self.utilities.mkdir(projectmainfolder + topmainpackage + "/controllers")
+        self.utilities.mkdir(projectmainfolder + topmainpackage + "/exceptions")
+        self.utilities.mkdir(projectmainfolder + topmainpackage + "/business")
+        self.utilities.mkdir(projectmainfolder + topmainpackage + "/dtos")
+        self.utilities.mkdir(projectmainfolder + topmainpackage + "/proxy")
+        self.utilities.mkdir(projectmainfolder + topmainpackage + "/proxy/dtos")
+        self.utilities.mkdir(projectmainfolder + topmainpackage + "/proxy/pojos")
+        self.utilities.mkdir(projectmainfolder + topmainpackage + "/proxy/services")
+        self.utilities.mkdir(projectmainfolder + topmainpackage + "/pojos")
+        self.utilities.mkdir(projectmainfolder + topmainpackage + "/services")
+        self.utilities.mkdir(projectmainfolder + topmainpackage + "/utilities")
 
-        utilities.mkdir(projecttestfolder + toptestpackage)
+        self.utilities.mkdir(projecttestfolder + toptestpackage)
         # make subpackages
-        utilities.mkdir(projecttestfolder + toptestpackage + "/config")
-        utilities.mkdir(projecttestfolder + toptestpackage + "/controllers")
-        utilities.mkdir(projecttestfolder + toptestpackage + "/exceptions")
-        utilities.mkdir(projecttestfolder + toptestpackage + "/business")
-        utilities.mkdir(projecttestfolder + toptestpackage + "/dtos")
-        utilities.mkdir(projecttestfolder + toptestpackage + "/proxy")
-        utilities.mkdir(projecttestfolder + toptestpackage + "/proxy/dtos")
-        utilities.mkdir(projecttestfolder + toptestpackage + "/proxy/pojos")
-        utilities.mkdir(projecttestfolder + toptestpackage + "/proxy/services")
-        utilities.mkdir(projecttestfolder + toptestpackage + "/pojos")
-        utilities.mkdir(projecttestfolder + toptestpackage + "/services")
-        utilities.mkdir(projecttestfolder + toptestpackage + "/utilities")
+        self.utilities.mkdir(projecttestfolder + toptestpackage + "/config")
+        self.utilities.mkdir(projecttestfolder + toptestpackage + "/controllers")
+        self.utilities.mkdir(projecttestfolder + toptestpackage + "/exceptions")
+        self.utilities.mkdir(projecttestfolder + toptestpackage + "/business")
+        self.utilities.mkdir(projecttestfolder + toptestpackage + "/dtos")
+        self.utilities.mkdir(projecttestfolder + toptestpackage + "/proxy")
+        self.utilities.mkdir(projecttestfolder + toptestpackage + "/proxy/dtos")
+        self.utilities.mkdir(projecttestfolder + toptestpackage + "/proxy/pojos")
+        self.utilities.mkdir(projecttestfolder + toptestpackage + "/proxy/services")
+        self.utilities.mkdir(projecttestfolder + toptestpackage + "/pojos")
+        self.utilities.mkdir(projecttestfolder + toptestpackage + "/services")
+        self.utilities.mkdir(projecttestfolder + toptestpackage + "/utilities")
 
         # set the Table object's main java and test package roots
         project.topmainpackage = projectmainfolder + topmainpackage
@@ -122,7 +150,7 @@ class FileMaker:
             resources_file.write(Configuration.app_port + str(project.portnum) + "\n")
             resources_file.write(Configuration.spring_cloud_config_uri+"\n")
             resources_file.close()
-            resources_file = open(project.projectresourcesfolder + "/"+project.pomname+".properties", "w")
+            resources_file = open("/nms-config-server-git/"+project.pomname+".properties", "w")
             resources_file.write(Configuration.app_log + "\n")
             resources_file.write(Configuration.app_jpa + "\n")
             resources_file.write(Configuration.app_jpa_show + "\n")
@@ -189,7 +217,7 @@ class FileMaker:
                         newpom.write(itemstr)
                 elif (itemstr.find("</artifactId>") > -1):
                     if (artifactIdadded == False):
-                        newpom.write(Constants.xml_art.replace("*", project.lowercasename) + "\n")
+                        newpom.write(Constants.xml_art.replace("*", project.pomname) + "\n")
                         artifactIdadded = True
                     else:
                         newpom.write(itemstr)

@@ -13,6 +13,7 @@ class Table:
         :param createtablestring:
         """
         print("initializing table object : " + name)
+        self.is_mid_level = False
         self.tablename = name
         self.projectname = ''
         self.pomname = ''
@@ -41,6 +42,7 @@ class Table:
         utilities = Utilities()
         # assume that the table name may have underscores, but no dashes
         self.pomname = self.tablename.lower().replace("_","-")
+        self.projectname = self.pomname
         self.lowercasename = sub('[^A-Za-z]+', '', self.tablename).lower()
         print("converting tablename : " + self.tablename + " to pom name = " + self.pomname)
         if(self.tablename.find("_")>-1):

@@ -1,0 +1,31 @@
+big tasks, ideas:
+- mid-level project functionality half done
+- Zuul API gateway server functionality not done
+- needs Angular 7 generation functionality
+- add foreign key functionality, with a setting that will make the program automatically group tables into projects
+    according to foregin key relationships
+- refactor the JsonUtility.createPostmanCollection() method to create these collection dynamically, so that it can be
+    used eventually when making the postman collections for mid-level projects
+
+medium tasks:
+- add more Junit testing, not sure atm what is missing
+- change the JavaFileMaker.create_proxy_class()
+- change the JavaFileMaker.create_proxy_classes_for_mid_levels() method to add REST calls to the proxied services(we can't
+    just make a template file for this)
+- change the Junit tests to use mock objects instead of actually making changes to the database or proxy calls to other projects
+    this way, a config server and/or naming server does not have to be active in order to perform Junit testing
+
+small tasks:
+- take the template files in the files folder and move them to a new folder called templates
+- rename these template files ".template"
+- move the SQL_file.py adn Constants.py files to the configuration folder
+- move the data types from SQL_file.py to Configuration.py or Constants.py
+- move the 4 projects(demo,config-server,naming-server,zuul-api-gateway-server) to a new projects folder
+- write methods to actually copy/alter the 3 other projects to the destinationroot, using the groupId config and a new
+    artifactId config, etc..., to give these projects a folder structure and name that the user wants. Maybe add a config
+    option to use these projects "as is"
+- add an MIT license to this project
+- add a better instruction file into the project
+- change the JsonUtility.createPostmanCollection() method to correctly make each REST url if we are using a zuul server
+
+

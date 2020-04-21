@@ -1,0 +1,34 @@
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import javax.validation.Valid;
+import java.util.*;
+
+import com.schnarbiesnmeowers.&.business.%Business;
+
+/**
+ * this class is the main REST controller
+ * @author ^
+ *
+ */
+@RestController
+@RequestMapping(path="/&")
+public class %Controller {
+
+	/**
+	 * JPA Repository handle
+	 */
+	@Autowired
+	private %Business businessService;;
+
+	/**
+	 * healthcheck
+	 * @return String
+	 */
+	@GetMapping(path = "/health")
+	public ResponseEntity<Object> healthcheck() throws Exception {
+		return ResponseEntity.status(HttpStatus.OK).body("PING!");
+	}
+
+}

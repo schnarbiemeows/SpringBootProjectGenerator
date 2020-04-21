@@ -50,7 +50,9 @@ class Constants:
 
 # main application file
     import_feign = "import org.springframework.cloud.openfeign.EnableFeignClients;"
+    import_dc = "import org.springframework.cloud.client.discovery.EnableDiscoveryClient;"
     ann_feign = '@EnableFeignClients("XXX")'
+    ann_dc = "@EnableDiscoveryClient"
 # Swagger file
 
 # application.properties

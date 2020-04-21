@@ -47,14 +47,17 @@ class Utilities:
             x = range(len(dbname))
             for n in x:
                 if (toUpper == True):
-                    convertedjavaname += dbname[n].upper()
+                    if(dbname[n].isnumeric == False):
+                        convertedjavaname += dbname[n].upper()
+                    else:
+                        convertedjavaname += dbname[n]
                     toUpper = False
                 elif (dbname[n] == "_"):
                     toUpper = True
                 else:
                     convertedjavaname += dbname[n]
-                    gettername = self.capitalize(convertedjavaname)
-                    javaname = convertedjavaname
+            gettername = self.capitalize(convertedjavaname)
+            javaname = convertedjavaname
         else:
             gettername = self.capitalize(dbname)
             javaname = dbname
@@ -185,8 +188,8 @@ class Utilities:
                 temp_array[i] = item
         return temp_array
 
-    def parseGroupingsTextFile(self):
-        inputfile = open("files/groupings.txt")
+    def parseGroupingsTextFile(self, filename):
+        inputfile = open(filename)
         projectnames = []
         projecttables = {}
         for line in inputfile:
