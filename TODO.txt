@@ -27,5 +27,7 @@ small tasks:
 - add an MIT license to this project
 - add a better instruction file into the project
 - change the JsonUtility.createPostmanCollection() method to correctly make each REST url if we are using a zuul server
+- complete the bypass_business and bypass_controllers functionality, so that, if a user is working on one of their projects, but they
+    need to regenerate it, any changes they may have made to the controllers/business classes will not be overwritten
 
 
