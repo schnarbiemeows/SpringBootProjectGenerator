@@ -1,6 +1,8 @@
 ideas, love-to-haves:
 - get this program to work using different versions of SB and associated dependencies
 - needs Angular 7 generation functionality - BIG love-to-have
+- a Django or flash front-end UI that can help guide the user through the configuration process
+
 big tasks:
 - mid-level project functionality half done
 - Zuul API gateway server functionality not done
