@@ -1,7 +1,9 @@
-big tasks, ideas:
+ideas, love-to-haves:
+- get this program to work using different versions of SB and associated dependencies
+- needs Angular 7 generation functionality - BIG love-to-have
+big tasks:
 - mid-level project functionality half done
 - Zuul API gateway server functionality not done
-- needs Angular 7 generation functionality
 - add foreign key functionality, with a setting that will make the program automatically group tables into projects
     according to foregin key relationships
 - refactor the JsonUtility.createPostmanCollection() method to create these collection dynamically, so that it can be
@@ -14,11 +16,15 @@ medium tasks:
     just make a template file for this)
 - change the Junit tests to use mock objects instead of actually making changes to the database or proxy calls to other projects
     this way, a config server and/or naming server does not have to be active in order to perform Junit testing
+- change the beginning_port_num and mid_lvl_port_num configuration variables functionality to instead add either a new config file or
+    add to groupings.txt and mid_level.txt a port # so that the user can manually specify which port # to use for each project
 
 small tasks:
 - take the template files in the files folder and move them to a new folder called templates
 - rename these template files ".template"
-- move the SQL_file.py adn Constants.py files to the configuration folder
+- move the SQL_file.py and Constants.py files to the configuration folder - DONE
+- move the groupings.txt file to the Configuration folder - DONE
+- move the mid_level.txt file to the configuration folder - DONE
 - move the data types from SQL_file.py to Configuration.py or Constants.py
 - move the 4 projects(demo,config-server,naming-server,zuul-api-gateway-server) to a new projects folder
 - write methods to actually copy/alter the 3 other projects to the destinationroot, using the groupId config and a new
@@ -29,5 +35,6 @@ small tasks:
 - change the JsonUtility.createPostmanCollection() method to correctly make each REST url if we are using a zuul server
 - complete the bypass_business and bypass_controllers functionality, so that, if a user is working on one of their projects, but they
     need to regenerate it, any changes they may have made to the controllers/business classes will not be overwritten
-
+- change the JsonUtility.createPostmanCollection() method to use a configuration variable to specify where to save the collection - DONE
+- needs testing amongst the different config server/naming server/zuul server option combinations
 
