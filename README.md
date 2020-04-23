@@ -10,7 +10,7 @@ off of a MySQL schema.</p><br/>
 
 <p>The basic functionality that this program offers is to create some basic CRUD REST microservices for each of your tables. 
 It can generate a seperate service for each table, 1 service for all of the tables, or you can use a file called 
-<b>files/grouping.txt</b> to specify groupings of tables into services. Each service will also have <b>Junit</b> test cases 
+<b>configuration/grouping.txt</b> to specify groupings of tables into services. Each service will also have <b>Junit</b> test cases
 created within it, and will also generate json file that can be imported into <b>Postman</b> as a collection for testing as well.</p>
 
 <p><b>A couple of assumptions:</b></p>
@@ -19,7 +19,7 @@ created within it, and will also generate json file that can be imported into <b
 	<p>3. Does not generate any foreign key functionality in the Java code</p>
 
 <p><b>How to configure the program:</b></p>
-<p>1. In a file called <b>files/SQL_file.sql</b>, you want to put in your MySQL definitions. These will be table creation statements.
+<p>1. In a file called <b>configuration/SQL_file.sql</b>, you want to put in your MySQL definitions. These will be table creation statements.
 There can be other stuff in there, but the program will only look for the words "create table" to figure out all of your tables.</p>
 <p>2. in a file called <b>configuration/Configuration.py</b> : this file really just a configuration file. Here you will specify what you want the program to generate for you.</p>
 <br/>

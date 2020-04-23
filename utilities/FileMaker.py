@@ -1,23 +1,18 @@
-from popos.Table import *
 from utilities.Utilities import *
 from utilities.JsonUtility import *
-from utilities.Constants import *
+from configuration.Constants import *
 from configuration.Configuration import *
-import os
-import sys
-import xml.etree.ElementTree as ET
-import shutil
 from distutils.dir_util import *
 
 class FileMaker:
     
-    def init(self):
+    def __init__(self):
         """
         initilization
         :return: 
         """
-        utilities = Utilities()
-        jsonutility = JsonUtility()
+        self.utilities = Utilities()
+        self.jsonutility = JsonUtility()
     
     def createPostmanCollection(self, project):
         """

@@ -41,6 +41,7 @@ class Constants:
     doc_create = "/**\n\t * create a new ^\n\t * @param ^\n\t * @return ^\n\t */\n"
     doc_update = "/**\n\t * update a ^\n\t * @param ^\n\t * @return ^\n\t */\n"
     doc_delete = "/**\n\t * delete a ^ by primary key\n\t * @param id\n\t */\n"
+    doc_proxy = "\t"+doc_opn+"\n"+"\t *\n"+"\t * @param\n"+"\t * @return\n"+"\t **/\n"
 
 # pom file
     xml_grp = "<groupId>*</groupId>"

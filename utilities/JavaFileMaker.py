@@ -1,11 +1,5 @@
-from popos.Table import *
-from utilities.Utilities import *
-from utilities.Constants import *
+from configuration.Constants import *
 from configuration.Configuration import *
-import os
-import sys
-import xml.etree.ElementTree as ET
-import shutil
 
 """
     this class creates the different Java files(excluding the test files)
@@ -167,6 +161,11 @@ class JavaFileMaker:
                             for tablename in otherproject.tablenames:
                                 proxytable = otherproject.tabledata[tablename]
                                 resources_file.write("import "+currentprojectdata.rootpackage + "." + Constants.pckg_proxy_dtos+"."+proxytable.dtoname+";\n")
+                        elif(linestr.find("WWW"))>-1:
+                            if(Configuration.use_gateway_server == True):
+                                resources_file.write(linestr.replace("WWW","zuul-api-gateway-server"))
+                            else:
+                                resources_file.write(linestr.replace("WWW", otherproject.pomname))
                         else:
                             resources_file.write(linestr.replace("^", Configuration.author).replace("%", otherproject.camelcasejavaname).replace("XXX", otherproject.pomname))
                     resources_file.close()
@@ -190,8 +189,8 @@ class JavaFileMaker:
         :return:
         """
         mid_lvl_map = {}
-        for tablename in mid_lvl_proj.tablenames:
-            mid_lvl_map[tablename] = "YES"
+        for project_name in mid_lvl_proj.tablenames:
+            mid_lvl_map[project_name] = "YES"
         for projectname in crud_proj_names:
             currentproject = crud_proj_data[projectname]
             if currentproject.pomname in mid_lvl_map:
@@ -201,9 +200,18 @@ class JavaFileMaker:
                 proxy_file = open("files/specific_proxy.txt", "r")
                 for line in proxy_file:
                     linestr = str(line)
-                    if (linestr.find("YYY")) == -1:
+                    if(linestr.find("YYY")) > -1:
+                        None
+                    elif(linestr.find("ZZZ")) > -1:
+                        self.create_rest_calls_for_proxy(currentproject,resources_file)
+                    elif (linestr.find("WWW")) > -1:
+                        if (Configuration.use_gateway_server == True):
+                            resources_file.write(linestr.replace("WWW", "zuul-api-gateway-server"))
+                        else:
+                            resources_file.write(linestr.replace("WWW", currentproject.pomname))
+                    else:
                         resources_file.write(linestr.replace("^", Configuration.author).replace("%",currentproject.camelcasejavaname).replace(
-                            "&", currentproject.lowercasename).replace("XXX", currentproject.pomname))
+                            "&", mid_lvl_proj.rootpackage).replace("XXX", currentproject.pomname))
                 resources_file.close()
                 proxy_file.close()
 
@@ -257,8 +265,8 @@ class JavaFileMaker:
             mid_lvl_map[tablename] = "YES"
         for projectname in crud_proj_names:
             currentproject = crud_proj_data[projectname]
-            for tablename in currentproject.tablenames:
-                if tablename in mid_lvl_map:
+            if currentproject.pomname in mid_lvl_map:
+                for tablename in currentproject.tablenames:
                     currenttable = currentproject.tabledata[tablename]
                     filename = mid_lvl_proj.topmainpackage + "/" + Constants.path_proxy_dtos + "/" + currenttable.dtoname + ".java"
                     resources_file = open(filename, "w")
@@ -278,8 +286,6 @@ class JavaFileMaker:
                             count += 1
                     resources_file.close()
                     source_file.close()
-        else:
-            None
 
     def create_proxy_pojos(self, destinationroot, currentprojectdata, projectnames, projectdata):
         """
@@ -330,8 +336,8 @@ class JavaFileMaker:
             mid_lvl_map[tablename] = "YES"
         for projectname in crud_proj_names:
             currentproject = crud_proj_data[projectname]
-            for tablename in currentproject.tablenames:
-                if tablename in mid_lvl_map:
+            if currentproject.pomname in mid_lvl_map:
+                for tablename in currentproject.tablenames:
                     currenttable = currentproject.tabledata[tablename]
                     filename = mid_lvl_proj.topmainpackage + "/" + Constants.path_proxy_pojos + "/" + currenttable.camelcasejavaname + ".java"
                     resources_file = open(filename, "w")
@@ -411,22 +417,57 @@ class JavaFileMaker:
         resources_file.close()
         business_file.close()
 
-    def create_business_class_for_mid_lvl(self,project):
+    def create_business_class_for_mid_lvl(self, mid_lvl_proj, crud_proj_names, crud_proj_data):
         """
         this method will create a business class for the mid-level projects
-        :param project:
+        :param mid_lvl_proj:
         :return:
         """
         # create the file and open
-        filename = project.topmainpackage + "/" + Constants.pckg_bus + "/" + project.camelcasejavaname + "Business.java"
+        filename = mid_lvl_proj.topmainpackage + "/" + Constants.pckg_bus + "/" + mid_lvl_proj.camelcasejavaname + "Business.java"
         resources_file = open(filename, "w")
         business_file = open("files/business_mid_lvl.txt")
-        resources_file.write("package " + project.rootpackage + "." + Constants.pckg_bus + ";\n\n")
+        resources_file.write("package " + mid_lvl_proj.rootpackage + "." + Constants.pckg_bus + ";\n\n")
         for line in business_file:
             linestr = str(line)
-            resources_file.write(linestr.replace("%", project.camelcasejavaname).replace("&", project.lowercasename).replace("^",Configuration.author))
+            if (linestr.find("XXX")) > -1:
+                self.create_business_service_proxy_calls(mid_lvl_proj, crud_proj_names, crud_proj_data,resources_file)
+            else:
+                resources_file.write(linestr.replace("%", mid_lvl_proj.camelcasejavaname).replace("&", mid_lvl_proj.lowercasename).replace("^", Configuration.author).replace("$",mid_lvl_proj.rootpackage))
         resources_file.close()
         business_file.close()
+
+
+    def create_business_service_proxy_calls(self, mid_lvl_proj, crud_proj_names, crud_proj_data, resources_file):
+        """
+
+        :param mid_lvl_proj:
+        :param crud_proj_names:
+        :param crud_proj_data:
+        :param resources_file:
+        :return:
+        """
+        tabs = "\t"
+        mid_lvl_map = {}
+        for project_name in mid_lvl_proj.tablenames:
+            mid_lvl_map[project_name] = "YES"
+        for projectname in crud_proj_names:
+            currentproject = crud_proj_data[projectname]
+            if currentproject.pomname in mid_lvl_map:
+                filename = mid_lvl_proj.topmainpackage + "/" + Constants.path_proxy_services + "/" + currentproject.camelcasejavaname + "ServiceProxy.java"
+                resources_file.write(Constants.doc_proxy)
+                resources_file.write(tabs+Constants.ann_autowired+"\n")
+                service_name = currentproject.lowercasename+"serviceproxy"
+                resources_file.write(tabs+currentproject.camelcasejavaname+"ServiceProxy "+service_name+" ;\n\n")
+                source_file = open(filename, "r")
+                for line in source_file:
+                    linestr = str(line)
+                    if(linestr.find("public ResponseEntity<Object>")) > -1:
+                        method_name = self.remove_datatypes_from_string(linestr)
+                        resources_file.write(Constants.doc_proxy)
+                        resources_file.write(linestr.replace(";","{"))
+                        resources_file.write(tabs+tabs+"return "+service_name+"."+method_name+";\n"+tabs+"}\n\n")
+                source_file.close()
 
     def create_controller_class(self, table):
         """
@@ -451,20 +492,23 @@ class JavaFileMaker:
         resources_file.close()
         controller_file.close()
 
-    def create_controller_class_for_mid_lvl(self, project):
+    def create_controller_class_for_mid_lvl(self, mid_lvl_proj, crud_proj_names, crud_proj_data):
         """
         this method will create the RestController for the mid-lvl projects
-        :param project:
+        :param mid_lvl_proj:
         :return:
         """
         # create the file and open
-        filename = project.topmainpackage + "/" + Constants.pckg_contr + "/" + project.camelcasejavaname + "Controller.java"
+        filename = mid_lvl_proj.topmainpackage + "/" + Constants.pckg_contr + "/" + mid_lvl_proj.camelcasejavaname + "Controller.java"
         resources_file = open(filename, "w")
         test_controller = open("files/controller_mid_lvl.txt")
-        resources_file.write("package " + project.rootpackage + "." + Constants.pckg_contr + ";\n\n")
+        resources_file.write("package " + mid_lvl_proj.rootpackage + "." + Constants.pckg_contr + ";\n\n")
         for line in test_controller:
             linestr = str(line)
-            resources_file.write(linestr.replace("%", project.camelcasejavaname).replace("&", project.lowercasename).replace("^", Configuration.author))
+            if(linestr.find("XXX")>-1):
+                self.create_controller_business_calls_for_mid_level(mid_lvl_proj, crud_proj_names, crud_proj_data,resources_file)
+            else:
+                resources_file.write(linestr.replace("$",mid_lvl_proj.rootpackage).replace("%", mid_lvl_proj.camelcasejavaname).replace("&", mid_lvl_proj.lowercasename).replace("^", Configuration.author))
         resources_file.close()
         test_controller.close()
 
@@ -729,3 +773,151 @@ class JavaFileMaker:
         text = text[0:-1] + ");\n"
         file.write(text)
         file.write(tabs + "}\n")
+
+    def create_rest_calls_for_proxy(self, project, file):
+        """
+        this method will create the REST service calls to all tables of the proxy for the given project
+        :param project:
+        :return:
+        """
+        tabs = "\t"
+        for tablename in project.tablenames:
+            tabledata = project.tabledata[tablename]
+            tablefile = open(project.topmainpackage + "/" + Constants.pckg_contr + "/" + tabledata.camelcasejavaname + "Controller.java","r")
+            requestmappingfound = False
+            itemfound = False
+            for line in tablefile:
+                linestr = str(line)
+                if requestmappingfound == True:
+                    if itemfound == True:
+                        file.write(self.remove_annotations_from_string(linestr).replace("{", ";"))
+                        file.write("\n\n")
+                        itemfound = False
+                    elif linestr.find('Mapping(') > -1:
+                        itemfound = True
+                        relativepath = "/"+project.pomname+"/"+tabledata.lowercasename+"/"
+                        file.write(Constants.doc_proxy)
+                        file.write(linestr.replace("/",relativepath,1))
+
+                elif linestr.find('Mapping(') > -1:
+                    requestmappingfound = True
+            tablefile.close()
+
+    def remove_annotations_from_string(self, inputstring):
+        """
+        this method is for the mid-level proxies, it will remove annotations from the method declarations
+        :param inputstring:
+        :return:
+        """
+        stringarray = inputstring.split("(")
+        outputstring = stringarray[0]+'('
+        remaining = stringarray[1].split(" ")
+        for word in remaining:
+            wordstr = str(word)
+            if wordstr.find('@') == -1:
+                outputstring += wordstr + " "
+        return outputstring.rstrip()
+
+    def remove_datatypes_from_string(self, inputstring):
+        """
+        this method is for the mid-level business classes; it will remove the data types from an input parameter string
+        :param inputstring:
+        :return:
+        """
+        tempstring = inputstring[inputstring.find("public ResponseEntity<Object>") + 30:]
+        methodname = tempstring[0:tempstring.find("(")]
+        parameterlist = tempstring[tempstring.find("("):tempstring.find(")")]
+        paramsstring = ''
+        if(len(parameterlist)==0):
+            return methodname+"()"
+        if(parameterlist.find(",") > -1):
+            parameterpairs = parameterlist.split(",")
+            for pair in parameterpairs:
+                items = pair.split(" ")
+                counter = 0
+                for item in items:
+                    counter +=1
+                    if(counter%2 == 0):
+                        paramsstring += item+","
+            return methodname+"("+paramsstring[:-1]+")"
+        else:
+            items = parameterlist.split(" ")
+            counter = 0
+            for item in items:
+                counter += 1
+                if (counter % 2 == 0):
+                    paramsstring += item + ","
+            return methodname + "(" + paramsstring[:-1] + ")"
+
+    def create_controller_business_calls_for_mid_level(self, mid_lvl_proj, crud_proj_names, crud_proj_data, resources_file):
+        """
+
+        :param mid_lvl_proj:
+        :param crud_proj_names:
+        :param crud_proj_data:
+        :param resources_file:
+        :return:
+        """
+        tabs = "\t"
+        mid_lvl_map = {}
+        for project_name in mid_lvl_proj.tablenames:
+            mid_lvl_map[project_name] = "YES"
+        for projectname in crud_proj_names:
+            currentproject = crud_proj_data[projectname]
+            if currentproject.pomname in mid_lvl_map:
+                for tablename in currentproject.tablenames:
+                    tabledata = currentproject.tabledata[tablename]
+                    tablefile = open(currentproject.topmainpackage + "/" + Constants.pckg_contr + "/" + tabledata.camelcasejavaname + "Controller.java","r")
+                    requestmappingfound = False
+                    linecount = 0
+                    is_create = False
+                    for line in tablefile:
+                        linestr = str(line)
+                        if requestmappingfound == True:
+                            if linecount > 0:
+                                if is_create == True:
+                                    if(linecount == 8):
+                                        resources_file.write(linestr)
+                                    elif(linecount == 7):
+                                        resources_file.write(tabs+tabs+"try{\n")
+                                    elif (linecount == 6):
+                                        newlinestr = tabs + tabs + tabs + "Object result = " + linestr[linestr.find(
+                                            "businessService"):linestr.find(";")] + ".getBody();\n"
+                                        resources_file.write(newlinestr)
+                                    elif (linecount == 5):
+                                        resources_file.write(
+                                            tabs + tabs + tabs + "return ResponseEntity.status(HttpStatus.OK).body(result);\n")
+                                    elif (linecount == 4):
+                                        resources_file.write(linestr)
+                                    elif (linecount == 3):
+                                        resources_file.write(linestr)
+                                    elif (linecount == 2):
+                                        resources_file.write(linestr)
+                                    elif (linecount == 1):
+                                        resources_file.write(linestr+"\n")
+                                        is_create = False
+                                    linecount -= 1
+                                else:
+                                    if(linecount == 4):
+                                        resources_file.write(linestr)
+                                    elif(linecount == 3):
+                                        newlinestr = tabs+tabs+"Object result = " + linestr[linestr.find("businessService"):linestr.find(";")] + ".getBody();\n"
+                                        resources_file.write(newlinestr)
+                                    elif(linecount == 2):
+                                        resources_file.write(tabs+tabs+"return ResponseEntity.status(HttpStatus.OK).body(result);\n")
+                                    else:
+                                        resources_file.write(tabs+"}\n\n")
+                                    linecount -= 1
+                            elif linestr.find('Mapping(') > -1:
+                                is_create = False
+                                if(linestr.find("/create")>-1):
+                                    is_create = True
+                                linecount = 4
+                                if is_create == True:
+                                    linecount = 8
+                                relativepath = "/"+tabledata.lowercasename+"/"
+                                resources_file.write(Constants.doc_proxy)
+                                resources_file.write(linestr.replace("/",relativepath,1))
+                        elif linestr.find('Mapping(') > -1:
+                            requestmappingfound = True
+                    tablefile.close()

@@ -17,4 +17,5 @@
 #find-food-item:
 # add a dietary note and retrieve notes
 #use-dietary-notes:
-diet-and-notes:daily-weight,daily-dietary-notes,user-date
+#diet-and-notes:daily-weight,daily-dietary-notes,user-date
+servings:serv-type-svc

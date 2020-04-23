@@ -1,8 +1,5 @@
-from popos.Table import *
-from utilities.Constants import *
+from configuration.Constants import *
 from configuration.Configuration import *
-import os
-import sys
 
 """
     this class generates all of the test classes

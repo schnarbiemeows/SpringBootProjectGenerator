@@ -1,16 +1,7 @@
-from popos.Table import *
 from popos.Project import *
-from utilities.Utilities import *
-from utilities.FileMaker import *
-from utilities.JavaFileMaker import *
-from utilities.TestFileMaker import *
 from utilities.SqlParser import *
-from utilities.Constants import *
 from utilities.JsonUtility import *
 from configuration.Configuration import *
-import os
-import sys
-import shutil
 
 """
     created by Dylan I. Kessler
@@ -102,7 +93,7 @@ class SpringBootProjectGenerator:
             self.projectdata[Configuration.project_name] = project
         elif(setting == 3):
             utilities = Utilities()
-            projectnames,projectttables = utilities.parseGroupingsTextFile("files/groupings.txt")
+            projectnames,projectttables = utilities.parseGroupingsTextFile("configuration/groupings.txt")
             for name in projectnames:
                 self.projectsnames.append(name)
                 project = Project(name,portnum)
@@ -124,7 +115,7 @@ class SpringBootProjectGenerator:
         :return:
         """
         utilities = Utilities()
-        mid_lvl_projects, lwr_lvl_projects = utilities.parseGroupingsTextFile("files/mid_level.txt")
+        mid_lvl_projects, lwr_lvl_projects = utilities.parseGroupingsTextFile("configuration/mid_level.txt")
         portnum = int(Configuration.mid_lvl_port_num)
         localprojectsnames = []
         localprojectdata = {}
@@ -293,7 +284,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.javafilemaker.create_controller_class_for_mid_lvl(project)
+        self.javafilemaker.create_controller_class_for_mid_lvl(project, self.projectsnames, self.projectdata)
 
     def create_business_class(self, table):
         """
@@ -309,7 +300,7 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        self.javafilemaker.create_business_class_for_mid_lvl(project)
+        self.javafilemaker.create_business_class_for_mid_lvl(project, self.projectsnames, self.projectdata)
 
     def create_pojo_test_file(self, table):
         """
@@ -365,7 +356,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.jsonutility.createPostmanCollection(project)
+        self.filemaker.createPostmanCollection(project)
 
     def backup_project(self, project):
         """
@@ -443,8 +434,8 @@ class SpringBootProjectGenerator:
                 self.create__exceptions_test_class(currentproject)
                 self.create_randomizer_test_class(currentproject)
                 self.create_proxy_classes_for_mid_levels(currentproject)
-                #self.create_proxy_dtos_for_mid_lvl(currentproject)
-                #self.create_proxy_pojos_for_mid_lvl(currentproject)
+                self.create_proxy_dtos_for_mid_lvl(currentproject)
+                self.create_proxy_pojos_for_mid_lvl(currentproject)
                 self.create_business_class_for_mid_lvl(currentproject)
                 self.create_controller_class_for_mid_lvl(currentproject)
 """

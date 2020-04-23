@@ -1,5 +1,5 @@
 from utilities.Utilities import *
-from utilities.Constants import *
+from configuration.Constants import *
 
 """
     this class represents all of the properties that a given column of a table could have

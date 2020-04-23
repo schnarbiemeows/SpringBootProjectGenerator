@@ -170,13 +170,13 @@ table_name varchar(50) comment "FK to another table for later querying",
 actv varchar(1) comment "is this record active(Y or N)?");
 
 # list of all of the different serving types(ozs., cups, tbs, etc..)
-xreate table if not exists serving_types(serv_type_id mediumint not null auto_increment primary key,
+create table if not exists serving_types(serv_type_id mediumint not null auto_increment primary key,
 serv_type_cde varchar(10) not null comment "short code for the serving type",
 serv_type_desc varchar(50) not null comment "longer description of the serving type",
 actv varchar(1) comment "is this record active(Y or N)?");
 
 # conversion factors between each different servings types
-xreate table if not exists serving_type_ratios(serv_type_ratio_id mediumint not null auto_increment primary key,
+create table if not exists serving_type_ratios(serv_type_ratio_id mediumint not null auto_increment primary key,
 serv_type_id_1 mediumint not null comment "FK to the serving_types.serv_type_id field",
 serv_type_id_2 mediumint not null comment "FK to the serving_types.serv_type_id field",
 ratio decimal(6,2) comment "conversion factor from serv_type_id_1 to serv_type_id_2",
@@ -277,14 +277,14 @@ actv varchar(1) comment "is this record active(Y or N)?");
 create index daily_totals_idx on daily_totals(user_date_id);
 
 # join table that joins daily_totals with the users and calendar date, compund user/date index
-create table if not exists user_date(user_date_id mediumint not null auto_increment primary key,
+xreate table if not exists user_date(user_date_id mediumint not null auto_increment primary key,
 user_id mediumint not null comment "FK to the users.user_id field",
 calendar_date datetime not null comment "the caledar date(date only, no time)",
 actv varchar(1) comment "is this record active(Y or N)?");
 create index user_date_idx on user_date(user_id);
 
 # daily weight table
-create table if not exists daily_weight(daily_weight_id mediumint not null auto_increment primary key,
+xreate table if not exists daily_weight(daily_weight_id mediumint not null auto_increment primary key,
 user_id mediumint not null comment "FK to the users.user_id field",
 calendar_date datetime not null comment "the caledar date(date only, no time)",
 weight decimal(6,2) not null comment "person's weight on this given day",
@@ -292,7 +292,7 @@ actv varchar(1) comment "is this record active(Y or N)?");
 create index daily_weight_idx on daily_weight(user_id);
 
 # daily dietary notes table - a list of notes about your diet
-create table if not exists daily_dietary_notes(ddn_id mediumint not null auto_increment primary key,
+xreate table if not exists daily_dietary_notes(ddn_id mediumint not null auto_increment primary key,
 user_id mediumint not null comment "FK to the users.user_id field",
 user_date_id mediumint not null comment "FK to the user.user_id field",
 daily_note varchar(512) comment "daily note about your diet",

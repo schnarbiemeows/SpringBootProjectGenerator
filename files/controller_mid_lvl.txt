@@ -5,7 +5,9 @@ import org.springframework.http.HttpStatus;
 import javax.validation.Valid;
 import java.util.*;
 
-import com.schnarbiesnmeowers.&.business.%Business;
+import $.business.%Business;
+import $.proxy.pojos.*;
+import $.proxy.dtos.*;
 
 /**
  * this class is the main REST controller
@@ -30,5 +32,7 @@ public class %Controller {
 	public ResponseEntity<Object> healthcheck() throws Exception {
 		return ResponseEntity.status(HttpStatus.OK).body("PING!");
 	}
+
+	XXX
 
 }
