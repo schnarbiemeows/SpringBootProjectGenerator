@@ -41,6 +41,7 @@ class SpringBootProjectGenerator:
         self.javafilemaker = JavaFileMaker()
         self.testfilemaker = TestFileMaker()
         self.jsonutility = JsonUtility()
+        self.angularfilemaker = AngularFileMaker()
 
     def create_base_project_folders(self, project):
         """
@@ -262,6 +263,22 @@ class SpringBootProjectGenerator:
         """
         self.javafilemaker.create_pojo_and_dto_classes(table,"pojo")
 
+    def create_pojo_resonse_class(self, project):
+        """
+        this method creates the POJO Java file in the project
+        :param table:
+        :return:
+        """
+        self.javafilemaker.create_pojo_resonse_class(project)
+
+    def create_pojo_resonse_class_for_mid_level(self, project):
+        """
+        this method creates the POJO Java file in the project
+        :param table:
+        :return:
+        """
+        self.javafilemaker.create_pojo_resonse_class_for_mid_level(project)
+
     def create_dto_class(self, table):
         """
         this method creates the DTO Java file in the project
@@ -358,13 +375,29 @@ class SpringBootProjectGenerator:
         """
         self.filemaker.createPostmanCollection(project)
 
+    def make_postman_for_mid_level(self, project):
+        """
+        this method calls the JsonUtility class to generate a postman test collection for the project
+        :param project:
+        :return:
+        """
+        self.filemaker.make_postman_for_mid_level(project)
+
     def backup_project(self, project):
         """
-
+        this method will backup any project before changing it
         :param project:
         :return:
         """
         self.filemaker.backup_project(project, self.destinationroot)
+
+    def make_angular_project(self, project):
+        """
+        this method will create the angular 8 project for a given project
+        :param project:
+        :return:
+        """
+        self.angularfilemaker.make_angular_project(project, Configuration.angular_directory)
 
     def run(self):
         """
@@ -377,6 +410,9 @@ class SpringBootProjectGenerator:
         self.parsesqlfileToGroupProjects()
         for project in self.projectsnames:
             currentproject = self.projectdata[project]
+            if(Configuration.create_angular_projects == True):
+                self.angularfilemaker.projectsnames.append(project)
+                self.angularfilemaker.projectdata[project] = currentproject
             if(Configuration.backup_all_projects == True):
                 self.backup_project(currentproject)
             self.create_base_project_folders(currentproject)
@@ -388,6 +424,7 @@ class SpringBootProjectGenerator:
             self.create_exceptions_file(currentproject)
             self.make_rnf_exc_class(currentproject)
             self.make_spec_eh_class(currentproject)
+            self.create_pojo_resonse_class(currentproject)
             self.create__exceptions_test_class(currentproject)
             self.create_randomizer_test_class(currentproject)
             # for each table found for this project, do:
@@ -420,6 +457,9 @@ class SpringBootProjectGenerator:
             localprojectsnames, localprojectdata = self.parseMidLevelFile()
             for projectname in localprojectsnames:
                 currentproject = localprojectdata[projectname]
+                if (Configuration.create_angular_projects == True):
+                    self.angularfilemaker.projectsnames.append(project)
+                    self.angularfilemaker.projectdata[project] = currentproject
                 if (Configuration.backup_all_projects == True):
                     self.backup_project(currentproject)
                 self.create_base_project_folders(currentproject)
@@ -431,6 +471,7 @@ class SpringBootProjectGenerator:
                 self.create_exceptions_file(currentproject)
                 self.make_rnf_exc_class(currentproject)
                 self.make_spec_eh_class(currentproject)
+                self.create_pojo_resonse_class_for_mid_level(currentproject)
                 self.create__exceptions_test_class(currentproject)
                 self.create_randomizer_test_class(currentproject)
                 self.create_proxy_classes_for_mid_levels(currentproject)
@@ -438,6 +479,12 @@ class SpringBootProjectGenerator:
                 self.create_proxy_pojos_for_mid_lvl(currentproject)
                 self.create_business_class_for_mid_lvl(currentproject)
                 self.create_controller_class_for_mid_lvl(currentproject)
+                self.make_postman_for_mid_level(currentproject)
+        if (Configuration.create_angular_projects == True):
+            for projectname in self.angularfilemaker.projectsnames:
+                currentproject = self.angularfilemaker.projectdata[project]
+                self.make_angular_project(currentproject)
+
 """
     main executable of this program
 """

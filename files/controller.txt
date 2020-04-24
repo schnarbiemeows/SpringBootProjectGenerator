@@ -5,9 +5,9 @@ import org.springframework.http.HttpStatus;
 import javax.validation.Valid;
 import java.util.*;
 
-import $.business.%Business;
-import $.dtos.%DTO;
-import $.pojos.%;
+import $.business.*;
+import $.dtos.*;
+import $.pojos.*;
 
 /**
  * this class is the main REST controller
@@ -78,7 +78,8 @@ public class %Controller {
 	@DeleteMapping(path = "/delete/{id}")
 	public ResponseEntity<Object> delete%(@PathVariable int id) throws Exception {
 		businessService.delete%(id);
-		return ResponseEntity.status(HttpStatus.OK).body("Successfully Deleted");
+		ResponseMessage rb = new ResponseMessage("successfully deleted");
+		return ResponseEntity.status(HttpStatus.OK).body(rb);
 	}
 
 }

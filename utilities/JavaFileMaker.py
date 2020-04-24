@@ -161,6 +161,8 @@ class JavaFileMaker:
                             for tablename in otherproject.tablenames:
                                 proxytable = otherproject.tabledata[tablename]
                                 resources_file.write("import "+currentprojectdata.rootpackage + "." + Constants.pckg_proxy_dtos+"."+proxytable.dtoname+";\n")
+                        elif (linestr.find("ZZZ")) > -1:
+                            None
                         elif(linestr.find("WWW"))>-1:
                             if(Configuration.use_gateway_server == True):
                                 resources_file.write(linestr.replace("WWW","zuul-api-gateway-server"))
@@ -465,7 +467,7 @@ class JavaFileMaker:
                     if(linestr.find("public ResponseEntity<Object>")) > -1:
                         method_name = self.remove_datatypes_from_string(linestr)
                         resources_file.write(Constants.doc_proxy)
-                        resources_file.write(linestr.replace(";","{"))
+                        resources_file.write(self.remove_annotations_from_string(linestr).replace(";","{")+"\n")
                         resources_file.write(tabs+tabs+"return "+service_name+"."+method_name+";\n"+tabs+"}\n\n")
                 source_file.close()
 
@@ -790,7 +792,7 @@ class JavaFileMaker:
                 linestr = str(line)
                 if requestmappingfound == True:
                     if itemfound == True:
-                        file.write(self.remove_annotations_from_string(linestr).replace("{", ";"))
+                        file.write(linestr.replace("{", ";"))
                         file.write("\n\n")
                         itemfound = False
                     elif linestr.find('Mapping(') > -1:
@@ -834,19 +836,29 @@ class JavaFileMaker:
             parameterpairs = parameterlist.split(",")
             for pair in parameterpairs:
                 items = pair.split(" ")
-                counter = 0
+                oddfield = True
                 for item in items:
-                    counter +=1
-                    if(counter%2 == 0):
-                        paramsstring += item+","
+                    if(len(item)>0):
+                        if(item.find("@")>-1):
+                            None
+                        elif(oddfield == False):
+                            paramsstring += item + ","
+                            oddfield = True
+                        else:
+                            oddfield = False
             return methodname+"("+paramsstring[:-1]+")"
         else:
             items = parameterlist.split(" ")
-            counter = 0
+            oddfield = True
             for item in items:
-                counter += 1
-                if (counter % 2 == 0):
-                    paramsstring += item + ","
+                if (len(item) > 0):
+                    if (item.find("@") > -1):
+                        None
+                    elif (oddfield == False):
+                        paramsstring += item + ","
+                        oddfield = True
+                    else:
+                        oddfield = False
             return methodname + "(" + paramsstring[:-1] + ")"
 
     def create_controller_business_calls_for_mid_level(self, mid_lvl_proj, crud_proj_names, crud_proj_data, resources_file):
@@ -921,3 +933,35 @@ class JavaFileMaker:
                         elif linestr.find('Mapping(') > -1:
                             requestmappingfound = True
                     tablefile.close()
+
+    def create_pojo_resonse_class(self, project):
+        """
+        this method creates a ResponseMessage object that is needed by the DELETE REST calls
+        :param table:
+        :return:
+        """
+        filename = project.topmainpackage + "/" + Constants.pckg_pojos + "/ResponseMessage.java"
+        main_file = open("files/response_message.txt", "r")
+        resources_file = open(filename, "w")
+        resources_file.write("package " + project.rootpackage + "." + Constants.pckg_pojos + ";\n\n")
+        for line in main_file:
+            linestr = str(line)
+            resources_file.write(linestr)
+        resources_file.close()
+        main_file.close()
+
+    def create_pojo_resonse_class_for_mid_level(self, project):
+        """
+        this method creates a ResponseMessage object that is needed by the DELETE REST calls
+        :param table:
+        :return:
+        """
+        filename = project.topmainpackage + "/" + Constants.path_proxy_pojos + "/ResponseMessage.java"
+        main_file = open("files/response_message.txt", "r")
+        resources_file = open(filename, "w")
+        resources_file.write("package " + project.rootpackage + "." + Constants.pckg_proxy_pojos + ";\n\n")
+        for line in main_file:
+            linestr = str(line)
+            resources_file.write(linestr)
+        resources_file.close()
+        main_file.close()

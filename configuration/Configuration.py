@@ -8,13 +8,19 @@ class Configuration:
     email = "email@email.com"
     groupid = "com.schnarbiesnmeowers"
 
+    """
+        hostname : primarily for the postman generation functionality, it represents the ipaddress that each project will be using. leave as localhost if testing locally,
+                    otherwise, specify the ipaddress where each of these projects will be run
+    """
+    hostname = "http://localhost"
+
     # generation options:
     """
         set the variable below for generation_type, options are:
         1 - each table has its own project. The name of each project is approximately the same as the table name, project_name field is ignored
         2 - all tables are in one project, the user needs to specify the name of the overall project with the project_name field below
         3 - manually specify the table grouping using a text file called groupings.txt(located in the files folder in this project)
-
+    
     """
     generation_type = 1
     project_name = "test-project"
@@ -23,8 +29,12 @@ class Configuration:
         multiple services, the first one will be this number, the next one will be this number +1, etc....
     """
     beginning_port_num = 8000
+    """
+        backup_all_projects :
+    """
+    backup_all_projects = True
 
-
+    backup_directory = "< where you want to backup your projects to >"
     """
         these options below must be set to True ; otherwise they default to false
     
@@ -63,6 +73,13 @@ class Configuration:
     use_naming_server = True
     naming_server_url = "eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/"
     naming_server_proxy_mode = 2
+    """
+        use_gateway_server : do you want to use a netflix zuul gateway server. must be used in conjunction with using both a config and a naming server
+    
+        gateway_server_url : url to the gateways server
+    """
+    use_gateway_server = True
+    gateway_server_url = "http://localhost:8765"
 
     """
         make_mid_lvl_services : would you like to make some mid-level SB services that make calls to your CRUD services? 
@@ -72,13 +89,6 @@ class Configuration:
                                 will have no repository interface, but will have proxies to the CRUD services, with DTOs and POJOs
                                 set = True, otherwise, defaults to False
     """
-    """
-        use_gateway_server : do you want to use a netflix zuul gateway server. must be used in conjunction with using both a config and a naming server
-    
-        gateway_server_url : url to the gateways server
-    """
-    use_gateway_server = True
-    gateway_server_url = "http://localhost:8765"
     make_mid_lvl_services = False
     mid_lvl_port_num = 8100
     """
@@ -94,6 +104,7 @@ class Configuration:
     sourceprojectfolder = "files/demo"
     sourcesqlfile = "files/SQL_file.sql"
     destinationroot = "<where you want your Spring Boot projects to go>"
+    postmandirectory = "<where you want your Postman collections to go>"
 
     # for the application.properties file
     app_name = "spring.application.name="

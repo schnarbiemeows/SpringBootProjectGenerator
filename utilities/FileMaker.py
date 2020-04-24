@@ -14,11 +14,19 @@ class FileMaker:
         self.utilities = Utilities()
         self.jsonutility = JsonUtility()
     
+    def make_postman_for_mid_level(self, project):
+        """
+        redirecting to JsonUtility.py make_postman_for_mid_level method
+        :param project: 
+        :return: 
+        """
+        self.jsonutility.make_postman_for_mid_level(project)
+
     def createPostmanCollection(self, project):
         """
         redirecting to JsonUtility.py createPostmanCollection method
-        :param project: 
-        :return: 
+        :param project:
+        :return:
         """
         self.jsonutility.createPostmanCollection(project)
 
