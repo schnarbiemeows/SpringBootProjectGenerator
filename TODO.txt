@@ -39,4 +39,7 @@ small tasks:
     need to regenerate it, any changes they may have made to the controllers/business classes will not be overwritten
 - change the JsonUtility.createPostmanCollection() method to use a configuration variable to specify where to save the collection - DONE
 - needs testing amongst the different config server/naming server/zuul server option combinations
+- add hostname configuration field for the user(http://localhost for local), mostly for postman, but also for.....
+- add an option just for regenerating the postman and the application.properties for when the user wants to eventually deploy to the cloud
+
 
