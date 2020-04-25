@@ -20,6 +20,8 @@ medium tasks:
     this way, a config server and/or naming server does not have to be active in order to perform Junit testing
 - change the beginning_port_num and mid_lvl_port_num configuration variables functionality to instead add either a new config file or
     add to groupings.txt and mid_level.txt a port # so that the user can manually specify which port # to use for each project
+- and try/catches to all of the code
+- add file path checks to check for "/" at the end, so that when concatenating paths, we correctly have "/" between stuff
 
 small tasks:
 - take the template files in the files folder and move them to a new folder called templates
