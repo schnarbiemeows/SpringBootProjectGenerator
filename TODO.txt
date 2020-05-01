@@ -1,15 +1,12 @@
 ideas, love-to-haves:
 - get this program to work using different versions of SB and associated dependencies
-- needs Angular 7 generation functionality - BIG love-to-have
 - a Django or flash front-end UI that can help guide the user through the configuration process
 
 big tasks:
-- mid-level project functionality half done
-- Zuul API gateway server functionality not done
 - add foreign key functionality, with a setting that will make the program automatically group tables into projects
     according to foregin key relationships
 - refactor the JsonUtility.createPostmanCollection() method to create these collection dynamically, so that it can be
-    used eventually when making the postman collections for mid-level projects
+    used eventually when making the postman collections for mid-level projects - DONE for mid-level, still needed for CRUD level
 
 medium tasks:
 - add more Junit testing, not sure atm what is missing
@@ -27,9 +24,6 @@ medium tasks:
 small tasks:
 - take the template files in the files folder and move them to a new folder called templates
 - rename these template files ".template"
-- move the SQL_file.py and Constants.py files to the configuration folder - DONE
-- move the groupings.txt file to the Configuration folder - DONE
-- move the mid_level.txt file to the configuration folder - DONE
 - move the data types from SQL_file.py to Configuration.py or Constants.py
 - move the 4 projects(demo,config-server,naming-server,zuul-api-gateway-server) to a new projects folder
 - write methods to actually copy/alter the 3 other projects to the destinationroot, using the groupId config and a new
@@ -37,12 +31,19 @@ small tasks:
     option to use these projects "as is"
 - add an MIT license to this project
 - add a better instruction file into the project
-- change the JsonUtility.createPostmanCollection() method to correctly make each REST url if we are using a zuul server
+- change the JsonUtility.createPostmanCollection() method to correctly make each REST url if we are using a zuul server - see above
 - complete the bypass_business and bypass_controllers functionality, so that, if a user is working on one of their projects, but they
     need to regenerate it, any changes they may have made to the controllers/business classes will not be overwritten
-- change the JsonUtility.createPostmanCollection() method to use a configuration variable to specify where to save the collection - DONE
 - needs testing amongst the different config server/naming server/zuul server option combinations
 - add hostname configuration field for the user(http://localhost for local), mostly for postman, but also for.....
 - add an option just for regenerating the postman and the application.properties for when the user wants to eventually deploy to the cloud
 
 
+functionality added:
+04/01/2020 - Angular 8 project files functionality for implementing a basic CRUD front end for each SB project
+04/01/2020 - move the SQL_file.py and Constants.py files to the configuration folder
+04/01/2020 - move the groupings.txt file to the Configuration folder
+04/01/2020 - move the mid_level.txt file to the configuration folder
+04/01/2020 - change the JsonUtility.createPostmanCollection() method to use a configuration variable to specify where to save the collection
+04/01/2020 - mid-level project functionality added
+04/01/2020 - Zuul API gateway server functionality added
