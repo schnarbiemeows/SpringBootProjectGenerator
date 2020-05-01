@@ -42,6 +42,29 @@ class FileMaker:
             print("backing up project " + project.pomname)
             copy_tree(destinationroot+"/"+project.pomname, destinationroot+"/backup/"+project.pomname)
 
+    def make_base_angular_project(self, project):
+        """
+        this method will backup a project that has already been generated before, so that the user can retrieve the various files
+        that will get overwritten with the current generation
+        :param project:
+        :param destinationroot:
+        :return:
+        """
+        destination_dir_array = Configuration.angular_dest_directory.split("/")
+        directory = ''
+        for items in destination_dir_array:
+            if len(items)>0:
+                directory += "/"+items
+            if len(directory)>1 and not os.path.exists(directory):
+                self.utilities.mkdir(directory)
+        destinationroot = directory
+        if(not destinationroot.endswith("/")):
+            destinationroot += "/"
+        if not os.path.exists(destinationroot+project.pomname):
+            print("creating Angular project : " + project.pomname)
+            self.utilities.mkdir(destinationroot+project.pomname)
+        return destinationroot+project.pomname
+
     def create_base_project_folders(self, project, sourceprojectfolder, destinationroot, artifactid, groupid):
         """
         this method will create the basic folder structure of a SB project

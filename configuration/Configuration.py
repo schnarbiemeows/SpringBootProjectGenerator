@@ -100,6 +100,20 @@ class Configuration:
     bypass_business = False
     bypass_controllers = False
 
+    """
+        create_angular_projects : this will make Angualr 8 UI projects for each of the CRUD projects and mid-level projects
+        angular_directory : this is the directory where you want the angular project files to go in; it is up to the user to manually copy these
+        files/folders into their Angular projects
+    """
+    create_angular_projects = True
+    angular_dest_directory = "/angular_code/servings"
+    # dependencies
+    angular_boostrap = '4.0.0-beta.2'
+    angular_core_js = '^3.6.5'
+    angular_font_awesome = '^4.7.0'
+    angular_jquery = '^3.5.0'
+    angular_popper_js = '^1.16.1'
+
     # source project to clone
     sourceprojectfolder = "files/demo"
     sourcesqlfile = "files/SQL_file.sql"

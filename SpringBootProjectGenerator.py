@@ -2,7 +2,7 @@ from popos.Project import *
 from utilities.SqlParser import *
 from utilities.JsonUtility import *
 from configuration.Configuration import *
-
+from utilities.AngularFileMaker import *
 """
     created by Dylan I. Kessler
     03/29/2020
@@ -123,6 +123,7 @@ class SpringBootProjectGenerator:
         for mid_lvl_proj in mid_lvl_projects:
             localprojectsnames.append(mid_lvl_proj)
             project = Project(mid_lvl_proj, portnum)
+            project.is_mid_level = True
             portnum += 1
             lwr_lvl_projs = lwr_lvl_projects[mid_lvl_proj]
             for lwr_lvl_proj in lwr_lvl_projs:
@@ -391,13 +392,13 @@ class SpringBootProjectGenerator:
         """
         self.filemaker.backup_project(project, self.destinationroot)
 
-    def make_angular_project(self, project):
+    def make_angular_project(self):
         """
         this method will create the angular 8 project for a given project
         :param project:
         :return:
         """
-        self.angularfilemaker.make_angular_project(project, Configuration.angular_directory)
+        self.angularfilemaker.make_angular_project()
 
     def run(self):
         """
@@ -458,8 +459,8 @@ class SpringBootProjectGenerator:
             for projectname in localprojectsnames:
                 currentproject = localprojectdata[projectname]
                 if (Configuration.create_angular_projects == True):
-                    self.angularfilemaker.projectsnames.append(project)
-                    self.angularfilemaker.projectdata[project] = currentproject
+                    self.angularfilemaker.projectsnames.append(projectname)
+                    self.angularfilemaker.projectdata[projectname] = currentproject
                 if (Configuration.backup_all_projects == True):
                     self.backup_project(currentproject)
                 self.create_base_project_folders(currentproject)
@@ -481,9 +482,7 @@ class SpringBootProjectGenerator:
                 self.create_controller_class_for_mid_lvl(currentproject)
                 self.make_postman_for_mid_level(currentproject)
         if (Configuration.create_angular_projects == True):
-            for projectname in self.angularfilemaker.projectsnames:
-                currentproject = self.angularfilemaker.projectdata[project]
-                self.make_angular_project(currentproject)
+                self.make_angular_project()
 
 """
     main executable of this program

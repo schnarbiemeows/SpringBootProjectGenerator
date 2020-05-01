@@ -21,6 +21,7 @@ class Project:
         self.tablenames = []
         self.tabledata = {}
         self.configure_names()
+        self.is_mid_level = False
 
     def configure_names(self):
         """

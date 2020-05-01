@@ -1,0 +1,30 @@
+<h2>XXX</h2>
+<h4 *ngIf="!loaded">Loading XXX...</h4>
+<div *ngIf="loaded">
+  <div class="card">
+    <div class="card-content">
+      <table class="table">
+        <thead>
+          <tr>
+            YYY
+          </tr>
+        </thead>
+        <tbody *ngFor="let dto of %; let i = index">
+          <tr>
+            ZZZ
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+    <div class="card">
+        <button *ngIf="!editMode" (click)="showXXXForm = !showXXXForm" class="btn btn-dark mb-3 mt-3">{{this.addbarmsg}}</button>
+        <div class="card card-body mb-3" *ngIf="showXXXForm">
+          <h2>{{this.formmsg}}</h2>
+          <form (submit)="onSubmit($event)">
+              WWW
+            <button (click)="addXXX()" class="btn btn-block mb-3">{{this.addbarmsg}}</button>
+          </form>
+        </div>
+    </div>
+</div>

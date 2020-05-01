@@ -69,7 +69,7 @@ class JsonUtility:
                 if(getname == True):
                     thirdword = linestr.split(" ")[2]
                     tempname = thirdword[0:thirdword.find("(")]
-                    print("temp name = " + tempname)
+                    #print("temp name = " + tempname)
                     # set the JSON text for the name
                     postman_obj.requests[counter].name = postman_obj.requests[counter].name.replace("XXX",tempname)
                     # finally, set other details about this request before we go on to look for the next request
@@ -87,12 +87,12 @@ class JsonUtility:
                     newobj.method = newobj.method.replace("XXX", newobj.method_type)
                     # fill in the path name
                     newobj.path_name = linestr[linestr.find('"') + 1:-3]
-                    print("request method = " + newobj.method_type + " , and the request path name is = " + newobj.path_name)
+                    #print("request method = " + newobj.method_type + " , and the request path name is = " + newobj.path_name)
                     postman_obj.requests.append(newobj)
                     getname = True
             elif(linestr.find("@RequestMapping")>-1):
                 postman_obj.request_name = linestr[linestr.find('path="')+6:-3]
-                print("name of the request is : ")
+                #print("name of the request is : ")
                 requestmappingfound = True
 
     def set_url_raw_host_and_path_items(self, request_obj, request_name, project):
