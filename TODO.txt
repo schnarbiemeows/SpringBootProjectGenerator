@@ -1,6 +1,7 @@
 ideas, love-to-haves:
 - get this program to work using different versions of SB and associated dependencies
 - a Django or flash front-end UI that can help guide the user through the configuration process
+- add functionality to generate a basic Android mobile CRUD app
 
 big tasks:
 - add foreign key functionality, with a setting that will make the program automatically group tables into projects
