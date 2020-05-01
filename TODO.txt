@@ -12,8 +12,6 @@ big tasks:
 medium tasks:
 - add more Junit testing, not sure atm what is missing
 - change the JavaFileMaker.create_proxy_class()
-- change the JavaFileMaker.create_proxy_classes_for_mid_levels() method to add REST calls to the proxied services(we can't
-    just make a template file for this)
 - change the Junit tests to use mock objects instead of actually making changes to the database or proxy calls to other projects
     this way, a config server and/or naming server does not have to be active in order to perform Junit testing
 - change the beginning_port_num and mid_lvl_port_num configuration variables functionality to instead add either a new config file or
@@ -36,8 +34,7 @@ small tasks:
 - complete the bypass_business and bypass_controllers functionality, so that, if a user is working on one of their projects, but they
     need to regenerate it, any changes they may have made to the controllers/business classes will not be overwritten
 - needs testing amongst the different config server/naming server/zuul server option combinations
-- add hostname configuration field for the user(http://localhost for local), mostly for postman, but also for.....
-- add an option just for regenerating the postman and the application.properties for when the user wants to eventually deploy to the cloud
+- add an option for just regenerating the postman and the application.properties for when the user wants to eventually deploy to the cloud
 
 
 functionality added:
@@ -48,3 +45,5 @@ functionality added:
 04/01/2020 - change the JsonUtility.createPostmanCollection() method to use a configuration variable to specify where to save the collection
 04/01/2020 - mid-level project functionality added
 04/01/2020 - Zuul API gateway server functionality added
+04/01/2020 - changed the JavaFileMaker.create_proxy_classes_for_mid_levels() method to add REST calls to the proxied services
+04/01/2020 - add hostname configuration field for the user(http://localhost for local), mostly for postman
