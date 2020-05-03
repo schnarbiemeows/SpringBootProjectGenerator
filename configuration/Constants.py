@@ -52,6 +52,8 @@ class Constants:
 # main application file
     import_feign = "import org.springframework.cloud.openfeign.EnableFeignClients;"
     import_dc = "import org.springframework.cloud.client.discovery.EnableDiscoveryClient;"
+    import_bean = "import org.springframework.context.annotation.Bean;"
+    import_sampler = "import brave.sampler.Sampler;"
     ann_feign = '@EnableFeignClients("XXX")'
     ann_dc = "@EnableDiscoveryClient"
 # Swagger file

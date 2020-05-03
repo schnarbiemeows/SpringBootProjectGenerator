@@ -12,6 +12,7 @@ class JavaFileMaker:
         :param project:
         :return:
         """
+        tabs = "\t"
         filename = project.topmainpackage + "/" + project.camelcasejavaname + "Application.java"
         main_file = open("files/main.txt", "r")
         resources_file = open(filename, "w")
@@ -22,6 +23,14 @@ class JavaFileMaker:
                 if(Configuration.use_naming_server == True):
                     resources_file.write(Constants.import_feign+"\n")
                     resources_file.write(Constants.import_dc + "\n")
+                    if(Configuration.use_distributed_tracing == True):
+                        resources_file.write(Constants.import_bean + "\n")
+                        resources_file.write(Constants.import_sampler + "\n")
+            elif (linestr.find("ZZZ") > -1):
+                resources_file.write(tabs+"@Bean\n")
+                resources_file.write(tabs+"public Sampler defaultSampler() {\n")
+                resources_file.write(tabs+tabs+"return Sampler.ALWAYS_SAMPLE;\n")
+                resources_file.write(tabs +"}\n")
             elif (linestr.find("XXX") > -1):
                 if (Configuration.use_naming_server == True):
                     resources_file.write(Constants.ann_feign.replace("XXX", project.rootpackage)+"\n")

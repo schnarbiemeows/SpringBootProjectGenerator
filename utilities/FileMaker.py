@@ -298,6 +298,13 @@ class FileMaker:
                             newpom.write(propstr)
                         configclientdep.close()
                     newpom.write("\n")
+                    if (Configuration.use_distributed_tracing == True):
+                        sleuthfile = open("files/sleuth.xml", "r")
+                        for line in sleuthfile:
+                            linestr = str(line)
+                            newpom.write(linestr)
+                        sleuthfile.close()
+                        newpom.write("\n")
                     newpom.write(itemstr)
                     # cloud config client dependency management
                     if (Configuration.use_config_server == True):

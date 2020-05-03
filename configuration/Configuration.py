@@ -12,6 +12,7 @@ class Configuration:
         hostname : primarily for the postman generation functionality, it represents the ipaddress that each project will be using. leave as localhost if testing locally,
                     otherwise, specify the ipaddress where each of these projects will be run
     """
+
     hostname = "http://localhost"
 
     # generation options:
@@ -113,6 +114,13 @@ class Configuration:
     angular_font_awesome = '^4.7.0'
     angular_jquery = '^3.5.0'
     angular_popper_js = '^1.16.1'
+
+    """
+        use_distributed_tracing : this feature will enable spring cloud sleuth to generate a unique transaction ID for each transaction
+                                    this is part of distributed central logging functionality
+    """
+
+    use_distributed_tracing = True
 
     # source project to clone
     sourceprojectfolder = "files/demo"
