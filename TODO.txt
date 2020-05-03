@@ -47,3 +47,4 @@ functionality added:
 04/01/2020 - Zuul API gateway server functionality added
 04/01/2020 - changed the JavaFileMaker.create_proxy_classes_for_mid_levels() method to add REST calls to the proxied services
 04/01/2020 - add hostname configuration field for the user(http://localhost for local), mostly for postman
+04/03/2020 - added spring-cloud sleuth functionality; distributed tracing will be in phase II
