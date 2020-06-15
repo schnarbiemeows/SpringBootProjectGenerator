@@ -31,7 +31,7 @@ class SpringBootProjectGenerator:
         self.sourcesqlfile = Configuration.sourcesqlfile
         # root detination folder where the new Spring Boot project(s) will go
         self.destinationroot = Configuration.destinationroot
-        self.artifactid = ""
+        self.artifactid = "demo"
         self.projectsnames = []
         self.projectdata = {}
         self.tablenames = []
@@ -50,14 +50,6 @@ class SpringBootProjectGenerator:
         :return:
         """
         self.filemaker.create_base_project_folders(project, self.sourceprojectfolder, self.destinationroot, self.artifactid, Configuration.groupid)
-
-    def parse_pom(self):
-        """
-        this method will parse through the source pom.xml to retrieve the artifactId
-        :return:
-        """
-        utilities = Utilities()
-        self.artifactid = utilities.parse_source_pom(self.sourceprojectfolder)
 
     def parsesqlfile(self):
         """
@@ -288,6 +280,14 @@ class SpringBootProjectGenerator:
         """
         self.javafilemaker.create_pojo_and_dto_classes(table,"dto")
 
+    def create_health_check_controller(self, project):
+        """
+        this method will create a health check controller for the project
+        :param project:
+        :return:
+        """
+        self.javafilemaker.create_health_check_controller(project)
+
     def create_controller_class(self, table):
         """
         this method creates the controller class for the project
@@ -400,13 +400,62 @@ class SpringBootProjectGenerator:
         """
         self.angularfilemaker.make_angular_project()
 
+    def create_docker_file(self, project):
+        """
+        this method will make the docker file for the project
+        :param project:
+        :return:
+        """
+        self.filemaker.create_docker_file(project)
+
+    def initialize_kubernetes_file(self):
+        """
+        this method will initialize a complete kubernetes file for our project
+        :return:
+        """
+        self.filemaker.initialize_kubernetes_file()
+
+    def create_kubernetes_file(self, project):
+        """
+        this method will make the kubernetes file for the project
+        :param project:
+        :return:
+        """
+        self.filemaker.create_kubernetes_file(project)
+
+    def create_kubernetes_commands_file(self, project):
+        """
+        this method will make the docker file for the project
+        :param project:
+        :return:
+        """
+        self.filemaker.create_kubernetes_commands_file(project)
+
+    def populate_kubernetes_commands_file(self, project):
+        """
+        this method will make the docker file for the project
+        :param project:
+        :return:
+        """
+        self.filemaker.populate_kubernetes_commands_file(project)
+
+    def generate_ingress_file(self,localprojectsnames,localprojectdata):
+        """
+
+        :return:
+        """
+        self.filemaker.create_ingress_file(self.projectsnames, self.projectdata,localprojectsnames,localprojectdata)
+
     def run(self):
         """
         main method of this program
         :return:
         """
         print("Begin execution")
-        self.parse_pom()
+        localprojectsnames = []
+        localprojectdata = []
+        if(Configuration.use_docker == True):
+            self.initialize_kubernetes_file()
         self.parsesqlfile()
         self.parsesqlfileToGroupProjects()
         for project in self.projectsnames:
@@ -417,6 +466,11 @@ class SpringBootProjectGenerator:
             if(Configuration.backup_all_projects == True):
                 self.backup_project(currentproject)
             self.create_base_project_folders(currentproject)
+            if(Configuration.use_docker == True):
+                self.create_docker_file(currentproject)
+                self.create_kubernetes_file(currentproject)
+                self.create_kubernetes_commands_file(currentproject)
+                self.create_health_check_controller(currentproject)
             self.create_application_resources_file(currentproject)
             self.create_main_method_file(currentproject)
             self.create_main_test_file(currentproject)
@@ -428,6 +482,7 @@ class SpringBootProjectGenerator:
             self.create_pojo_resonse_class(currentproject)
             self.create__exceptions_test_class(currentproject)
             self.create_randomizer_test_class(currentproject)
+            self.populate_kubernetes_commands_file(currentproject)
             # for each table found for this project, do:
             for name in currentproject.tablenames:
                 currenttable = currentproject.tabledata[name]
@@ -464,6 +519,11 @@ class SpringBootProjectGenerator:
                 if (Configuration.backup_all_projects == True):
                     self.backup_project(currentproject)
                 self.create_base_project_folders(currentproject)
+                if (Configuration.use_docker == True):
+                    self.create_docker_file(currentproject)
+                    self.create_kubernetes_file(currentproject)
+                    self.create_kubernetes_commands_file(currentproject)
+                    self.create_health_check_controller(currentproject)
                 self.create_application_resources_file(currentproject)
                 self.create_main_method_file(currentproject)
                 self.create_main_test_file(currentproject)
@@ -481,8 +541,11 @@ class SpringBootProjectGenerator:
                 self.create_business_class_for_mid_lvl(currentproject)
                 self.create_controller_class_for_mid_lvl(currentproject)
                 self.make_postman_for_mid_level(currentproject)
+                self.populate_kubernetes_commands_file(currentproject)
         if (Configuration.create_angular_projects == True):
                 self.make_angular_project()
+        if(Configuration.use_docker == True):
+            self.generate_ingress_file(localprojectsnames, localprojectdata)
 
 """
     main executable of this program

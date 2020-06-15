@@ -44,10 +44,6 @@ class Constants:
     doc_proxy = "\t"+doc_opn+"\n"+"\t *\n"+"\t * @param\n"+"\t * @return\n"+"\t **/\n"
 
 # pom file
-    xml_grp = "<groupId>*</groupId>"
-    xml_art = "<artifactId>*</artifactId>"
-    xml_name = "<name>*</name>"
-    xml_desc = "<description>CRUD application for the * project</description>"
 
 # main application file
     import_feign = "import org.springframework.cloud.openfeign.EnableFeignClients;"

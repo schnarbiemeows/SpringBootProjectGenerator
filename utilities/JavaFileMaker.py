@@ -20,19 +20,20 @@ class JavaFileMaker:
         for line in main_file:
             linestr = str(line)
             if (linestr.find("YYY") > -1):
-                if(Configuration.use_naming_server == True):
+                if(Configuration.use_naming_server == True or Configuration.use_docker == True):
                     resources_file.write(Constants.import_feign+"\n")
                     resources_file.write(Constants.import_dc + "\n")
                     if(Configuration.use_distributed_tracing == True):
                         resources_file.write(Constants.import_bean + "\n")
                         resources_file.write(Constants.import_sampler + "\n")
             elif (linestr.find("ZZZ") > -1):
-                resources_file.write(tabs+"@Bean\n")
-                resources_file.write(tabs+"public Sampler defaultSampler() {\n")
-                resources_file.write(tabs+tabs+"return Sampler.ALWAYS_SAMPLE;\n")
-                resources_file.write(tabs +"}\n")
+                if (Configuration.use_distributed_tracing == True):
+                    resources_file.write(tabs+"@Bean\n")
+                    resources_file.write(tabs+"public Sampler defaultSampler() {\n")
+                    resources_file.write(tabs+tabs+"return Sampler.ALWAYS_SAMPLE;\n")
+                    resources_file.write(tabs +"}\n")
             elif (linestr.find("XXX") > -1):
-                if (Configuration.use_naming_server == True):
+                if (Configuration.use_naming_server == True or Configuration.use_docker == True):
                     resources_file.write(Constants.ann_feign.replace("XXX", project.rootpackage)+"\n")
                     resources_file.write(Constants.ann_dc + "\n")
             else:
@@ -174,11 +175,23 @@ class JavaFileMaker:
                             None
                         elif(linestr.find("WWW"))>-1:
                             if(Configuration.use_gateway_server == True):
-                                resources_file.write(linestr.replace("WWW","zuul-api-gateway-server"))
+                                resources_file.write(linestr.replace("WWW",'@FeignClient(name="zuul-api-gateway-server")'))
+                            elif(Configuration.use_docker == True):
+                                resources_file.write(linestr.replace("WWW", '@FeignClient(name = "'+otherproject.pomname+'", url = "${CURRENCY_EXCHANGE_SERVICE_HOST:http://localhost}:'+str(otherproject.portnum)+'")'))
                             else:
                                 resources_file.write(linestr.replace("WWW", otherproject.pomname))
+                        elif (linestr.find("XXX")) > -1:
+                            if (Configuration.use_naming_server == True):
+                                resources_file.write(
+                                    linestr.replace("XXX", '@RibbonClient(name="' + otherproject.pomname + '")'))
+                        elif (linestr.find("WW1")) > -1:
+                            if (Configuration.use_naming_server == True or Configuration.use_gateway_server == True or Configuration.use_docker == True):
+                                resources_file.write("import org.springframework.cloud.openfeign.FeignClient;\n")
+                        elif (linestr.find("XX1")) > -1:
+                            if (Configuration.use_naming_server == True):
+                                resources_file.write("import org.springframework.cloud.netflix.ribbon.RibbonClient;\n")
                         else:
-                            resources_file.write(linestr.replace("^", Configuration.author).replace("%", otherproject.camelcasejavaname).replace("XXX", otherproject.pomname))
+                            resources_file.write(linestr.replace("^", Configuration.author).replace("%", otherproject.camelcasejavaname))
                     resources_file.close()
                     proxy_file.close()
         else:
@@ -218,11 +231,25 @@ class JavaFileMaker:
                     elif (linestr.find("WWW")) > -1:
                         if (Configuration.use_gateway_server == True):
                             resources_file.write(linestr.replace("WWW", "zuul-api-gateway-server"))
+                        elif (Configuration.use_docker == True):
+                            service_name = currentproject.pomname.upper().replace("-","_") + "_SERVICE_HOST"
+                            mid_lvl_proj.service_config.append(service_name)
+                            text = '@FeignClient(name = "' + currentproject.pomname + '", url = "${' + service_name + ':http://XXX}:' + str(currentproject.portnum) + '")'
+                            resources_file.write(linestr.replace("WWW",text.replace("XXX", "localhost")))
                         else:
                             resources_file.write(linestr.replace("WWW", currentproject.pomname))
+                    elif(linestr.find("XXX")) > -1:
+                        if (Configuration.use_naming_server == True):
+                            resources_file.write(linestr.replace("XXX", '@RibbonClient(name="'+currentproject.pomname+'")'))
+                    elif (linestr.find("WW1")) > -1:
+                        if (Configuration.use_naming_server == True or Configuration.use_gateway_server == True or Configuration.use_docker == True):
+                            resources_file.write("import org.springframework.cloud.openfeign.FeignClient;\n")
+                    elif (linestr.find("XX1")) > -1:
+                        if (Configuration.use_naming_server == True):
+                            resources_file.write("import org.springframework.cloud.netflix.ribbon.RibbonClient;\n")
                     else:
                         resources_file.write(linestr.replace("^", Configuration.author).replace("%",currentproject.camelcasejavaname).replace(
-                            "&", mid_lvl_proj.rootpackage).replace("XXX", currentproject.pomname))
+                            "&", mid_lvl_proj.rootpackage))
                 resources_file.close()
                 proxy_file.close()
 
@@ -479,6 +506,23 @@ class JavaFileMaker:
                         resources_file.write(self.remove_annotations_from_string(linestr).replace(";","{")+"\n")
                         resources_file.write(tabs+tabs+"return "+service_name+"."+method_name+";\n"+tabs+"}\n\n")
                 source_file.close()
+
+    def create_health_check_controller(self, project):
+        """
+        this method will create a health check controller for the project
+        :param project:
+        :return:
+        """
+        # create the file and open
+        filename = project.topmainpackage + "/" + Constants.pckg_contr + "/HealthCheckController.java"
+        resources_file = open(filename, "w")
+        controller_file = open("files/health_check.txt")
+        resources_file.write("package " + project.rootpackage + "." + Constants.pckg_contr + ";\n\n")
+        for line in controller_file:
+            linestr = str(line)
+            resources_file.write(linestr)
+        resources_file.close()
+        controller_file.close()
 
     def create_controller_class(self, table):
         """
@@ -806,7 +850,10 @@ class JavaFileMaker:
                         itemfound = False
                     elif linestr.find('Mapping(') > -1:
                         itemfound = True
-                        relativepath = "/"+project.pomname+"/"+tabledata.lowercasename+"/"
+                        if(Configuration.use_naming_server == True):
+                            relativepath = "/"+project.pomname+"/"+tabledata.lowercasename+"/"
+                        else:
+                            relativepath = "/" + tabledata.lowercasename + "/"
                         file.write(Constants.doc_proxy)
                         file.write(linestr.replace("/",relativepath,1))
 

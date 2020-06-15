@@ -64,24 +64,6 @@ class Utilities:
         print("making javaname = " + javaname + " getter name = " + gettername + " from db name = " + dbname)
         return (javaname, gettername)
 
-    def parse_source_pom(self,sourceprojectfolder):
-        """
-        parse the source pom of the demo project so that we can retrieve the artifactId
-        :param sourceprojectfolder:
-        :return:
-        """
-        pomfile = open(sourceprojectfolder + "/demo/pom.xml")
-        tree = ET.parse(pomfile)
-        root = tree.getroot()
-        artifactId = ''
-        for child in root:
-            childitem = str(child.tag)
-            if (childitem.find('artifactId') > -1):
-                print("sorce POM artifact ID = " + child.text)
-                artifactId = child.text
-        pomfile.close()
-        return artifactId
-
     def capitalize(self,word):
         """
         small function to capitalize the first letter of the javaname

@@ -5,9 +5,10 @@ ideas, love-to-haves:
 
 big tasks:
 - add foreign key functionality, with a setting that will make the program automatically group tables into projects
-    according to foregin key relationships
+    according to foreign key relationships
 - refactor the JsonUtility.createPostmanCollection() method to create these collection dynamically, so that it can be
     used eventually when making the postman collections for mid-level projects - DONE for mid-level, still needed for CRUD level
+- add Docker functionality
 
 medium tasks:
 - add more Junit testing, not sure atm what is missing
@@ -19,6 +20,7 @@ medium tasks:
 - and try/catches to all of the code
 - add file path checks to check for "/" at the end, so that when concatenating paths, we correctly have "/" between stuff
 - ADD MORE COMMENTS! incl., check each method to make sure it has a good summary in it
+- get the hysterix functionality added
 
 small tasks:
 - take the template files in the files folder and move them to a new folder called templates
@@ -35,6 +37,7 @@ small tasks:
     need to regenerate it, any changes they may have made to the controllers/business classes will not be overwritten
 - needs testing amongst the different config server/naming server/zuul server option combinations
 - add an option for just regenerating the postman and the application.properties for when the user wants to eventually deploy to the cloud
+- get the spring-cloud-bus functionality added
 
 
 functionality added:

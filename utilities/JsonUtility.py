@@ -105,15 +105,18 @@ class JsonUtility:
         array = request_obj.path_name.split("/")
         secondarray = []
         # set the host and raw
-        if (Configuration.use_gateway_server == True):
+        if(Configuration.use_docker == True):
+            request_obj.raw += "http://" + Configuration.docker_localhost_url + ":" + str(project.portnum) + '/' + project.pomname
+            request_obj.host = "http://" + Configuration.docker_localhost_url + ":" + str(project.portnum) + '/' + project.pomname
+        elif (Configuration.use_gateway_server == True):
             request_obj.raw += Configuration.gateway_server_url + '/' + project.pomname + request_name
             request_obj.host = Configuration.gateway_server_url
             # add first item to the path array
             secondarray.append('"' + project.pomname + request_name + '"')
         else:
-            request_obj.raw += Configuration.hostname + project.port
-            request_obj.host = Configuration.hostname + project.port
-            secondarray.append('"' + request_obj.request_name + '"')
+            request_obj.raw += Configuration.hostname + ":" + str(project.portnum)
+            request_obj.host = Configuration.hostname + ":" + str(project.portnum)
+            secondarray.append('"' + request_name + '"')
         # add the remaining items to the path array
         for item in array:
             if(len(item)>0):
@@ -176,6 +179,13 @@ class JsonUtility:
         :return:
         """
         tabs = "\t"
+        hostname_and_port = "http://localhost:" + str(project.portnum)
+        path = table.lowercasename
+        if(Configuration.use_docker == True):
+            hostname_and_port = "http://" + Configuration.docker_localhost_url + ":" + str(project.portnum)
+        elif(Configuration.use_gateway_server == True):
+            hostname_and_port = str(Configuration.gateway_server_url)
+            path = str(project.pomname) + '/' + table.lowercasename
         # getAll operation
         json = tabs + tabs + '{\n'
         json += tabs + tabs + tabs + '"name": "getAll' + table.camelcasejavaname + '",\n'
@@ -183,14 +193,9 @@ class JsonUtility:
         json += tabs + tabs + tabs + tabs + '"method": "GET",\n'
         json += tabs + tabs + tabs + tabs + '"header": [],\n'
         json += tabs + tabs + tabs + tabs + '"url": {\n'
-        if(Configuration.use_gateway_server == True):
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "' + str(Configuration.gateway_server_url) + '/' + str(project.pomname) + '/' + table.lowercasename + '/all",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "' + str(Configuration.gateway_server_url) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + str(project.pomname) + '/' + table.lowercasename + '", "all" ]\n'
-        else:
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "http://localhost:' + str(project.port) + '/' + table.lowercasename + '/all",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "http://localhost:' + str(project.port) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + table.lowercasename + '", "all" ]\n'
+        json += tabs + tabs + tabs + tabs + tabs + '"raw": "' + hostname_and_port + '/' + path + '/all",\n'
+        json += tabs + tabs + tabs + tabs + tabs + '"host": [ "' + hostname_and_port + '" ],\n'
+        json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + path + '", "all" ]\n'
         json += tabs + tabs + tabs + tabs + '}\n'
         json += tabs + tabs + tabs + '},\n'
         json += tabs + tabs + tabs + '"response": []\n'
@@ -202,14 +207,9 @@ class JsonUtility:
         json += tabs + tabs + tabs + tabs + '"method": "GET",\n'
         json += tabs + tabs + tabs + tabs + '"header": [],\n'
         json += tabs + tabs + tabs + tabs + '"url": {\n'
-        if (Configuration.use_gateway_server == True):
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "' + str(Configuration.gateway_server_url) + '/' + str(project.pomname) + '/' + table.lowercasename + '/findById/1",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "' + str(Configuration.gateway_server_url) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + str(project.pomname) + '/' + table.lowercasename + '", "findById", "1" ]\n'
-        else:
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "http://localhost:' + str(project.port) + '/' + table.lowercasename + '/findById/1",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "http://localhost:' + str(project.port) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + table.lowercasename + '", "findById", "1" ]\n'
+        json += tabs + tabs + tabs + tabs + tabs + '"raw": "' + hostname_and_port + '/' + path + '/findById/1",\n'
+        json += tabs + tabs + tabs + tabs + tabs + '"host": [ "' + hostname_and_port + '" ],\n'
+        json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + path + '", "findById", "1" ]\n'
         json += tabs + tabs + tabs + tabs + '}\n'
         json += tabs + tabs + tabs + '},\n'
         json += tabs + tabs + tabs + '"response": []\n'
@@ -221,14 +221,9 @@ class JsonUtility:
         json += tabs + tabs + tabs + tabs + '"method": "DELETE",\n'
         json += tabs + tabs + tabs + tabs + '"header": [],\n'
         json += tabs + tabs + tabs + tabs + '"url": {\n'
-        if (Configuration.use_gateway_server == True):
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "' + str(Configuration.gateway_server_url) + '/' + str(project.pomname) + '/' + table.lowercasename + '/delete/1",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "' + str(Configuration.gateway_server_url) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + str(project.pomname) + '/' + table.lowercasename + '", "delete", "1" ]\n'
-        else:
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "http://localhost:' + str(project.port) + '/' + table.lowercasename + '/delete/1",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "http://localhost:' + str(project.port) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + str(project.pomname) + '/' + table.lowercasename + '", "delete", "1" ]\n'
+        json += tabs + tabs + tabs + tabs + tabs + '"raw": "' + hostname_and_port + '/' + path + '/delete/1",\n'
+        json += tabs + tabs + tabs + tabs + tabs + '"host": [ "' + hostname_and_port + '" ],\n'
+        json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + path + '", "delete", "1" ]\n'
         json += tabs + tabs + tabs + tabs + '}\n'
         json += tabs + tabs + tabs + '},\n'
         json += tabs + tabs + tabs + '"response": []\n'
@@ -247,14 +242,9 @@ class JsonUtility:
         json += tabs + tabs + tabs + tabs + tabs + '}\n'
         json += tabs + tabs + tabs + tabs + '},\n'
         json += tabs + tabs + tabs + tabs + '"url": {\n'
-        if (Configuration.use_gateway_server == True):
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "' + str(Configuration.gateway_server_url) + '/' + str(project.pomname) + '/' + table.lowercasename + '/create",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "' + str(Configuration.gateway_server_url) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + str(project.pomname) + '/' + table.lowercasename + '", "create" ]\n'
-        else:
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "http://localhost:' + str(project.port) + '/' + table.lowercasename + '/create",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "http://localhost:' + str(project.port) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + table.lowercasename + '", "create" ]\n'
+        json += tabs + tabs + tabs + tabs + tabs + '"raw": "' + hostname_and_port + '/' + path + '/create",\n'
+        json += tabs + tabs + tabs + tabs + tabs + '"host": [ "' + hostname_and_port + '" ],\n'
+        json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + path + '", "create" ]\n'
         json += tabs + tabs + tabs + tabs + '}\n'
         json += tabs + tabs + tabs + '},\n'
         json += tabs + tabs + tabs + '"response": []\n'
@@ -273,14 +263,9 @@ class JsonUtility:
         json += tabs + tabs + tabs + tabs + tabs + '}\n'
         json += tabs + tabs + tabs + tabs + '},\n'
         json += tabs + tabs + tabs + tabs + '"url": {\n'
-        if (Configuration.use_gateway_server == True):
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "' + str(Configuration.gateway_server_url) + '/' + str(project.pomname) + '/' + table.lowercasename + '/update",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "' + str(Configuration.gateway_server_url) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + str(project.pomname) + '/' + table.lowercasename + '", "update" ]\n'
-        else:
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "http://localhost:' + str(project.port) + '/' + table.lowercasename + '/update",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "http://localhost:' + str(project.port) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + table.lowercasename + '", "update" ]\n'
+        json += tabs + tabs + tabs + tabs + tabs + '"raw": "' + hostname_and_port + '/' + path + '/update",\n'
+        json += tabs + tabs + tabs + tabs + tabs + '"host": [ "' + hostname_and_port + '" ],\n'
+        json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + path + '", "update" ]\n'
         json += tabs + tabs + tabs + tabs + '}\n'
         json += tabs + tabs + tabs + '},\n'
         json += tabs + tabs + tabs + '"response": []\n'
