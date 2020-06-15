@@ -8,7 +8,7 @@ big tasks:
     according to foreign key relationships
 - refactor the JsonUtility.createPostmanCollection() method to create these collection dynamically, so that it can be
     used eventually when making the postman collections for mid-level projects - DONE for mid-level, still needed for CRUD level
-- add Docker functionality
+- add Docker functionality - DONE
 
 medium tasks:
 - add more Junit testing, not sure atm what is missing
@@ -51,3 +51,5 @@ functionality added:
 04/01/2020 - changed the JavaFileMaker.create_proxy_classes_for_mid_levels() method to add REST calls to the proxied services
 04/01/2020 - add hostname configuration field for the user(http://localhost for local), mostly for postman
 04/03/2020 - added spring-cloud sleuth functionality; distributed tracing will be in phase II
+Phase II:
+06/15/2020 - added Docker and Kubernetes functionality for deploying to Google Cloud behind an Ingress
