@@ -20,10 +20,10 @@ public class &Test {
 	@Test
 	public void testClass() {
 		& % = new &();
-		XXX
+		SETTER_STMT
 		assertTrue(true);
 		& newitem = new &(
-		YYY
+		GETTER_STMT
 		assertNotNull(newitem);
 		String string = %.toString();
 		assertNotNull(string);

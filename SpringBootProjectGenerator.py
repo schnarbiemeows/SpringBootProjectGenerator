@@ -3,6 +3,13 @@ from utilities.SqlParser import *
 from utilities.JsonUtility import *
 from configuration.Configuration import *
 from utilities.AngularFileMaker import *
+from utilities.main.business.BusinessGenerator import BusinessGenerator
+from utilities.main.entities.PojoAndDtoGenerator import *
+from utilities.test.business.BusinessTestGenerator import BusinessTestGenerator
+from utilities.test.entities.PojoAndDtoTestGenerator import *
+from utilities.main.controllers.RestControllerGenerator import *
+from utilities.test.controllers.RestControllerTestGenerator import *
+from utilities.main.services.GenerateRepository import *
 """
     created by Dylan I. Kessler
     03/29/2020
@@ -16,9 +23,6 @@ from utilities.AngularFileMaker import *
     how to configure it
 """
 class SpringBootProjectGenerator:
-
-
-
 
     def init(self):
         # template Spring Boot project that this program uses to clone into new projects
@@ -34,14 +38,12 @@ class SpringBootProjectGenerator:
         self.artifactid = "demo"
         self.projectsnames = []
         self.projectdata = {}
+        self.ang_proj_names = []
+        self.ang_proj_data = {}
+        self.ang_root_dir = ''
         self.tablenames = []
         self.tabledata = {}
         self.sqlparser = SqlParser(self.tablenames,self.tabledata)
-        self.filemaker = FileMaker()
-        self.javafilemaker = JavaFileMaker()
-        self.testfilemaker = TestFileMaker()
-        self.jsonutility = JsonUtility()
-        self.angularfilemaker = AngularFileMaker()
 
     def create_base_project_folders(self, project):
         """
@@ -49,14 +51,14 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.filemaker.create_base_project_folders(project, self.sourceprojectfolder, self.destinationroot, self.artifactid, Configuration.groupid)
+        FileMaker.create_base_project_folders(project, self.sourceprojectfolder, self.destinationroot, self.artifactid, Configuration.groupid)
 
     def parsesqlfile(self):
         """
         this method parses the main SQL file
         :return:
         """
-        self.tablenames,self.tabledata = self.sqlparser.parseSqlFileToExtractTableData(self.sourcesqlfile)
+        self.tablenames,self.tabledata = self.sqlparser.processSQL(self.sourcesqlfile)
 
     def parsesqlfileToGroupProjects(self):
         """
@@ -69,7 +71,7 @@ class SpringBootProjectGenerator:
             # one project per table
             print("ONE PROJECT PER TABLE SPECIFIED")
             for name in self.tablenames:
-                currenttable = Table(name, self.tabledata[name])
+                currenttable = self.tabledata[name]
                 self.projectsnames.append(currenttable.pomname)
                 project = Project(currenttable.pomname,portnum)
                 portnum +=1
@@ -80,7 +82,7 @@ class SpringBootProjectGenerator:
             self.projectsnames.append(Configuration.project_name)
             project = Project(Configuration.project_name,portnum)
             for name in self.tablenames:
-                currenttable = Table(name, self.tabledata[name])
+                currenttable = self.tabledata[name]
                 project.tablenames.append(name)
                 project.tabledata[name] = currenttable
             self.projectdata[Configuration.project_name] = project
@@ -92,13 +94,17 @@ class SpringBootProjectGenerator:
                 project = Project(name,portnum)
                 portnum +=1
                 for table in projectttables[name]:
-                    if self.tabledata[table] is None:
+                    # we have to account for tables with backticks
+                    # @ this point, if there is a table named: `hi there`, that name is lost
+                    # so we need to replace any spaces with ~|*
+                    correctedtablename = table.replace(" ", "~|*")
+                    if self.tabledata[correctedtablename] is None:
                         raise Exception("table name " + table + " not found in SQL file!")
                     else:
-                        project.tablenames.append(table)
-                        currenttable = Table(table, self.tabledata[table])
+                        project.tablenames.append(correctedtablename)
+                        currenttable = self.tabledata[correctedtablename]
                         project.tabledata[table] = currenttable
-                self.projectdata[name] = project
+                self.projectdata[correctedtablename] = project
         else:
             None
 
@@ -130,7 +136,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.filemaker.create_application_resources_file(project)
+        FileMaker.create_application_resources_file(project)
 
     def create_main_method_file(self, project):
         """
@@ -138,7 +144,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.javafilemaker.create_main_method_class(project)
+        JavaFileMaker.create_main_method_class(project)
 
     def create_main_test_file(self, project):
         """
@@ -146,7 +152,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.testfilemaker.create_main_test_class(project)
+        TestFileMaker.create_main_test_class(project)
 
     def create_swagger_file(self, project):
         """
@@ -154,7 +160,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.javafilemaker.create_swagger_class(project)
+        JavaFileMaker.create_swagger_class(project)
 
     def create_randomizer_class(self, project):
         """
@@ -162,7 +168,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.javafilemaker.create_randomizer_class(project)
+        JavaFileMaker.create_randomizer_class(project)
 
     def create_exceptions_file(self, project):
         """
@@ -170,7 +176,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.javafilemaker.make_base_exc_class(project)
+        JavaFileMaker.make_base_exc_class(project)
 
     def make_rnf_exc_class(self, project):
         """
@@ -178,7 +184,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.javafilemaker.make_rnf_exc_class(project)
+        JavaFileMaker.make_rnf_exc_class(project)
 
     def make_spec_eh_class(self, project):
         """
@@ -186,7 +192,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.javafilemaker.make_spec_eh_class(project)
+        JavaFileMaker.make_spec_eh_class(project)
 
     def create_repository_file(self, table):
         """
@@ -194,7 +200,7 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        self.javafilemaker.create_repository_class(table)
+        GenerateRepository.create_repository_class(table)
 
     def create_proxy_classes(self, currentproject, projectnames, projectdata):
         """
@@ -202,7 +208,7 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        self.javafilemaker.create_proxy_class(currentproject, projectnames, projectdata)
+        JavaFileMaker.create_proxy_class(currentproject, projectnames, projectdata)
 
     def create_proxy_classes_for_mid_levels(self, mid_level_proj):
         """
@@ -210,7 +216,7 @@ class SpringBootProjectGenerator:
         :param mid_level_proj:
         :return:
         """
-        self.javafilemaker.create_proxy_classes_for_mid_levels(mid_level_proj, self.projectsnames, self.projectdata)
+        JavaFileMaker.create_proxy_classes_for_mid_levels(mid_level_proj, self.projectsnames, self.projectdata)
 
     def create_proxy_dtos(self, currentproject, projectnames, projectdata):
         """
@@ -219,7 +225,7 @@ class SpringBootProjectGenerator:
         :return:
         """
         None
-        self.javafilemaker.create_proxy_dtos(self.destinationroot, currentproject, projectnames, projectdata)
+        JavaFileMaker.create_proxy_dtos(self.destinationroot, currentproject, projectnames, projectdata)
 
     def create_proxy_dtos_for_mid_lvl(self, currentproject):
         """
@@ -228,7 +234,7 @@ class SpringBootProjectGenerator:
         :return:
         """
         None
-        self.javafilemaker.create_proxy_dtos_for_mid_lvl(self.destinationroot, currentproject, self.projectsnames, self.projectdata)
+        JavaFileMaker.create_proxy_dtos_for_mid_lvl(self.destinationroot, currentproject, self.projectsnames, self.projectdata)
 
     def create_proxy_pojos(self, currentproject, projectnames, projectdata):
         """
@@ -237,7 +243,7 @@ class SpringBootProjectGenerator:
         :return:
         """
         None
-        self.javafilemaker.create_proxy_pojos(self.destinationroot, currentproject, projectnames, projectdata)
+        JavaFileMaker.create_proxy_pojos(self.destinationroot, currentproject, projectnames, projectdata)
 
     def create_proxy_pojos_for_mid_lvl(self, currentproject):
         """
@@ -246,7 +252,7 @@ class SpringBootProjectGenerator:
         :return:
         """
         None
-        self.javafilemaker.create_proxy_pojos_for_mid_lvl(self.destinationroot, currentproject, self.projectsnames, self.projectdata)
+        JavaFileMaker.create_proxy_pojos_for_mid_lvl(self.destinationroot, currentproject, self.projectsnames, self.projectdata)
 
     def create_pojo_class(self, table):
         """
@@ -254,15 +260,15 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        self.javafilemaker.create_pojo_and_dto_classes(table,"pojo")
+        PojoAndDtoGenerator.create_pojo_and_dto_classes(table, "pojo", self.tabledata)
 
-    def create_pojo_resonse_class(self, project):
+    def create_pojo_response_class(self, project):
         """
         this method creates the POJO Java file in the project
         :param table:
         :return:
         """
-        self.javafilemaker.create_pojo_resonse_class(project)
+        JavaFileMaker.create_pojo_response_class(project)
 
     def create_pojo_resonse_class_for_mid_level(self, project):
         """
@@ -270,7 +276,7 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        self.javafilemaker.create_pojo_resonse_class_for_mid_level(project)
+        JavaFileMaker.create_pojo_response_class_for_mid_level(project)
 
     def create_dto_class(self, table):
         """
@@ -278,7 +284,7 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        self.javafilemaker.create_pojo_and_dto_classes(table,"dto")
+        PojoAndDtoGenerator.create_pojo_and_dto_classes(table, "dto", self.tabledata)
 
     def create_health_check_controller(self, project):
         """
@@ -286,7 +292,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.javafilemaker.create_health_check_controller(project)
+        JavaFileMaker.create_health_check_controller(project)
 
     def create_controller_class(self, table):
         """
@@ -294,7 +300,7 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        self.javafilemaker.create_controller_class(table)
+        RestControllerGenerator.create_controller_class(table)
 
     def create_controller_class_for_mid_lvl(self, project):
         """
@@ -302,7 +308,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.javafilemaker.create_controller_class_for_mid_lvl(project, self.projectsnames, self.projectdata)
+        RestControllerGenerator.create_controller_class_for_mid_lvl(project, self.projectsnames, self.projectdata)
 
     def create_business_class(self, table):
         """
@@ -310,7 +316,7 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        self.javafilemaker.create_business_class(table)
+        BusinessGenerator.create_business_class(table)
 
     def create_business_class_for_mid_lvl(self, project):
         """
@@ -318,7 +324,7 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        self.javafilemaker.create_business_class_for_mid_lvl(project, self.projectsnames, self.projectdata)
+        BusinessGenerator.create_business_class_for_mid_lvl(project, self.projectsnames, self.projectdata)
 
     def create_pojo_test_file(self, table):
         """
@@ -326,7 +332,7 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        self.testfilemaker.create_pojo_test_class(table,"pojo")
+        PojoAndDtoTestGenerator.create_pojo_test_class(table,"pojo",self.tabledata)
 
     def create_dto_test_file(self, table):
         """
@@ -334,7 +340,7 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        self.testfilemaker.create_pojo_test_class(table,"dto")
+        PojoAndDtoTestGenerator.create_pojo_test_class(table,"dto",self.tabledata)
 
     def create__exceptions_test_class(self, table):
         """
@@ -342,7 +348,7 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        self.testfilemaker.create__exceptions_test_class(table)
+        TestFileMaker.create__exceptions_test_class(table)
 
     def create_randomizer_test_class(self, table):
         """
@@ -350,7 +356,7 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        self.testfilemaker.create_randomizer_test_class(table)
+        TestFileMaker.create_randomizer_test_class(table)
 
     def create_controller_test_file(self, table):
         """
@@ -358,7 +364,31 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        self.testfilemaker.create_controller_test_class(table)
+        RestControllerTestGenerator.create_controller_test_class(table)
+
+    def create_controller_test_file_for_mid_level(self, project):
+        """
+        this method creates the main test Java file in the project
+        :param project:
+        :return:
+        """
+        RestControllerTestGenerator.create_controller_test_class_for_mid_level(project, self.projectsnames, self.projectdata)
+
+    def create_business_test_class(self, table):
+        """
+        this method creates the Mock Business class for testing the Controller classes in the project
+        :param table:
+        :return:
+        """
+        BusinessTestGenerator.create_business_test_class(table)
+
+    def create_business_test_class_for_mid_lvl(self, project):
+        """
+        this method creates the Mock Business class for testing the Controller classes in the mid-level project
+        :param table:
+        :return:
+        """
+        BusinessTestGenerator.create_business_test_class_for_mid_lvl(project, self.projectsnames, self.projectdata)
 
     def create_table_properties(self,currenttable):
         """
@@ -374,7 +404,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.filemaker.createPostmanCollection(project)
+        FileMaker.createPostmanCollection(project)
 
     def make_postman_for_mid_level(self, project):
         """
@@ -382,7 +412,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.filemaker.make_postman_for_mid_level(project)
+        FileMaker.make_postman_for_mid_level(project)
 
     def backup_project(self, project):
         """
@@ -390,7 +420,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.filemaker.backup_project(project, self.destinationroot)
+        FileMaker.backup_project(project, self.destinationroot)
 
     def make_angular_project(self):
         """
@@ -398,7 +428,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.angularfilemaker.make_angular_project()
+        AngularFileMaker.make_angular_project(self.ang_proj_names,self.ang_proj_data,self.ang_root_dir)
 
     def create_docker_file(self, project):
         """
@@ -406,14 +436,14 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.filemaker.create_docker_file(project)
+        FileMaker.create_docker_file(project)
 
     def initialize_kubernetes_file(self):
         """
         this method will initialize a complete kubernetes file for our project
         :return:
         """
-        self.filemaker.initialize_kubernetes_file()
+        FileMaker.initialize_kubernetes_file()
 
     def create_kubernetes_file(self, project):
         """
@@ -421,7 +451,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.filemaker.create_kubernetes_file(project)
+        FileMaker.create_kubernetes_file(project)
 
     def create_kubernetes_commands_file(self, project):
         """
@@ -429,7 +459,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.filemaker.create_kubernetes_commands_file(project)
+        FileMaker.create_kubernetes_commands_file(project)
 
     def populate_kubernetes_commands_file(self, project):
         """
@@ -437,14 +467,14 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        self.filemaker.populate_kubernetes_commands_file(project)
+        FileMaker.populate_kubernetes_commands_file(project)
 
     def generate_ingress_file(self,localprojectsnames,localprojectdata):
         """
 
         :return:
         """
-        self.filemaker.create_ingress_file(self.projectsnames, self.projectdata,localprojectsnames,localprojectdata)
+        FileMaker.create_ingress_file(self.projectsnames, self.projectdata,localprojectsnames,localprojectdata)
 
     def run(self):
         """
@@ -461,8 +491,8 @@ class SpringBootProjectGenerator:
         for project in self.projectsnames:
             currentproject = self.projectdata[project]
             if(Configuration.create_angular_projects == True):
-                self.angularfilemaker.projectsnames.append(project)
-                self.angularfilemaker.projectdata[project] = currentproject
+                self.ang_proj_names.append(project)
+                self.ang_proj_data[project] = currentproject
             if(Configuration.backup_all_projects == True):
                 self.backup_project(currentproject)
             self.create_base_project_folders(currentproject)
@@ -479,7 +509,7 @@ class SpringBootProjectGenerator:
             self.create_exceptions_file(currentproject)
             self.make_rnf_exc_class(currentproject)
             self.make_spec_eh_class(currentproject)
-            self.create_pojo_resonse_class(currentproject)
+            self.create_pojo_response_class(currentproject)
             self.create__exceptions_test_class(currentproject)
             self.create_randomizer_test_class(currentproject)
             self.populate_kubernetes_commands_file(currentproject)
@@ -490,7 +520,7 @@ class SpringBootProjectGenerator:
                 currenttable.rootpackage = currentproject.rootpackage
                 currenttable.topmainpackage = currentproject.topmainpackage
                 currenttable.toptestpackage = currentproject.toptestpackage
-                self.create_table_properties(currenttable)
+                #self.create_table_properties(currenttable)
                 self.create_repository_file(currenttable)
                 self.create_pojo_class(currenttable)
                 self.create_dto_class(currenttable)
@@ -502,6 +532,7 @@ class SpringBootProjectGenerator:
                 self.create_dto_test_file(currenttable)
                 if (Configuration.bypass_controllers != True):
                     self.create_controller_test_file(currenttable)
+                    self.create_business_test_class(currenttable)
             self.create_postman_collection(currentproject)
         if (Configuration.use_naming_server == True):
             for project in self.projectsnames:
@@ -514,8 +545,8 @@ class SpringBootProjectGenerator:
             for projectname in localprojectsnames:
                 currentproject = localprojectdata[projectname]
                 if (Configuration.create_angular_projects == True):
-                    self.angularfilemaker.projectsnames.append(projectname)
-                    self.angularfilemaker.projectdata[projectname] = currentproject
+                    self.ang_proj_names.append(projectname)
+                    self.ang_proj_data[projectname] = currentproject
                 if (Configuration.backup_all_projects == True):
                     self.backup_project(currentproject)
                 self.create_base_project_folders(currentproject)
@@ -538,8 +569,12 @@ class SpringBootProjectGenerator:
                 self.create_proxy_classes_for_mid_levels(currentproject)
                 self.create_proxy_dtos_for_mid_lvl(currentproject)
                 self.create_proxy_pojos_for_mid_lvl(currentproject)
-                self.create_business_class_for_mid_lvl(currentproject)
-                self.create_controller_class_for_mid_lvl(currentproject)
+                if (Configuration.bypass_business != True):
+                    self.create_business_class_for_mid_lvl(currentproject)
+                if (Configuration.bypass_controllers != True):
+                    self.create_controller_class_for_mid_lvl(currentproject)
+                    self.create_controller_test_file_for_mid_level(currentproject)
+                    self.create_business_test_class_for_mid_lvl(currentproject)
                 self.make_postman_for_mid_level(currentproject)
                 self.populate_kubernetes_commands_file(currentproject)
         if (Configuration.create_angular_projects == True):

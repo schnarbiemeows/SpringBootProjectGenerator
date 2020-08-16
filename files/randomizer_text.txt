@@ -106,6 +106,14 @@ public class Randomizer {
 		return new Date();
 	}
 
+    /**
+	 * generate a random boolean
+	 * @return
+	 */
+	public static boolean randomBoolean() {
+		return true;
+	}
+
 	/**
 	 * generate a random Timestamp
 	 * @return

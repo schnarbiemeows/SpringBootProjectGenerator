@@ -32,13 +32,23 @@ class Configuration:
         3 - manually specify the table grouping using a text file called groupings.txt(located in the files folder in this project)
 
     """
-    generation_type = 3
-    project_name = "groups-test"
+    generation_type = "<1,2, or 3>"
+    project_name = "<give a project name if 2 is selected>"
     """
         beginning_port_num : this is the port # for the first application. numbers are generated consecutively, so if you are generating
         multiple services, the first one will be this number, the next one will be this number +1, etc....
     """
     beginning_port_num = 8010
+    """
+        make_mid_lvl_services : would you like to make some mid-level SB services that make calls to your CRUD services?
+                                use the file configuration/mid_level.txt to map the mid-level services to the CRUD services you would
+                                like each service to have proxies for.
+                                these mid-level service will come with some default REST endpoints in the controller(like a healthcheck GET),
+                                will have no repository interface, but will have proxies to the CRUD services, with DTOs and POJOs
+                                set = True, otherwise, defaults to False
+    """
+    make_mid_lvl_services = True
+    mid_lvl_port_num = 8182
     """
         backup_all_projects :
     """
@@ -63,9 +73,6 @@ class Configuration:
     """
     use_config_server = False
     spring_cloud_config_uri = "spring.cloud.config.uri=< config server uri >"
-
-
-
     """
         use_sonar_jacoco : do you want to include sonarQube code analysis functionality and Jaccoco code coverage functionality?
                             set = True, otherwise, defaults to False
@@ -93,17 +100,6 @@ class Configuration:
     """
     use_gateway_server = False
     gateway_server_url = "http://localhost:8765"
-
-    """
-        make_mid_lvl_services : would you like to make some mid-level SB services that make calls to your CRUD services?
-                                use the file configuration/mid_level.txt to map the mid-level services to the CRUD services you would
-                                like each service to have proxies for.
-                                these mid-level service will come with some default REST endpoints in the controller(like a healthcheck GET),
-                                will have no repository interface, but will have proxies to the CRUD services, with DTOs and POJOs
-                                set = True, otherwise, defaults to False
-    """
-    make_mid_lvl_services = True
-    mid_lvl_port_num = 8101
     """
         bypass_business   : True or False. If True, the program will NOT remake the business classes for each project. Use this feature if you
                             don't want the program to overwrite any business logic that you might be working on. defaults to False.
@@ -112,29 +108,35 @@ class Configuration:
     """
     bypass_business = False
     bypass_controllers = False
-
     """
         create_angular_projects : this will make Angualr 8 UI projects for each of the CRUD projects and mid-level projects
         angular_directory : this is the directory where you want the angular project files to go in; it is up to the user to manually copy these
                             files/folders into their Angular projects
     """
-
     create_angular_projects = False
-    angular_dest_directory = "/angular_code/servings"
+    angular_dest_directory = "<where do you want the generated angular code to go>"
     # dependencies
     angular_boostrap = '4.0.0-beta.2'
     angular_core_js = '^3.6.5'
     angular_font_awesome = '^4.7.0'
     angular_jquery = '^3.5.0'
     angular_popper_js = '^1.16.1'
-
+    """
+        what needs to be installed into an empty project:
+        npm install bootstrap
+        npm install core-js
+        npm install font-awesome
+        npm install jquery
+        npm install rxjs-compat
+        npm install popper.js
+        for the pagination, you need to run this command:
+        npm install ngx-pagination --save
+    """
     """
         use_distributed_tracing : this feature will enable spring cloud sleuth to generate a unique transaction ID for each transaction
                                     this is part of distributed central logging functionality
     """
-
     use_distributed_tracing = False
-
     """
         use_docker              : use docker and Kubernetes. This feature will create a Docker file and deployment.yml and/or docker-compose files.
         docker_remote_repo_name : your username on the remote repository site DockerHub. the projects are configured for pushing to
@@ -150,8 +152,11 @@ class Configuration:
     docker_localhost_url = "192.168.99.100"
     kubernetes_use_detailed_deployment_specs = False
     kubernetes_complete_file_location = "<where you want your complete kubernetes file to go>"
-
-
+    """
+        postmandirectory    :   generate postman JSON files for each microservice that can be imported as a 
+                                collection in postman,
+                                will include all of the servive calls for each service
+    """
     postmandirectory = "<where you want your Postman collections to go>"
 
     # for the application.properties file - this is for local testing

@@ -2,20 +2,22 @@
 # <project name> : <comma separated list of lower level project names>
 #
 # create a new account
-#create-account:action_type,users,users_hist,groups,groups_hist,
+# create-account:action_type,users,users_hist,groups,groups_hist,
 # login to application
-#login-action:
+# login-action:
 # determine a user's permissions
-#roles-service:users,
+# roles-service:users,
 # add daily weight measurement and retrieve weight data
-#use-daily-weight:daily_weight,
+# use-daily-weight:daily_weight,
 # view everything eaten on a given day
-#view-daily-totals:
+# view-daily-totals:
 # add an item to a daily totals
-#add-item-to-daily:action_type,
+# add-item-to-daily:action_type,
 # find a recipe/ingredient
-#find-food-item:
+# find-food-item:
 # add a dietary note and retrieve notes
-#use-dietary-notes:
-#diet-and-notes:daily-weight,daily-dietary-notes,user-date
-servings:serv-type-svc
+# use-dietary-notes:
+# diet-and-notes:daily-weight,daily-dietary-notes,user-date
+# servings:serv-type-svc
+#interview2:question2,question-category2
+fk-mid:fk1
