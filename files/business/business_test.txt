@@ -1,0 +1,73 @@
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import $.exceptions.ResourceNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import $.dtos.%DTO;
+import $.pojos.%;
+import $.services.%Repository;
+
+/**
+ * this class retrieves data from the controller class
+ * most business logic should be put in this class
+ * @author ^
+ *
+ */
+@Component
+public class %Business {
+
+
+	/**
+	 * get all % records
+	 * @return
+	 * @throws Exception
+	 */
+	public List<%DTO> getAll%() throws Exception {
+	    System.out.println("Inside Mock Business Class");
+		List<%DTO> &DTO = new ArrayList<%DTO>();
+		return &DTO;
+	}
+
+	/**
+	 * get % by primary key
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public %DTO find%ById(int id) throws Exception {
+		return new %DTO();
+	}
+
+	/**
+	 * create a new %
+	 * @param data
+	 * @return
+	 */
+	public %DTO create%(%DTO data) {
+        data.setPRIMARY_KEY(1);
+        return data;
+	}
+
+	/**
+	 * update a %
+	 * @param data
+	 * @return
+	 * @throws Exception
+	 */
+	public %DTO update%(%DTO data) throws Exception {
+		return data;
+	}
+
+	/**
+	 * delete a % by primary key
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public String delete%(int id) throws Exception {
+		return "Successfully Deleted";
+	}
+
+    FKSECTION
+}

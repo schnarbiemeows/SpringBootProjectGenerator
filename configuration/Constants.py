@@ -5,6 +5,25 @@ class Constants:
 # general constants
     tab = "\t"
 
+
+    mysqlnumberset = set(
+    ["numeric", "decimal", "integer", "bigint", "smallint", "mediumint", "float", "real", "dec", "int", "fixed",
+     "double precision", "double", "bit"])
+    mysqldatetypes = set(["date", "datetime", "timestamp", "time", "year"])
+    mysqlstringtypes = set(["varchar", "char", "binary", "varbinary", "blob", "text", "enum", "set"])
+    mysqlboolean = set(["boolean"])
+    pound_sign = "#"
+    semi_quote = ";"
+    sq_repl = "@!&"
+    comma_repl = "&!@"
+    tick_repl = "^%+"
+    tick_space_repl = "~|*"
+    dash_dash = "--"
+    backtick = "`"
+    dblquote = "\""
+    singlquote = "'"
+    comment = "comment"
+
 # general java imports
 
     import_serializeable = "import java.io.Serializable;"
@@ -38,16 +57,17 @@ class Constants:
     doc_emp = "/**\n * ^\n */\n"
     doc_get_all = "/**\n\t * get all ^ records\n\t * @return Iterable<^>\n\t */\n"
     doc_get_pk = "/**\n\t * get ^ by primary key\n\t * @param id\n\t * @return ^\n\t */\n"
+    doc_get_fk = "/**\n\t * get List<^DTO> by foreign key : z\n\t * @param z\n\t * @return List<^>\n\t * @throws Exception\n\t*/\n"
+    doc_get_all_fk = "/**\n\t * get ^ by all foreign keys\n\t * @param id\n\t * @return ^\n\t */\n"
+    doc_query_fk = "/**\n\t * get Iterable<^> by foreign key : z\n\t * @param z\n\t * @return Iterable<^>\n\t*/\n"
+    doc_query_all_fk = "/**\n\t * get Iterable<^> by all foreign keys\n\t * @return Iterable<^>\n\t*/\n"
     doc_create = "/**\n\t * create a new ^\n\t * @param ^\n\t * @return ^\n\t */\n"
     doc_update = "/**\n\t * update a ^\n\t * @param ^\n\t * @return ^\n\t */\n"
     doc_delete = "/**\n\t * delete a ^ by primary key\n\t * @param id\n\t */\n"
     doc_proxy = "\t"+doc_opn+"\n"+"\t *\n"+"\t * @param\n"+"\t * @return\n"+"\t **/\n"
-
+    doc_test_get_fk = "/**\n\t * test getting all ^ by foreign key z\n\t * @throws URISyntaxException\n\t*/"
+    doc_test_get_by_all_fk = "/**\n\t * test getting all ^ by all foreign keys\n\t * @throws URISyntaxException\n\t*/"
 # pom file
-    xml_grp = "<groupId>*</groupId>"
-    xml_art = "<artifactId>*</artifactId>"
-    xml_name = "<name>*</name>"
-    xml_desc = "<description>CRUD application for the * project</description>"
 
 # main application file
     import_feign = "import org.springframework.cloud.openfeign.EnableFeignClients;"
@@ -79,6 +99,8 @@ class Constants:
     import_notnull = "import javax.validation.constraints.NotNull"
     ann_entity = "@Entity"
     ann_table = '@Table(name = "*")'
+    ann_table_with_keys = '@Table(name = "*", uniqueConstraints={XXX})'
+    ann_unq_id = '@UniqueConstraint( columnNames = {"'
     ann_id = "@Id"
     ann_autogen = "@GeneratedValue(strategy=GenerationType.AUTO)"
     ann_column = '@Column(name = "*")'
@@ -88,6 +110,7 @@ class Constants:
     ann_notnull = '@NotNull(message = "* may not be null")'
     str_tostring = "public String toString() "
     str_super = "super();"
+    cut = "classUnderTest"
 
 # controllers classes
 
@@ -108,10 +131,13 @@ class Constants:
     ann_autowired = "@Autowired"
     ann_getmapping = '@GetMapping(path = "/*")'
     ann_getsinglemapping = '@GetMapping(path = "/findById/{id}")'
+    ann_getfkmapping = '@GetMapping(path = "/findBy^/{id}")'
+    ann_get_mult_fk_maps = '@GetMapping(path = "/findBy^/X")'
     ann_postmapping = '@PostMapping(path = "/*")'
     ann_delmapping = '@DeleteMapping(path = "/*/{id}")'
     ann_pathvar = "@PathVariable"
     ann_reqbody = "@RequestBody"
+    record = "record"
 
 # business classes
 
@@ -123,8 +149,12 @@ class Constants:
 
     pckg_services = "services"
     import_repo = "import org.springframework.data.repository.CrudRepository;"
+    import_query = "import org.springframework.data.jpa.repository.Query;"
+    import_param = "import org.springframework.data.repository.query.Param;"
     import_pojo = "import %;"
-    class_decl_repo = "public interface *Repository extends CrudRepository<*, Integer>{\n\n}"
+    class_decl_repo = "public interface *Repository extends CrudRepository<*, Integer>{\n\n"
+    query = "@Query"
+    tilde_l_star = "~|*"
 
 # feign/Ribbon proxy class
 

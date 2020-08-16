@@ -10,6 +10,7 @@ XXX
 })
 export class %Component implements OnInit {
   ZZZ
+    p: number = 1;
     showExtended: boolean = true;
     loaded: boolean = false;
     alwaysHidden: boolean = true;

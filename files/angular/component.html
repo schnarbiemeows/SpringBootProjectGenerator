@@ -1,30 +1,46 @@
-<h2>XXX</h2>
-<h4 *ngIf="!loaded">Loading XXX...</h4>
-<div *ngIf="loaded">
-  <div class="card">
-    <div class="card-content">
-      <table class="table">
-        <thead>
-          <tr>
-            YYY
-          </tr>
-        </thead>
-        <tbody *ngFor="let dto of %; let i = index">
-          <tr>
-            ZZZ
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-    <div class="card">
-        <button *ngIf="!editMode" (click)="showXXXForm = !showXXXForm" class="btn btn-dark mb-3 mt-3">{{this.addbarmsg}}</button>
-        <div class="card card-body mb-3" *ngIf="showXXXForm">
-          <h2>{{this.formmsg}}</h2>
-          <form (submit)="onSubmit($event)">
-              WWW
-            <button (click)="addXXX()" class="btn btn-block mb-3">{{this.addbarmsg}}</button>
-          </form>
+ <div class="container-fluid border rounded" name="container2">
+    <div class="row" style="height:900px;">
+		<div class="col col-sm-2 mh-100">
+
+		</div>
+		<div class="col col-sm-8 mh-100">
+          <div class="card bg-secondary border-info">
+            <h2 class="text-center">XXX</h2>
+          </div>
+          <h4 *ngIf="!loaded">Loading XXX...</h4>
+          <div *ngIf="loaded">
+            <div class="card border-info"> <!-- table section -->
+              <div class="card-body table-responsive">
+                <table class="table table-bordered table-hover rounded">
+                  <thead>
+                    <tr>
+                      YYY
+                    </tr>
+                  </thead>
+                  <tbody *ngFor="let dto of % | paginate: { itemsPerPage: 10, currentPage: p }; let i = index">
+                    <tr>
+                      ZZZ
+                    </tr>
+                  </tbody>
+                </table>
+                <!-- https://www.npmjs.com/package/ngx-pagination -->
+						<pagination-controls (pageChange)="p = $event"></pagination-controls>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+              <button *ngIf="!editMode" (click)="showXXXForm = !showXXXForm" class="btn btn-dark mb-3 mt-3">{{this.addbarmsg}}</button>
+              <div class="card card-body mb-3" *ngIf="showXXXForm">
+                <h2>{{this.formmsg}}</h2>
+                <form (submit)="onSubmit($event)">
+                    WWW
+                  <button (click)="addXXX()" class="btn btn-block mb-3">{{this.addbarmsg}}</button>
+                </form>
+              </div>
+          </div>
         </div>
-    </div>
+        <div class="col col-sm-2 mh-100">
+
+        </div>
+	</div>
 </div>

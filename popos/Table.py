@@ -27,12 +27,15 @@ class Table:
         self.fieldnames = []
         self.fielddata = {}
         self.hasprimary = False
-        self.primary_name = None
-        self.hasunique = False
-        self.unique_name = None
+        self.fksymbolnames = []
+        self.fksymboldata = {}
+        self.parentkeysymbolnames = []
+        self.parentkeysymboldata = {}
+        self.primarykeys = []
+        self.uniquekeys = []
+        self.droppk = False
         self.createtablestring = createtablestring
         self.configure_names()
-
 
     def configure_names(self):
         """
@@ -41,40 +44,46 @@ class Table:
         """
         utilities = Utilities()
         # assume that the table name may have underscores, but no dashes
-        self.pomname = self.tablename.lower().replace("_","-")
+
+        self.correctedtablename = self.tablename.replace("`","").replace("~|*", "_")
+        self.pomname = self.correctedtablename.lower().replace("_","-")
         self.projectname = self.pomname
-        self.lowercasename = sub('[^A-Za-z]+', '', self.tablename).lower()
-        print("converting tablename : " + self.tablename + " to pom name = " + self.pomname)
-        if(self.tablename.find("_")>-1):
+        self.lowercasename = sub('[^A-Za-z0-9]+', '', self.correctedtablename).lower()
+        #print("converting tablename : " + self.tablename + " to pom name = " + self.pomname)
+        if(self.correctedtablename.find("_")>-1):
             index = 0
             convertedjavaname = ''
             toUpper = False
-            x = range(len(self.tablename))
+            x = range(len(self.correctedtablename))
             for n in x:
                 if(toUpper == True):
-                    convertedjavaname += self.tablename[n].upper()
+                    convertedjavaname += self.correctedtablename[n].upper()
                     toUpper = False
-                elif(self.tablename[n] == "_"):
+                elif(self.correctedtablename[n] == "_"):
                     toUpper = True
                 else:
-                    convertedjavaname += self.tablename[n]
+                    convertedjavaname += self.correctedtablename[n]
             self.camelcasejavaname = utilities.capitalize(convertedjavaname)
         else:
-            self.camelcasejavaname = utilities.capitalize(self.tablename)
+            self.camelcasejavaname = utilities.capitalize(self.correctedtablename)
         self.dtoname = self.camelcasejavaname + "DTO"
-        print("converting tablename : " + self.tablename + " to java name = " + self.camelcasejavaname)
-        print("converting tablename : " + self.tablename + " to lower name = " + self.lowercasename)
+        #print("converting tablename : " + self.correctedtablename + " to java name = " + self.camelcasejavaname)
+        #print("converting tablename : " + self.correctedtablename + " to lower name = " + self.lowercasename)
 
-    def properties(self):
+    def properties(self,outputfile=None):
         """
-        print out the objects fields and properties
+        #print out the objects fields and properties
         :return:
         """
-        print("Table - tablename = " + self.tablename)
-        print("Table - pomname = " + self.pomname)
-        print("Table - camelcasejavaname = " + self.camelcasejavaname)
-        print("Table - lowercasename = " + self.lowercasename)
-        print("Table - projectresourcesfolder = " + self.projectresourcesfolder)
-        print("Table - topmainpackage = " + self.topmainpackage)
-        print("Table - toptestpackage = " + self.toptestpackage)
-        print("Table - rootpackage = " + self.rootpackage)
+        #print("Table - tablename = " + self.tablename)
+        #print("Table - pomname = " + self.pomname)
+        #print("Table - camelcasejavaname = " + self.camelcasejavaname)
+        #print("Table - lowercasename = " + self.lowercasename)
+        if(outputfile is not None):
+            outputfile.write("Table - tablename = " + self.tablename+"\n")
+            outputfile.write("Table - pomname = " + self.pomname+"\n")
+            outputfile.write("Table - camelcasejavaname = " + self.camelcasejavaname+"\n")
+            outputfile.write("Table - lowercasename = " + self.lowercasename+"\n")
+        for item in self.fieldnames:
+            currentitem = self.fielddata[item]
+            currentitem.properties(outputfile)

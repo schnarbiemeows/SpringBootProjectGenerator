@@ -1,0 +1,6 @@
+FROM openjdk:11
+VOLUME /tmp
+EXPOSE XXX
+ADD target/*.jar app.jar
+ENV JAVA_OPTS=""
+ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -jar /app.jar ${0} ${@}"]

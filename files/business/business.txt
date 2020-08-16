@@ -1,4 +1,7 @@
 import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import $.exceptions.ResourceNotFoundException;
@@ -27,9 +30,15 @@ public class %Business {
 	 * @return
 	 * @throws Exception
 	 */
-	public Iterable<%> getAll%() throws Exception {
+	public List<%DTO> getAll%() throws Exception {
 		Iterable<%> & = service.findAll();
-		return &;
+		Iterator<%> &s = &.iterator();
+		List<%DTO> &dto = new ArrayList();
+		while(&s.hasNext()) {
+			% item = &s.next();
+			&dto.add(item.toDTO());
+		}
+		return &dto;
 	}
 
 	/**
@@ -38,11 +47,11 @@ public class %Business {
 	 * @return
 	 * @throws Exception
 	 */
-	public % find%ById(int id) throws Exception {
+	public %DTO find%ById(int id) throws Exception {
 		Optional<%> &Optional = service.findById(id);
 		if(&Optional.isPresent()) {
 			% results = &Optional.get();
-			return results;
+			return results.toDTO();
 		} else {
 			throw new ResourceNotFoundException("id = " + id + " not found");
 		}
@@ -53,11 +62,11 @@ public class %Business {
 	 * @param data
 	 * @return
 	 */
-	public % create%(%DTO data) {
+	public %DTO create%(%DTO data) {
 		try {
 		    % createdData = data.toEntity();
 		    createdData = service.save(createdData);
-		    return createdData;
+		    return createdData.toDTO();
 		} catch (Exception e) {
 			throw e;
 		}
@@ -69,14 +78,14 @@ public class %Business {
 	 * @return
 	 * @throws Exception
 	 */
-	public % update%(%DTO data) throws Exception {
-		Optional<%> &Optional = service.findById(data.XXX);
+	public %DTO update%(%DTO data) throws Exception {
+		Optional<%> &Optional = service.findById(data.PRIMARY_KEY);
 		if(&Optional.isPresent()) {
 		    % updatedData = data.toEntity();
 			updatedData = service.save(updatedData);
-			return updatedData;
+			return updatedData.toDTO();
 		} else {
-			throw new ResourceNotFoundException("id = " + data.XXX + " not found");
+			throw new ResourceNotFoundException("id = " + data.PRIMARY_KEY + " not found");
 		}
 	}
 
@@ -95,5 +104,6 @@ public class %Business {
 			throw new ResourceNotFoundException("id = " + id + " not found");
 		}
 	}
-	
+
+	FKSECTION
 }

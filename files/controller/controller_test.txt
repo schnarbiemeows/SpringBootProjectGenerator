@@ -14,6 +14,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -25,7 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
-import XXX;
+import IMPORTS_SECTION;
 
 /**
  * this class tests the %Controller class
@@ -44,25 +46,17 @@ public class %ControllerTest {
 	@LocalServerPort
 	int randomServerPort;
 
-    private static %DTO &;
-
-    /**
-	 * create a shared instance of our Entity Bean
-	 * @throws Exception
+	/**
+	 * create a Mock Business object
 	 */
-    @BeforeClass
-	public static void setUp() throws Exception {
-		& = generateRandom%();
-	}
+	@Mock
+	private %Business &Business;
 
-    /**
-	 * clear our Entity Bean for garbage collection
-	 * @throws Exception
-	 */
-	@AfterClass
-	public static void tearDown() throws Exception {
-		& = null;
-	}
+	/**
+     * inject the Mock into the RestTemplate
+     */
+    @InjectMocks
+    private RestTemplate restTemplate = new RestTemplate();
 
 	/**
 	 * test creating a new %
@@ -71,7 +65,7 @@ public class %ControllerTest {
 	@Test
 	public void testA_Create%() throws URISyntaxException
 	{
-		RestTemplate restTemplate = new RestTemplate();
+	    %DTO & = generateRandom%();
 		System.out.println("RANDOM SERVER PORT = " + randomServerPort);
 		System.out.println(&.toString());
 		final String createUrl = "http://localhost:" + randomServerPort + "/&/create";
@@ -84,8 +78,7 @@ public class %ControllerTest {
 		// Verify request succeed
 		System.out.println("FINISHED testCreate + " + result.getBody().toString());
 		assertEquals(201, result.getStatusCodeValue());
-        & = %DTO.fromJson(result.getBody().toString());
-	}
+    }
 
     /**
 	 * test getting all %
@@ -94,7 +87,6 @@ public class %ControllerTest {
 	@Test
 	public void testB_GetAll%() throws URISyntaxException
 	{
-		RestTemplate restTemplate = new RestTemplate();
 		System.out.println("RANDOM SERVER PORT = " + randomServerPort);
 		final String baseUrl = "http://localhost:" + randomServerPort + "/&/all";
 		URI uri = new URI(baseUrl);
@@ -111,9 +103,8 @@ public class %ControllerTest {
 	@Test
 	public void testC_Get%() throws URISyntaxException
 	{
-		RestTemplate restTemplate = new RestTemplate();
 		System.out.println("RANDOM SERVER PORT = " + randomServerPort);
-		QQQ
+		int num = 1;
 		final String baseUrl = "http://localhost:" + randomServerPort + "/&/findById/" + num;
 		URI uri = new URI(baseUrl);
 		HttpEntity<String> request = new HttpEntity<>(new String());
@@ -129,7 +120,7 @@ public class %ControllerTest {
 	@Test
 	public void testD_Update%() throws URISyntaxException
 	{
-		RestTemplate restTemplate = new RestTemplate();
+	    %DTO & = generateRandom%();
 		final String updateUrl = "http://localhost:" + randomServerPort + "/&/update";
 		URI uri = new URI(updateUrl);
 		HttpEntity<%DTO> request = new HttpEntity<>(&);
@@ -146,8 +137,8 @@ public class %ControllerTest {
 	@Test
 	public void testE_Delete%() throws URISyntaxException
 	{
-		RestTemplate restTemplate = new RestTemplate();
-		QQQ
+		%DTO & = generateRandom%();
+		int num = 1;
 		final String deleteUrl = "http://localhost:" + randomServerPort + "/&/delete/" + num;
 		URI uri = new URI(deleteUrl);
 		HttpEntity<%DTO> request = new HttpEntity<>(&);
@@ -157,7 +148,9 @@ public class %ControllerTest {
 		assertEquals(200, result.getStatusCodeValue());
 	}
 
+    FKSECTION
+
 	public static %DTO generateRandom%() {
-		ZZZ
+		RANDOM_DTO_GENERATOR
 	}
 }

@@ -13,26 +13,28 @@ class JsonUtility:
 
     numbers_and_strings = "abcdefghijklmnopqrstuvwxyz0123456789"
 
-    def createPostmanCollection(self,project):
+    @staticmethod
+    def createPostmanCollection(project):
         """
         this method will create the postman collection for the CRUD level projects
         :param project:
         :return:
         """
-        tabs = "\t"
+        tabs = Constants.tab
         jsonstr = '{\n'
-        jsonstr += self.make_info_part(project)
+        jsonstr += JsonUtility.make_info_part(project)
         jsonstr += tabs + '"item": [\n'
         for name in project.tablenames:
             currenttable = project.tabledata[name]
-            jsonstr += self.add_table_json(currenttable, project)
+            jsonstr += JsonUtility.add_table_json(currenttable, project)
         jsonstr = jsonstr[0:-2] + '\n' + tabs + '],\n' + tabs + '"protocolProfileBehavior": {}\n}'
         postmanfile = open(Configuration.postmandirectory + "/" + project.pomname + ".postman_collection.json", "w")
         #postmanfile = open(project.projectresourcesfolder+project.pomname+".postman_collection.json","w")
         postmanfile.write(jsonstr)
         postmanfile.close()
 
-    def make_postman_for_mid_level(self,project):
+    @staticmethod
+    def make_postman_for_mid_level(project):
         """
         this method will create the postman collection for the mid-level projects
         :param project:
@@ -41,14 +43,15 @@ class JsonUtility:
         # make a PostManObj
         postman_obj = PostManObj()
         # assemble the PostManObj, and fill it's RequestObj objects with the needed JSON text data
-        self.make_requests_from_controller(postman_obj, project)
+        JsonUtility.make_requests_from_controller(postman_obj, project)
         # assemble the final jsonstr JSON string object
-        jsonstr = self.assemble_final_json(postman_obj, project)
+        jsonstr = JsonUtility.assemble_final_json(postman_obj, project)
         postmanfile = open(Configuration.postmandirectory + "/" + project.pomname + ".postman_collection.json", "w")
         postmanfile.write(jsonstr)
         postmanfile.close()
 
-    def make_requests_from_controller(self,postman_obj, project):
+    @staticmethod
+    def make_requests_from_controller(postman_obj, project):
         """
         this method dynamically creates the postman request json based on the project's controller class
         :param postman_obj:
@@ -73,7 +76,7 @@ class JsonUtility:
                     # set the JSON text for the name
                     postman_obj.requests[counter].name = postman_obj.requests[counter].name.replace("XXX",tempname)
                     # finally, set other details about this request before we go on to look for the next request
-                    self.set_url_raw_host_and_path_items(postman_obj.requests[counter], postman_obj.request_name, project)
+                    JsonUtility.set_url_raw_host_and_path_items(postman_obj.requests[counter], postman_obj.request_name, project)
                     # reset this to False, so that the code knows to start looking for the next request
                     getname = False
                     counter += 1
@@ -95,7 +98,8 @@ class JsonUtility:
                 #print("name of the request is : ")
                 requestmappingfound = True
 
-    def set_url_raw_host_and_path_items(self, request_obj, request_name, project):
+    @staticmethod
+    def set_url_raw_host_and_path_items( request_obj, request_name, project):
         """
         this method figures out the items that need to go into the RequestObj.url_and_path list for a given request
         :param request_obj:
@@ -105,15 +109,18 @@ class JsonUtility:
         array = request_obj.path_name.split("/")
         secondarray = []
         # set the host and raw
-        if (Configuration.use_gateway_server == True):
+        if(Configuration.use_docker == True):
+            request_obj.raw += "http://" + Configuration.docker_localhost_url + ":" + str(project.portnum) + '/' + project.pomname
+            request_obj.host = "http://" + Configuration.docker_localhost_url + ":" + str(project.portnum) + '/' + project.pomname
+        elif (Configuration.use_gateway_server == True):
             request_obj.raw += Configuration.gateway_server_url + '/' + project.pomname + request_name
             request_obj.host = Configuration.gateway_server_url
             # add first item to the path array
             secondarray.append('"' + project.pomname + request_name + '"')
         else:
-            request_obj.raw += Configuration.hostname + project.port
-            request_obj.host = Configuration.hostname + project.port
-            secondarray.append('"' + request_obj.request_name + '"')
+            request_obj.raw += Configuration.hostname + ":" + str(project.portnum)
+            request_obj.host = Configuration.hostname + ":" + str(project.portnum)
+            secondarray.append('"' + request_name + '"')
         # add the remaining items to the path array
         for item in array:
             if(len(item)>0):
@@ -126,14 +133,15 @@ class JsonUtility:
         request_obj.url_path = request_obj.url_path.replace("XXX", ",".join(secondarray))
         request_obj.url = request_obj.url.replace("X1",request_obj.url_raw).replace("X2", request_obj.url_host).replace("X3", request_obj.url_path)
 
-    def assemble_final_json(self, postman_obj, project):
+    @staticmethod
+    def assemble_final_json( postman_obj, project):
         """
         this method will return the final json string to be printed to a text file
         :param postman_obj:
         :return:
         """
         # start the output json string
-        jsonstr = postman_obj.info.replace("XXX",self.generateRandomCollectionId()).replace("YYY",project.pomname)
+        jsonstr = postman_obj.info.replace("XXX",JsonUtility.generateRandomCollectionId()).replace("YYY",project.pomname)
         jsonstr += postman_obj.item
         counter = 0
         for req_object in postman_obj.requests:
@@ -153,141 +161,172 @@ class JsonUtility:
         jsonstr += postman_obj.closer
         return jsonstr
 
-    def make_info_part(self,project):
+    @staticmethod
+    def make_info_part(project):
         """
         this generates the general info part
         :param project:
         :param json:
         :return:
         """
-        tabs = "\t"
+        tabs = Constants.tab
         json = tabs+'"info": {\n'
-        json += tabs+tabs+'"_postman_id": "' + self.generateRandomCollectionId() + '",\n'
+        json += tabs+tabs+'"_postman_id": "' + JsonUtility.generateRandomCollectionId() + '",\n'
         json += tabs+tabs+'"name": "'+project.pomname+'",\n'
         json += tabs+tabs+'"description" : "postman testing collection for the '+project.pomname+' project",\n'
         json += tabs+tabs+'"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"\n'
         json += tabs+'},\n'
         return json
 
-    def add_table_json(self, table, project):
+    @staticmethod
+    def add_table_json( table, project):
         """
         this method adds the REST request details
         :param table:
         :return:
         """
-        tabs = "\t"
+        tabs = Constants.tab
+        hostname_and_port = "http://localhost:" + str(project.portnum)
+        path = table.lowercasename
+        if(Configuration.use_docker == True):
+            hostname_and_port = "http://" + Configuration.docker_localhost_url + ":" + str(project.portnum)
+        elif(Configuration.use_gateway_server == True):
+            hostname_and_port = str(Configuration.gateway_server_url)
+            path = str(project.pomname) + '/' + table.lowercasename
         # getAll operation
-        json = tabs + tabs + '{\n'
-        json += tabs + tabs + tabs + '"name": "getAll' + table.camelcasejavaname + '",\n'
-        json += tabs + tabs + tabs + '"request": {\n'
-        json += tabs + tabs + tabs + tabs + '"method": "GET",\n'
-        json += tabs + tabs + tabs + tabs + '"header": [],\n'
-        json += tabs + tabs + tabs + tabs + '"url": {\n'
-        if(Configuration.use_gateway_server == True):
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "' + str(Configuration.gateway_server_url) + '/' + str(project.pomname) + '/' + table.lowercasename + '/all",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "' + str(Configuration.gateway_server_url) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + str(project.pomname) + '/' + table.lowercasename + '", "all" ]\n'
-        else:
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "http://localhost:' + str(project.port) + '/' + table.lowercasename + '/all",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "http://localhost:' + str(project.port) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + table.lowercasename + '", "all" ]\n'
-        json += tabs + tabs + tabs + tabs + '}\n'
-        json += tabs + tabs + tabs + '},\n'
-        json += tabs + tabs + tabs + '"response": []\n'
-        json += tabs + tabs + '},\n'
+        json = tabs * 2+ '{\n'
+        json += tabs * 3+ '"name": "getAll' + table.camelcasejavaname + '",\n'
+        json += tabs * 3+ '"request": {\n'
+        json += tabs * 4 + '"method": "GET",\n'
+        json += tabs * 4 + '"header": [],\n'
+        json += tabs * 4 + '"url": {\n'
+        json += tabs * 5 + '"raw": "' + hostname_and_port + '/' + path + '/all",\n'
+        json += tabs * 5 + '"host": [ "' + hostname_and_port + '" ],\n'
+        json += tabs * 5 + '"path": [ "' + path + '", "all" ]\n'
+        json += tabs * 4 + '}\n'
+        json += tabs * 3+ '},\n'
+        json += tabs * 3+ '"response": []\n'
+        json += tabs * 2+ '},\n'
         # findById operation
-        json += tabs + tabs + '{\n'
-        json += tabs + tabs + tabs + '"name": "find' + table.camelcasejavaname + 'ById",\n'
-        json += tabs + tabs + tabs + '"request": {\n'
-        json += tabs + tabs + tabs + tabs + '"method": "GET",\n'
-        json += tabs + tabs + tabs + tabs + '"header": [],\n'
-        json += tabs + tabs + tabs + tabs + '"url": {\n'
-        if (Configuration.use_gateway_server == True):
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "' + str(Configuration.gateway_server_url) + '/' + str(project.pomname) + '/' + table.lowercasename + '/findById/1",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "' + str(Configuration.gateway_server_url) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + str(project.pomname) + '/' + table.lowercasename + '", "findById", "1" ]\n'
-        else:
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "http://localhost:' + str(project.port) + '/' + table.lowercasename + '/findById/1",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "http://localhost:' + str(project.port) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + table.lowercasename + '", "findById", "1" ]\n'
-        json += tabs + tabs + tabs + tabs + '}\n'
-        json += tabs + tabs + tabs + '},\n'
-        json += tabs + tabs + tabs + '"response": []\n'
-        json += tabs + tabs + '},\n'
+        json += tabs * 2+ '{\n'
+        json += tabs * 3+ '"name": "find' + table.camelcasejavaname + 'ById",\n'
+        json += tabs * 3+ '"request": {\n'
+        json += tabs * 4 + '"method": "GET",\n'
+        json += tabs * 4 + '"header": [],\n'
+        json += tabs * 4 + '"url": {\n'
+        json += tabs * 5 + '"raw": "' + hostname_and_port + '/' + path + '/findById/1",\n'
+        json += tabs * 5 + '"host": [ "' + hostname_and_port + '" ],\n'
+        json += tabs * 5 + '"path": [ "' + path + '", "findById", "1" ]\n'
+        json += tabs * 4 + '}\n'
+        json += tabs * 3+ '},\n'
+        json += tabs * 3+ '"response": []\n'
+        json += tabs * 2+ '},\n'
         # delete operation
-        json += tabs + tabs + '{\n'
-        json += tabs + tabs + tabs + '"name": "delete' + table.camelcasejavaname + '",\n'
-        json += tabs + tabs + tabs + '"request": {\n'
-        json += tabs + tabs + tabs + tabs + '"method": "DELETE",\n'
-        json += tabs + tabs + tabs + tabs + '"header": [],\n'
-        json += tabs + tabs + tabs + tabs + '"url": {\n'
-        if (Configuration.use_gateway_server == True):
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "' + str(Configuration.gateway_server_url) + '/' + str(project.pomname) + '/' + table.lowercasename + '/delete/1",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "' + str(Configuration.gateway_server_url) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + str(project.pomname) + '/' + table.lowercasename + '", "delete", "1" ]\n'
-        else:
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "http://localhost:' + str(project.port) + '/' + table.lowercasename + '/delete/1",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "http://localhost:' + str(project.port) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + str(project.pomname) + '/' + table.lowercasename + '", "delete", "1" ]\n'
-        json += tabs + tabs + tabs + tabs + '}\n'
-        json += tabs + tabs + tabs + '},\n'
-        json += tabs + tabs + tabs + '"response": []\n'
-        json += tabs + tabs + '},\n'
+        json += tabs * 2+ '{\n'
+        json += tabs * 3+ '"name": "delete' + table.camelcasejavaname + '",\n'
+        json += tabs * 3+ '"request": {\n'
+        json += tabs * 4 + '"method": "DELETE",\n'
+        json += tabs * 4 + '"header": [],\n'
+        json += tabs * 4 + '"url": {\n'
+        json += tabs * 5 + '"raw": "' + hostname_and_port + '/' + path + '/delete/1",\n'
+        json += tabs * 5 + '"host": [ "' + hostname_and_port + '" ],\n'
+        json += tabs * 5 + '"path": [ "' + path + '", "delete", "1" ]\n'
+        json += tabs * 4 + '}\n'
+        json += tabs * 3+ '},\n'
+        json += tabs * 3+ '"response": []\n'
+        json += tabs * 2+ '},\n'
         # create operation
-        json += tabs + tabs + '{\n'
-        json += tabs + tabs + tabs + '"name": "create' + table.camelcasejavaname + '",\n'
-        json += tabs + tabs + tabs + '"request": {\n'
-        json += tabs + tabs + tabs + tabs + '"method": "POST",\n'
-        json += tabs + tabs + tabs + tabs + '"header": [],\n'
-        json += tabs + tabs + tabs + tabs + '"body": {\n'
-        json += tabs + tabs + tabs + tabs + tabs + '"mode": "raw",\n'
-        json += tabs + tabs + tabs + tabs + tabs + '"raw": {},\n'
-        json += tabs + tabs + tabs + tabs + tabs + '"options": {\n'
-        json += tabs + tabs + tabs + tabs + tabs + tabs + '"raw": { "language" : "json" }\n'
-        json += tabs + tabs + tabs + tabs + tabs + '}\n'
-        json += tabs + tabs + tabs + tabs + '},\n'
-        json += tabs + tabs + tabs + tabs + '"url": {\n'
-        if (Configuration.use_gateway_server == True):
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "' + str(Configuration.gateway_server_url) + '/' + str(project.pomname) + '/' + table.lowercasename + '/create",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "' + str(Configuration.gateway_server_url) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + str(project.pomname) + '/' + table.lowercasename + '", "create" ]\n'
-        else:
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "http://localhost:' + str(project.port) + '/' + table.lowercasename + '/create",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "http://localhost:' + str(project.port) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + table.lowercasename + '", "create" ]\n'
-        json += tabs + tabs + tabs + tabs + '}\n'
-        json += tabs + tabs + tabs + '},\n'
-        json += tabs + tabs + tabs + '"response": []\n'
-        json += tabs + tabs + '},\n'
+        json += tabs * 2+ '{\n'
+        json += tabs * 3+ '"name": "create' + table.camelcasejavaname + '",\n'
+        json += tabs * 3+ '"request": {\n'
+        json += tabs * 4 + '"method": "POST",\n'
+        json += tabs * 4 + '"header": [],\n'
+        json += tabs * 4 + '"body": {\n'
+        json += tabs * 5 + '"mode": "raw",\n'
+        json += tabs * 5 + '"raw": {},\n'
+        json += tabs * 5 + '"options": {\n'
+        json += tabs * 5 + tabs + '"raw": { "language" : "json" }\n'
+        json += tabs * 5 + '}\n'
+        json += tabs * 4 + '},\n'
+        json += tabs * 4 + '"url": {\n'
+        json += tabs * 5 + '"raw": "' + hostname_and_port + '/' + path + '/create",\n'
+        json += tabs * 5 + '"host": [ "' + hostname_and_port + '" ],\n'
+        json += tabs * 5 + '"path": [ "' + path + '", "create" ]\n'
+        json += tabs * 4 + '}\n'
+        json += tabs * 3+ '},\n'
+        json += tabs * 3+ '"response": []\n'
+        json += tabs * 2+ '},\n'
         # update operation
-        json += tabs + tabs + '{\n'
-        json += tabs + tabs + tabs + '"name": "update' + table.camelcasejavaname + '",\n'
-        json += tabs + tabs + tabs + '"request": {\n'
-        json += tabs + tabs + tabs + tabs + '"method": "POST",\n'
-        json += tabs + tabs + tabs + tabs + '"header": [],\n'
-        json += tabs + tabs + tabs + tabs + '"body": {\n'
-        json += tabs + tabs + tabs + tabs + tabs + '"mode": "raw",\n'
-        json += tabs + tabs + tabs + tabs + tabs + '"raw": {},\n'
-        json += tabs + tabs + tabs + tabs + tabs + '"options": {\n'
-        json += tabs + tabs + tabs + tabs + tabs + tabs + '"raw": { "language" : "json" }\n'
-        json += tabs + tabs + tabs + tabs + tabs + '}\n'
-        json += tabs + tabs + tabs + tabs + '},\n'
-        json += tabs + tabs + tabs + tabs + '"url": {\n'
-        if (Configuration.use_gateway_server == True):
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "' + str(Configuration.gateway_server_url) + '/' + str(project.pomname) + '/' + table.lowercasename + '/update",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "' + str(Configuration.gateway_server_url) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + str(project.pomname) + '/' + table.lowercasename + '", "update" ]\n'
-        else:
-            json += tabs + tabs + tabs + tabs + tabs + '"raw": "http://localhost:' + str(project.port) + '/' + table.lowercasename + '/update",\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"host": [ "http://localhost:' + str(project.port) + '" ],\n'
-            json += tabs + tabs + tabs + tabs + tabs + '"path": [ "' + table.lowercasename + '", "update" ]\n'
-        json += tabs + tabs + tabs + tabs + '}\n'
-        json += tabs + tabs + tabs + '},\n'
-        json += tabs + tabs + tabs + '"response": []\n'
-        json += tabs + tabs + '},\n'
+        json += tabs * 2+ '{\n'
+        json += tabs * 3+ '"name": "update' + table.camelcasejavaname + '",\n'
+        json += tabs * 3+ '"request": {\n'
+        json += tabs * 4 + '"method": "POST",\n'
+        json += tabs * 4 + '"header": [],\n'
+        json += tabs * 4 + '"body": {\n'
+        json += tabs * 5 + '"mode": "raw",\n'
+        json += tabs * 5 + '"raw": {},\n'
+        json += tabs * 5 + '"options": {\n'
+        json += tabs * 5 + tabs + '"raw": { "language" : "json" }\n'
+        json += tabs * 5 + '}\n'
+        json += tabs * 4 + '},\n'
+        json += tabs * 4 + '"url": {\n'
+        json += tabs * 5 + '"raw": "' + hostname_and_port + '/' + path + '/update",\n'
+        json += tabs * 5 + '"host": [ "' + hostname_and_port + '" ],\n'
+        json += tabs * 5 + '"path": [ "' + path + '", "update" ]\n'
+        json += tabs * 4 + '}\n'
+        json += tabs * 3+ '},\n'
+        json += tabs * 3+ '"response": []\n'
+        json += tabs * 2+ '},\n'
+
+        # foreign key section
+        compoundFK = []
+        datatypes = []
+        inputparameters = []
+        counter = 0
+        for symbolname in table.fksymbolnames:
+            fklist = table.fksymboldata[symbolname]
+            for item in fklist:
+                field = table.fielddata[item[0]]
+                compoundFK.append(field.gettername)
+                datatypes.append("@PathVariable " + Utilities.translateDataType(field.datatype) + " id" + str(counter))
+                inputparameters.append("1")
+
+                json += tabs * 2 + '{\n'
+                json += tabs * 3 + '"name": "find' + table.camelcasejavaname + 'By' + field.gettername + '",\n'
+                json += tabs * 3 + '"request": {\n'
+                json += tabs * 4 + '"method": "GET",\n'
+                json += tabs * 4 + '"header": [],\n'
+                json += tabs * 4 + '"url": {\n'
+                json += tabs * 5 + '"raw": "' + hostname_and_port + '/' + path + '/findBy' + field.gettername +'/1",\n'
+                json += tabs * 5 + '"host": [ "' + hostname_and_port + '" ],\n'
+                json += tabs * 5 + '"path": [ "' + path + '", "findBy' + field.gettername +'" , "1" ]\n'
+                json += tabs * 4 + '}\n'
+                json += tabs * 3 + '},\n'
+                json += tabs * 3 + '"response": []\n'
+                json += tabs * 2 + '},\n'
+
+                counter += 1
+        if len(compoundFK) > 1:
+            compoundFKstr = "And".join(compoundFK)
+            urlText = compoundFKstr + "/" + "/".join(inputparameters)
+            json += tabs * 2 + '{\n'
+            json += tabs * 3 + '"name": "find' + table.camelcasejavaname + 'By' + compoundFKstr + '",\n'
+            json += tabs * 3 + '"request": {\n'
+            json += tabs * 4 + '"method": "GET",\n'
+            json += tabs * 4 + '"header": [],\n'
+            json += tabs * 4 + '"url": {\n'
+            json += tabs * 5 + '"raw": "' + hostname_and_port + '/' + path + '/findBy' + urlText + '",\n'
+            json += tabs * 5 + '"host": [ "' + hostname_and_port + '" ],\n'
+            json += tabs * 5 + '"path": [ "' + path + '", "findBy' + urlText + '", "1" ]\n'
+            json += tabs * 4 + '}\n'
+            json += tabs * 3 + '},\n'
+            json += tabs * 3 + '"response": []\n'
+            json += tabs * 2 + '},\n'
+
         return json
 
-    def generateRandomCollectionId(self):
+    @staticmethod
+    def generateRandomCollectionId():
         """
         this function will return a random postman collection id
         :return:
@@ -296,30 +335,30 @@ class JsonUtility:
         collection_id = ''
         while counter <8:
             index = random.randint(0, 35)
-            collection_id += self.numbers_and_strings[index]
+            collection_id += JsonUtility.numbers_and_strings[index]
             counter +=1
         collection_id += '-'
         counter = 0
         while counter <4:
             index = random.randint(0, 35)
-            collection_id += self.numbers_and_strings[index]
+            collection_id += JsonUtility.numbers_and_strings[index]
             counter +=1
         collection_id += '-'
         counter = 0
         while counter <4:
             index = random.randint(0, 35)
-            collection_id += self.numbers_and_strings[index]
+            collection_id += JsonUtility.numbers_and_strings[index]
             counter +=1
         collection_id += '-'
         counter = 0
         while counter <4:
             index = random.randint(0, 35)
-            collection_id += self.numbers_and_strings[index]
+            collection_id += JsonUtility.numbers_and_strings[index]
             counter +=1
         collection_id += '-'
         counter = 0
         while counter <12:
             index = random.randint(0, 35)
-            collection_id += self.numbers_and_strings[index]
+            collection_id += JsonUtility.numbers_and_strings[index]
             counter +=1
         return collection_id

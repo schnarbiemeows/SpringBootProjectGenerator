@@ -1,5 +1,6 @@
 from utilities.Utilities import *
 from re import *
+from configuration.Configuration import *
 
 """
     this class represent a project
@@ -10,6 +11,7 @@ class Project:
         """
 
     def __init__(self, pomname, port):
+        self.root = Configuration.destinationroot+"/" + pomname + "/" + pomname
         self.portnum = port
         self.pomname = pomname
         self.lowercasename = ''
@@ -22,6 +24,7 @@ class Project:
         self.tabledata = {}
         self.configure_names()
         self.is_mid_level = False
+        self.service_config = []
 
     def configure_names(self):
         """

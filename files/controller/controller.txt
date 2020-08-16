@@ -30,7 +30,7 @@ public class %Controller {
 	 */
 	@GetMapping(path = "/all")
 	public ResponseEntity<Object> getAll%() throws Exception {
-		Iterable<%> & = businessService.getAll%();
+		Iterable<%DTO> & = businessService.getAll%();
 		return ResponseEntity.status(HttpStatus.OK).body(&);
 	}
 
@@ -41,7 +41,7 @@ public class %Controller {
 	 */
 	@GetMapping(path = "/findById/{id}")
 	public ResponseEntity<Object> find%ById(@PathVariable int id) throws Exception {
-		% results = businessService.find%ById(id);
+		%DTO results = businessService.find%ById(id);
 		return ResponseEntity.status(HttpStatus.OK).body(results);
 	}
 
@@ -53,7 +53,7 @@ public class %Controller {
 	@PostMapping(path = "/create")
 	public ResponseEntity<Object> create%(@Valid @RequestBody %DTO data) {
 		try {
-		    % createdData = businessService.create%(data);
+		    %DTO createdData = businessService.create%(data);
 		    return ResponseEntity.status(HttpStatus.CREATED).body(createdData);
 		} catch (Exception e) {
 			throw e;
@@ -67,7 +67,7 @@ public class %Controller {
 	 */
 	@PostMapping(path = "/update")
 	public ResponseEntity<Object> update%(@Valid @RequestBody %DTO data) throws Exception {
-		% updatedData = businessService.update%(data);
+		%DTO updatedData = businessService.update%(data);
 		return ResponseEntity.status(HttpStatus.OK).body(updatedData);
 	}
 
@@ -82,4 +82,5 @@ public class %Controller {
 		return ResponseEntity.status(HttpStatus.OK).body(rb);
 	}
 
+    FKSECTION
 }

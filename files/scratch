@@ -1,0 +1,30 @@
+copy /y C:\angular_code\servings\servings\angular.json C:\Users\dylan\Angular7workspace\servings\angular.json
+copy /y C:\angular_code\servings\servings\package.json C:\Users\dylan\Angular7workspace\servings\package.json
+copy /y C:\angular_code\servings\servings\src\index.html C:\Users\dylan\Angular7workspace\servings\src\index.html
+copy /y C:\angular_code\servings\servings\src\app\app.module.ts C:\Users\dylan\Angular7workspace\servings\src\app\app.module.ts
+copy /y C:\angular_code\servings\servings\src\app\app-routing.module.ts C:\Users\dylan\Angular7workspace\servings\src\app\app-routing.module.ts
+copy /y C:\angular_code\servings\servings\src\app\app.component.html C:\Users\dylan\Angular7workspace\servings\src\app\app.component.html
+Xcopy /y /E /I C:\angular_code\servings\servings\src\app\components C:\Users\dylan\Angular7workspace\servings\src\app\components
+Xcopy /y /E /I C:\angular_code\servings\servings\src\app\guards C:\Users\dylan\Angular7workspace\servings\src\app\guards
+Xcopy /y /E /I C:\angular_code\servings\servings\src\app\models C:\Users\dylan\Angular7workspace\servings\src\app\models
+Xcopy /y /E /I C:\angular_code\servings\servings\src\app\services C:\Users\dylan\Angular7workspace\servings\src\app\services
+
+copy /y C:\angular_code\servings\serv-type-svc\angular.json C:\Users\dylan\Angular7workspace\serv-type-svc\angular.json
+copy /y C:\angular_code\servings\serv-type-svc\package.json C:\Users\dylan\Angular7workspace\serv-type-svc\package.json
+copy /y C:\angular_code\servings\serv-type-svc\src\index.html C:\Users\dylan\Angular7workspace\serv-type-svc\src\index.html
+copy /y C:\angular_code\servings\serv-type-svc\src\app\app.module.ts C:\Users\dylan\Angular7workspace\serv-type-svc\src\app\app.module.ts
+copy /y C:\angular_code\servings\serv-type-svc\src\app\app-routing.module.ts C:\Users\dylan\Angular7workspace\serv-type-svc\src\app\app-routing.module.ts
+copy /y C:\angular_code\servings\serv-type-svc\src\app\app.component.html C:\Users\dylan\Angular7workspace\serv-type-svc\src\app\app.component.html
+Xcopy /y /E /I C:\angular_code\servings\serv-type-svc\src\app\components C:\Users\dylan\Angular7workspace\serv-type-svc\src\app\components
+Xcopy /y /E /I C:\angular_code\servings\serv-type-svc\src\app\guards C:\Users\dylan\Angular7workspace\serv-type-svc\src\app\guards
+Xcopy /y /E /I C:\angular_code\servings\serv-type-svc\src\app\models C:\Users\dylan\Angular7workspace\serv-type-svc\src\app\models
+Xcopy /y /E /I C:\angular_code\servings\serv-type-svc\src\app\services C:\Users\dylan\Angular7workspace\serv-type-svc\src\app\services
+
+
+npm install bootstrap@4.0.0-beta2
+npm install core-js@3.6.5
+npm install jquery@3.5.0
+npm install font-awesome@4.7.0
+npm install popper.js@1.16.1
+npm install rxjs
+npm install rxjs-compat --save
