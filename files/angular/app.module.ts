@@ -6,17 +6,17 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NavbarComponent } from './components/navbar/navbar.component';
-XXX
+IMPORTS
 
 
 @NgModule({
   declarations: [
-    YYY
+    ADD_DECLARATIONS
   ],
   imports: [
-    ZZZ
+    ADD_MODULES
   ],
-  providers: [WWW],
+  providers: [ADD_PROVIDERS],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-XXX
+IMPORTS
 
 const routes: Routes = [
-YYY
+ROUTES
 ];
 ;
 @NgModule({

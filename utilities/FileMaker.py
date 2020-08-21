@@ -182,6 +182,7 @@ class FileMaker:
             resources_file.write(FileMaker.parseProperty(Configuration.app_log) + "\n")
             resources_file.write(FileMaker.parseProperty(Configuration.app_jpa) + "\n")
             resources_file.write(FileMaker.parseProperty(Configuration.app_jpa_show) + "\n")
+            resources_file.write(FileMaker.parseProperty(Configuration.app_hib_nmg) + "\n")
             resources_file.write(FileMaker.parseProperty(Configuration.app_hib_seq) + "\n")
             resources_file.write(FileMaker.parseProperty(Configuration.app_mysql_conn) + "\n")
             resources_file.write(FileMaker.parseProperty(Configuration.app_mysql_usr) + "\n")
@@ -200,6 +201,7 @@ class FileMaker:
             resources_file.write(Configuration.app_log + "\n")
             resources_file.write(Configuration.app_jpa + "\n")
             resources_file.write(Configuration.app_jpa_show + "\n")
+            resources_file.write(Configuration.app_hib_nmg + "\n")
             resources_file.write(Configuration.app_hib_seq + "\n")
             resources_file.write(Configuration.app_mysql_conn + "\n")
             resources_file.write(Configuration.app_mysql_usr + "\n")
@@ -217,6 +219,7 @@ class FileMaker:
             resources_file.write(Configuration.app_log + "\n")
             resources_file.write(Configuration.app_jpa + "\n")
             resources_file.write(Configuration.app_jpa_show + "\n")
+            resources_file.write(Configuration.app_hib_nmg + "\n")
             resources_file.write(Configuration.app_hib_seq + "\n")
             resources_file.write(Configuration.app_mysql_conn + "\n")
             resources_file.write(Configuration.app_mysql_usr + "\n")
@@ -524,6 +527,7 @@ class FileMaker:
         returnStr = "--from-literal=kub_" + Configuration.kub_app_log.replace("&","\&") + " "
         returnStr += "--from-literal=kub_" + Configuration.kub_app_jpa.replace("&","\&") + " "
         returnStr += "--from-literal=kub_" + Configuration.kub_app_hib_dial.replace("&","\&") + " "
+        returnStr += "--from-literal=kub_" + Configuration.kub_app_hib_nmg.replace("&", "\&") + " "
         returnStr += "--from-literal=kub_" + Configuration.kub_app_jpa_show.replace("&","\&") + " "
         returnStr += "--from-literal=kub_" + Configuration.kub_app_hib_seq.replace("&","\&") + " "
         returnStr += "--from-literal=kub_" + Configuration.kub_app_mysql_conn.replace("&","\&") + " "
@@ -553,7 +557,7 @@ class FileMaker:
         """
         space = " "
         destinationfile.write(space*8 + "env:\n")
-        configlist = [Configuration.kub_app_log, Configuration.kub_app_jpa , Configuration.kub_app_hib_dial , Configuration.kub_app_hib_seq , Configuration.kub_app_mysql_conn ,
+        configlist = [Configuration.kub_app_log, Configuration.kub_app_jpa , Configuration.kub_app_hib_dial , Configuration.kub_app_hib_nmg, Configuration.kub_app_hib_seq , Configuration.kub_app_mysql_conn ,
                       Configuration.kub_app_mysql_usr, Configuration.kub_app_jpa_show, Configuration.kub_app_actu_conf,  Configuration.kub_app_sec_usr, Configuration.kub_app_sec_pwd]
         x = range(len(configlist))
         for n in x:

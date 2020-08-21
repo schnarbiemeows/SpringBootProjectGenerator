@@ -1,0 +1,45 @@
+from https://dev.mysql.com/doc/refman/8.0/en/create-table-foreign-keys.html#foreign-key-identifiers
+
+what we need to do:
+
+we need to adjust the parser to handle a much wider range of DDL scenarios,
+including ALTER TABLE statements that might contains Foreign Key constraint
+or Primary Key constraint definitions. The two scenarios are either adding a PK or FK, 
+or dropping a PK or FK. compound PK and FKs must also be considered.
+We also need to:
+- remove any user comments (# --, or /* ... */ comments)
+- accomodate for any table or field names that are surrounded by backticks 
+
+assumptions:
+0. the SQL being given is VALID SQL; i.e., you could run it in total in an SQL
+	editor that was connected to a schema, and it would execute completely
+	without any errors - no guarantees if it is not
+1. the character ";" denotes the end of any major statement
+major statements are:
+- create table
+- alter table
+- insert into 
+- drop table
+2. we are only concerned with any "create table" and "alter table" statements;
+	the "alter table" statements we are looking for any indexes
+
+INPUTS/OUTPUTS - methods
+---------------
+method 1:	- parseSqlFileToExtractTableData method
+input: file
+output: a tuple of (List a,List b)
+List a = all "create table" statements
+@self.tablesnames = list of the table names
+@self.tabledata = Map("tablename" ->  "String of the entire create table statement"
+List b = all "alter table" statements
+
+
+problems with parseSqlFileToExtractTableData method:
+1. the create table statement could have a # in front of it
+2. the create table statement could be on the same line as a ";"
+3. a ";" could be inside a comment
+4. a # could be inside a comment
+5. 
+
+
+first prototype completed on 07/26/2020

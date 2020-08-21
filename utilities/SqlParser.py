@@ -162,7 +162,6 @@ class SqlParser:
     def joinAndResplit(self, inputfile):
         """
         read the entire file into 1 string
-        lowercase the string
         remove extra whitespace
         remove leading and trailing whitespaces after rejoining
         replace any spaces that occur between backticks:
@@ -171,12 +170,12 @@ class SqlParser:
         :param inputfile:
         :return:
         """
-        inputfilestring = " ".join(inputfile).lower()
+        inputfilestring = " ".join(inputfile)
         ticklist = inputfilestring.split("`")
         for i in range(0, len(ticklist)):
             if i % 2 != 0:
                 ticklist[i] = str(ticklist[i]).strip().replace(" ", SqlParser.tick_space_repl)
-        inputfilestring = "`".join(ticklist).lower()
+        inputfilestring = "`".join(ticklist)
         outputfile = inputfilestring.split(";")
         for i in range(0, len(outputfile)):
             outputfile[i] = str(outputfile[i]).strip()
@@ -184,12 +183,12 @@ class SqlParser:
 
     def filterStringByLambda(self, input, predicate, startsWith):
         if startsWith == True:
-            if input.startswith(predicate):
+            if input.lower().startswith(predicate):
                 return True
             else:
                 return False
         else:
-            if input.find(predicate) > -1:
+            if input.lower().find(predicate) > -1:
                 return True
             else:
                 return False
@@ -225,18 +224,18 @@ class SqlParser:
                 else --> just split by " ", take the first item and strip()         
         """
         fieldnames = []
-        if input.find("alter table") > -1:
-            substring = input[input.find("primary key") + 11:].strip()
+        if input.lower().find("alter table") > -1:
+            substring = input[input.lower().find("primary key") + 11:].strip()
             if substring[0:1] == "(":
                 fieldnames = substring[1:substring.find(")")].strip().split(",")
                 for i in range(0, len(fieldnames)):
                     fieldnames[i] = fieldnames[i].strip()
             else:
                 fieldnames = ["drop"]
-        elif input.find("create table") > -1:
+        elif input.lower().find("create table") > -1:
             commaindex = input.find(",")
-            pkindex = input.find("primary key")
-            wordsafterpk = input[input.find("primary key") + 11:].lstrip()
+            pkindex = input.lower().find("primary key")
+            wordsafterpk = input[input.lower().find("primary key") + 11:].lstrip()
             if wordsafterpk[0:1] == "(":
                 # only instance of where a compound PK could occur, and where the field name is after the words "primary key"
                 fieldnames = wordsafterpk.split(")")[0].replace("(", "").split(",")
@@ -247,7 +246,7 @@ class SqlParser:
                 # the primary key is a later field but can't be compound, so we can split by comma
                 temparray = input.split(",")
                 for item in temparray:
-                    if item.find("primary key") > -1:
+                    if item.lower().find("primary key") > -1:
                         fieldnames.append(item.strip().split(" ")[0].strip())
         print("returning primary keys for table: " + tablename)
         for i in range(0, len(fieldnames)):
@@ -298,8 +297,11 @@ class SqlParser:
         # some lines in our statement wont be fields
         lines_that_arenot_fields = []
         # pull out the beginning "create table" part, and remove any instances of the word "precision"
-        tempsqlstring = table.createtablestring.lower()[table.createtablestring.find("create table ") + 1:]
-        tempsqlstring = tempsqlstring[table.createtablestring.find("("):].replace(" precision", "")
+        tempsqlstring = table.createtablestring[table.createtablestring.lower().find("create table ") + 1:]
+        tempsqlstring = tempsqlstring[table.createtablestring.find("("):]\
+            .replace(" precision", "")\
+            .replace(" PRECISION", "")\
+            .replace(" Precision", "")
         # print("new create table statement is: " + tempsqlstring)
         # split the string by commas , whilst handling any commas inside quotes
         fieldarray = utilities.handleFieldsWithCommasAndParens(tempsqlstring)
@@ -330,12 +332,12 @@ class SqlParser:
                     if (datatypefull.find("(") > -1):
                         datatype = datatypefull[0:datatypefull.find("(")]
                         datatyperest = datatypefull[datatypefull.find("(") + 1:]
-                        if datatype.find("varchar") > -1:
+                        if datatype.lower().find("varchar") > -1:
                             newfield.lengthreq = True
                             newfield.set_length(datatyperest)
                     else:
                         datatype = datatypefull
-                    signedorno = itemstr.find("unsigned") > -1
+                    signedorno = itemstr.lower().find("unsigned") > -1
                     # translate the sql data type to java data type
                     newfield.translate_datatype(datatype, signedorno)
                     # figure out certain other properties of the field
@@ -403,14 +405,14 @@ class SqlParser:
         parenttablename = ''
         parentfieldname = []
         totalforeignkeys = []
-        if input.find("alter table") > -1:
-            beforefk = input.split("foreign key")[0]
-            afterfk = input.split("foreign key")[1]
+        if input.lower().find("alter table") > -1:
+            beforefk = input[0:self.findIndexOfGivenPhrase(input,"foreign key")]
+            afterfk = input[self.findIndexOfGivenPhrase(input,"foreign key")+11:]
             # beforefk
-            beforefk = beforefk.replace("alter", "").replace("table", "").replace("add", "").replace("constraint",
-                                                                                                     "").replace(
-                tablename, "")
-            if beforefk.find("drop") > -1:
+            words = ["alter","table","add","constraint"]
+            beforefk = self.replaceBunchOfWords(beforefk,words)\
+                .replace(tablename, "")
+            if beforefk.lower().find("drop") > -1:
                 fieldname.append("drop")
                 drop = True
             else:
@@ -426,22 +428,24 @@ class SqlParser:
                     symbolname = fieldname[0]
                 for i in range(0, len(fieldname)):
                     fieldname[i] = fieldname[i].strip()
-                parenttablename = afterfk.split("references")[1].split("(")[0].strip()
-                parentfieldname = afterfk.split("references")[1].split("(")[1].strip().split(")")[0].split(",")
+                referencesindex = afterfk.lower().find("references")+10
+                parenttablename = afterfk[referencesindex:].split("(")[0].strip()
+                parentfieldname = afterfk[referencesindex:].split("(")[1].strip().split(")")[0].split(",")
                 for i in range(0, len(parentfieldname)):
                     parentfieldname[i] = parentfieldname[i].strip()
                 totalforeignkeys.append((tablename, fieldname, symbolname, parenttablename, parentfieldname))
 
         else:
-            while input.find("foreign key") > -1:
-                input = input[input.find("foreign key") + 11:]
+            while input.lower().find("foreign key") > -1:
+                input = input[input.lower().find("foreign key") + 11:]
                 symbolname = input.split("(")[0].strip()  # if there is a symbol
                 fieldname = input.split("(")[1].strip().split(")")[0].split(",")
                 for i in range(0, len(fieldname)):
                     fieldname[i] = fieldname[i].strip()
                 if symbolname == '':
                     symbolname = fieldname[0]
-                substring = input.split("references")[1]
+                referencesindex = input.lower().find("references") + 10
+                substring = input[referencesindex:]
                 parenttablename = substring.split("(")[0].strip()
                 parentfieldname = substring.split("(")[1].split(")")[0].strip().split(",")
                 for i in range(0, len(parentfieldname)):
@@ -456,6 +460,28 @@ class SqlParser:
 
         return totalforeignkeys
 
+    def findIndexOfGivenPhrase(self, input, word):
+        """
+        this method is needed to find the location of a given phrase, like foreign key or primary key
+        :param input:
+        :return:
+        """
+        return input.lower().find(word)
+
+    def replaceBunchOfWords(self,input,words):
+        """
+        this method will remove all possible cases of a list of words from a given input string
+        :param input:
+        :param words:
+        :return:
+        """
+        for i in words:
+            first = i[0].upper()
+            rest = i[1:]
+            camelcase = first+rest.lower()
+            input = input.replace(i.upper,"").replace(i.lower(),"").replace(camelcase,"")
+        return input
+
     def parseOutUniqueKeys(self, input):
         """
 
@@ -465,11 +491,14 @@ class SqlParser:
         totaluniquekeys = []
         tablename = self.getTableName(input)
 
-        if input.find("alter table") > -1:
-            beforeuk = input.split("unique")[0]
-            afteruk = input.split("unique")[1]
+        if input.lower().find("alter table") > -1:
+            # [0:self.findIndexOfGivenPhrase(input,"foreign key")]
+            beforeuk = input[0:self.findIndexOfGivenPhrase(input,"unique")]
+            afteruk = input[self.findIndexOfGivenPhrase(input,"unique")+6:]
             # beforeuk
-            beforeuk = beforeuk.replace("alter", "").replace("table", "").replace("add", "").replace("constraint", "").replace(tablename, "")
+            words = ["alter", "table", "add", "constraint"]
+            beforeuk = self.replaceBunchOfWords(beforeuk, words) \
+                .replace(tablename, "")
             symbolname = beforeuk.strip()
             # afteruk
             fieldnames = afteruk.split("(")[1].strip().split(")")[0].split(",")
@@ -478,27 +507,27 @@ class SqlParser:
             for i in range(0, len(fieldnames)):
                 fieldnames[i] = fieldnames[i].strip()
             totaluniquekeys.append((tablename, fieldnames, symbolname))
-        elif input.find("create table") > -1:
-            while input.find("unique") > -1:
+        elif input.lower().find("create table") > -1:
+            while input.lower().find("unique") > -1:
                 fieldnames = []
                 symbolname = ''
                 # we have to first find any comma right before the next instance of "unique"
                 commaindex = input.find(",")
-                ukindex = input.find("unique")
+                ukindex = input.lower().find("unique")
                 while commaindex < ukindex:
                     input = input[input.find(",") + 1:]
                     commaindex = input.find(",")
-                    ukindex = input.find("unique")
-                wordsbeforeuk = input[0:input.find("unique")].strip()
-                wordsafteruk = input[input.find("unique") + 6:].lstrip()
+                    ukindex = input.lower().find("unique")
+                wordsbeforeuk = input[0:input.lower().find("unique")].strip()
+                wordsafteruk = input[input.lower().find("unique") + 6:].lstrip()
                 if wordsafteruk[0:1] == "(":
                     # scenarios 2 and 3
                     fieldnames = wordsafteruk.split(")")[0].replace("(", "").split(",")
                     for i in range(0, len(fieldnames)):
                         fieldnames[i] = fieldnames[i].strip()
                     symbolname = "".join(fieldnames)
-                    if wordsbeforeuk.find("constraint") > -1:
-                        tempsymbolname = wordsbeforeuk[wordsbeforeuk.find("constraint") + 10:].strip()
+                    if wordsbeforeuk.lower().find("constraint") > -1:
+                        tempsymbolname = wordsbeforeuk[wordsbeforeuk.lower().find("constraint") + 10:].strip()
                         if len(tempsymbolname)>0:
                             symbolname = tempsymbolname
                 else:
@@ -506,7 +535,7 @@ class SqlParser:
                     fieldnames.append(wordsbeforeuk.split(" ")[0].strip())
                     symbolname = fieldnames[0]
                 totaluniquekeys.append((tablename, fieldnames, symbolname))
-                input = input[input.find("unique") + 6:]
+                input = input[input.lower().find("unique") + 6:]
         return totaluniquekeys
 
     def parseOutUniqueDropsByLambda(self, input):
@@ -516,13 +545,13 @@ class SqlParser:
         :return:
         """
         tablename = self.getTableName(input)
-        indexname = input.split("index")[1].strip()
+        indexname = input[input.lower().find("index")+5:].strip()
         return tablename, indexname
 
     def getTableName(self, input):
-        if input.find("create table") > -1:
+        if input.lower().find("create table") > -1:
             tablename = self.getCreateTableTableName(input)
-        elif input.find("alter table") > -1:
+        elif input.lower().find("alter table") > -1:
             if input.find("`") > -1:
                 tablename = "`" + input.split("`")[1].strip() + "`"
             else:
@@ -552,7 +581,7 @@ class SqlParser:
         pkfields = {}  # Map[ tablename -> List[field]
         pkcounts = {}  # Map[ tablename -> count ]
         for item in primaryKeysList:
-            if item[1][0] != "drop":
+            if item[1][0].lower() != "drop":
                 tablename = item[0]
                 pknamelist = item[1]
                 if tablename not in pkfields:
@@ -585,7 +614,7 @@ class SqlParser:
         symboldata = {}  # Map[ tablename -> Map[ symbol : List[(field,table,field)]]
         symbolcounts = {}  # Map[ tablename -> Map[ symbol : count ]]
         for item in foreignKeysList:
-            if item[1][0] != "drop":
+            if item[1][0].lower() != "drop":
                 tablename = item[0]
                 fknamelist = item[1]
                 symbol = item[2]
@@ -605,7 +634,7 @@ class SqlParser:
                     symboldata[tablename][symbol].append((field, parenttable, parentfield))
                 symbolcounts[tablename][symbol] += 1
         for item in foreignKeysList:
-            if item[1][0] == "drop":
+            if item[1][0].lower() == "drop":
                 symbol = item[2]
                 symbolcounts[tablename][symbol] -= 1
         for table in symbolcounts.keys():

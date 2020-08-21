@@ -165,3 +165,6 @@ class Constants:
     path_proxy_pojos = "proxy/pojos"
     pckg_proxy_pojos = "proxy.pojos"
 
+# Angular stuff
+    serial_uid = "serialVersionUID"
+

@@ -163,12 +163,12 @@ class AngularFileMaker:
                 "w")
             for line in app_routing_input:
                 linestr = str(line)
-                if (linestr.find("XXX") > -1):
+                if (linestr.find("IMPORTS") > -1):
                     counter = 0
                     for item in angular_object.components:
                         app_routing_output.write("import { " + item + " } from './components/" + angular_object.names[counter] + "/" + angular_object.names[counter] + ".component';\n")
                         counter += 1
-                elif (linestr.find("YYY") > -1):
+                elif (linestr.find("ROUTES") > -1):
                     counter = 0
                     for item in angular_object.components:
                         app_routing_output.write("{ path: '" + angular_object.names[counter] + "', component: " + item + " }")
@@ -238,22 +238,22 @@ class AngularFileMaker:
                     "w")
                 for line in component_ts_file:
                     linestr = str(line)
-                    if(linestr.find("XXX")>-1):
+                    if(linestr.find("IMPORTS")>-1):
                         output_ts_file.write("import { " + javaname+"Service } from '../../services/" + lowercasename + ".service';\n")
                         output_ts_file.write("import { " + dtoname + " } from '../../models/" + dtoname + "';\n")
-                    elif(linestr.find("YYY")>-1):
+                    elif(linestr.find("CONSTRUCTOR")>-1):
                         output_ts_file.write(tabs + "constructor( ")
                         output_ts_file.write("private " + lowercasename + "service: " + javaname+"Service")
                         output_ts_file.write(" ) { }\n")
-                    elif (linestr.find("ZZZ") > -1):
+                    elif (linestr.find("LIST_ITEM_DTO") > -1):
                         AngularFileMaker.initialize_ts_object(dtoname,angular_object,output_ts_file)
                         output_ts_file.write(tabs+ lowercasename + "list: " + dtoname + "[];\n")
-                    elif (linestr.find("WWW") > -1):
+                    elif (linestr.find("GET_ALL_RECORDS") > -1):
                         output_ts_file.write(tabs + "this."+ lowercasename + "service." + angular_object.rest_call_names[dtoname][0] + "().subscribe(" + lowercasename + "list => {\n")
                         output_ts_file.write(tabs+tabs+"this."+lowercasename+"list = " + lowercasename + "list;\n")
                         output_ts_file.write(tabs + tabs + "this.loaded = true;\n")
                         output_ts_file.write(tabs +"});\n")
-                    elif (linestr.find("VVV") > -1):
+                    elif (linestr.find("CREATE_SERVICE") > -1):
                         output_ts_file.write(tabs + "if(this." + lowercasename +"." + angular_object.fieldnames[dtoname][0] + " === null ) {\n")
                         output_ts_file.write(tabs + tabs + "this." + lowercasename + "service." +
                                              angular_object.rest_call_names[dtoname][
@@ -280,10 +280,10 @@ class AngularFileMaker:
                                 output_ts_file.write(tabs + "this." + lowercasename + "." + name + " = null;\n")
                             else:
                                 output_ts_file.write(tabs + "this." + lowercasename + "." + name + " = '';\n")
-                    elif (linestr.find("QQQ") > -1):
+                    elif (linestr.find("EDIT_SERVICE") > -1):
                         output_ts_file.write(tabs + "this." + lowercasename + " = this." + lowercasename + "list[i];\n")
                         output_ts_file.write(tabs + "this.show" + javaname + "Form = true;\n")
-                    elif (linestr.find("SSS") > -1):
+                    elif (linestr.find("DELETE_SERVICE") > -1):
                         output_ts_file.write(tabs + "this." + lowercasename + "service." +
                                              angular_object.rest_call_names[dtoname][
                                                  4] + "(this." + lowercasename +"list[i]." + angular_object.fieldnames[dtoname][0] + ").subscribe(response => {\n")
@@ -297,8 +297,8 @@ class AngularFileMaker:
                 output_css_file = open(
                     root_directory + "/src/app/components/" + lowercasename + "/" + lowercasename + ".component.css",
                     "w")
-            except:
-                print("something went wrong inside the AngularFileMaker.make_components method")
+            except Exception :
+                print("something went wrong inside the AngularFileMaker.make_components method : " + Exception)
             finally:
                 if (component_html_file is not None):
                     component_html_file.close()
@@ -345,19 +345,18 @@ class AngularFileMaker:
         :param output_html_file:
         :return:
         """
-        tab3 = "\t\t\t"
-        tab4 = "\t\t\t\t"
+        tabs = Constants.tab
         print("making the html for dtoname = " + dtoname)
         for name in angular_object.fieldnames[dtoname]:
-            output_html_file.write(tab3+"<th>\n")
-            output_html_file.write(tab4+'<i class="text-size-10">'+name+'</i>\n')
-            output_html_file.write(tab3 + "</th>\n")
-        output_html_file.write(tab3 + "<th>\n")
-        output_html_file.write(tab4 + '<i class="text-size-8">Edit Item</i>\n')
-        output_html_file.write(tab3 + "</th>\n")
-        output_html_file.write(tab3 + "<th>\n")
-        output_html_file.write(tab4 + '<i class="text-size-8">Delete Item</i>\n')
-        output_html_file.write(tab3 + "</th>\n")
+            output_html_file.write(tabs*3+"<th>\n")
+            output_html_file.write(tabs*4+'<i class="text-size-10">'+name+'</i>\n')
+            output_html_file.write(tabs*3 + "</th>\n")
+        output_html_file.write(tabs*3 + "<th>\n")
+        output_html_file.write(tabs*4 + '<i class="text-size-8">Edit Item</i>\n')
+        output_html_file.write(tabs*3 + "</th>\n")
+        output_html_file.write(tabs*3 + "<th>\n")
+        output_html_file.write(tabs*4 + '<i class="text-size-8">Delete Item</i>\n')
+        output_html_file.write(tabs*3 + "</th>\n")
 
     @staticmethod
     def add_html_body(dtoname, angular_object, output_html_file):
@@ -368,25 +367,23 @@ class AngularFileMaker:
         :param output_html_file:
         :return:
         """
-        tab3 = "\t\t\t"
-        tab4 = "\t\t\t\t"
-        tab5 = "\t\t\t\t\t"
+        tabs = Constants.tab
         print("making the html for dtoname = " + dtoname)
-        output_html_file.write(tab3 + '<td [hidden]="alwaysHidden">{{ i + 1 }}</td>\n')
+        output_html_file.write(tabs*3 + '<td [hidden]="alwaysHidden">{{ i + 1 }}</td>\n')
         for name in angular_object.fieldnames[dtoname]:
-            output_html_file.write(tab3+"<td>\n")
-            output_html_file.write(tab4+'<i class="text-size-10">{{dto.'+name+'}}</i>\n')
-            output_html_file.write(tab3 + "</td>\n")
-        output_html_file.write(tab3 + "<td>\n")
-        output_html_file.write(tab4 + '<button class="btn-edit" type="submit" (click)="editItem(i)">\n')
-        output_html_file.write(tab5 + '<span class="iconspan fa fa-edit"></span>\n')
-        output_html_file.write(tab4 + '</button>\n')
-        output_html_file.write(tab3 + "</td>\n")
-        output_html_file.write(tab3 + "<td>\n")
-        output_html_file.write(tab4 + '<button class="btn-edit" type="submit" (click)="deleteItem(i)">\n')
-        output_html_file.write(tab5 + '<span class="iconspan fa fa-trash"></span>\n')
-        output_html_file.write(tab4 + '</button>\n')
-        output_html_file.write(tab3 + "</td>\n")
+            output_html_file.write(tabs*3+"<td>\n")
+            output_html_file.write(tabs*4+'<i class="text-size-10">{{dto.'+name+'}}</i>\n')
+            output_html_file.write(tabs*3 + "</td>\n")
+        output_html_file.write(tabs*3 + "<td>\n")
+        output_html_file.write(tabs*4 + '<button class="btn-edit" type="submit" (click)="editItem(i)">\n')
+        output_html_file.write(tabs*5 + '<span class="iconspan fa fa-edit"></span>\n')
+        output_html_file.write(tabs*4 + '</button>\n')
+        output_html_file.write(tabs*3 + "</td>\n")
+        output_html_file.write(tabs*3 + "<td>\n")
+        output_html_file.write(tabs*4 + '<button class="btn-edit" type="submit" (click)="deleteItem(i)">\n')
+        output_html_file.write(tabs*5 + '<span class="iconspan fa fa-trash"></span>\n')
+        output_html_file.write(tabs*4 + '</button>\n')
+        output_html_file.write(tabs*3 + "</td>\n")
 
     @staticmethod
     def add_html_form_body(dtoname, angular_object, output_html_file):
@@ -397,52 +394,23 @@ class AngularFileMaker:
         :param output_html_file:
         :return:
         """
-        tab1 = "\t\t\t"
-        tab2 = "\t\t\t\t"
+        tabs = Constants.tab
         lowercasename = dtoname.replace("DTO", "").lower()
         print("making the html form for dtoname = " + dtoname)
         counter = 0
         for name in angular_object.fieldnames[dtoname]:
             if (counter > 0):
-                output_html_file.write(tab1+'<div class="form-group">\n')
-                output_html_file.write(tab2 + '<label>'+name+'</label>\n')
+                output_html_file.write(tabs*3+'<div class="form-group">\n')
+                output_html_file.write(tabs*4 + '<label>'+name+'</label>\n')
                 type = "text"
                 fieldtype = angular_object.fieldtypes[dtoname][name]
                 if (fieldtype == 'number'):
                     type = "number"
                 elif(fieldtype == 'date'):
                     type = "date"
-                output_html_file.write(tab2+'<input type="'+type+'" class="form-control" [(ngModel)]="'+lowercasename+'.'+name+'" name="'+name+'">\n')
-                output_html_file.write(tab1 + "</div>\n")
+                output_html_file.write(tabs*4+'<input type="'+type+'" class="form-control" [(ngModel)]="'+lowercasename+'.'+name+'" name="'+name+'">\n')
+                output_html_file.write(tabs*3 + "</div>\n")
             counter += 1
-    """
-    
-    <th>
-              <i class="text-size-10">ServTypeId</i>
-            </th>
-            <th>
-              <i class="text-size-10">ServTypeCde</i>
-            </th>
-            <th>
-              <i class="text-size-10">ServTypeDesc</i>
-            </th>
-            <th>
-              <i class="text-size-10">Actv</i>
-            </th>
-            
-            <td>
-              <i class="text-size-10">{{dto.servtypeid}}</i>
-            </td>
-            <td>
-              <i class="text-size-10">{{dto.servtypecde}}</i>
-            </td>
-            <td>
-              <i class="text-size-10">{{dto.servtypedesc}}</i>
-            </td>
-            <td>
-              <i class="text-size-10">{{dto.actv}}</i>
-            </td>
-    """
 
     @staticmethod
     def make_services( project, angular_object, root_directory):
@@ -468,13 +436,13 @@ class AngularFileMaker:
                     "w")
                 for line in component_service_file:
                     linestr = str(line)
-                    if (linestr.find("XXX") > -1):
+                    if (linestr.find("IMPORTS") > -1):
                         output_service_file.write("import { " + dtoname + " } from '../models/" + dtoname + "';\n")
-                    elif(linestr.find("YYY")>-1):
+                    elif(linestr.find("SERVICE_CALLS")>-1):
                         counter = range(len(angular_object.rest_call_names[dtoname]))
                         for x in counter:
                             AngularFileMaker.make_rest_call_code_block(dtoname, angular_object.rest_call_names[dtoname][x], angular_object.rest_call_types[dtoname][x],angular_object.rest_call_parameters[dtoname][x],output_service_file)
-                    elif (linestr.find("ZZZ") > -1):
+                    elif (linestr.find("URLS") > -1):
                         counter = range(len(angular_object.rest_call_names[dtoname]))
                         for x in counter:
                             output_service_file.write(tabs+angular_object.rest_call_names[dtoname][x]+"URL : string = '" + angular_object.urls[dtoname][x]+"';\n")
@@ -564,14 +532,14 @@ class AngularFileMaker:
                 linestr = str(line)
                 if(stylesfound == False and linestr.find('"src/styles.css"')>-1):
                     altered_aj_file.write(linestr.replace('"src/styles.css"','"src/styles.css",'))
-                    altered_aj_file.write(tabs+tabs+tabs+'"./node_modules/font-awesome/css/font-awesome.css",\n')
-                    altered_aj_file.write(tabs + tabs + tabs +'"./node_modules/bootstrap/dist/css/bootstrap.css"\n')
+                    altered_aj_file.write(tabs+tabs+tabs+'"node_modules/font-awesome/css/font-awesome.css",\n')
+                    altered_aj_file.write(tabs + tabs + tabs +'"node_modules/bootstrap/dist/css/bootstrap.css"\n')
                     stylesfound = True
                 elif(scriptsfound == False and linestr.find('"scripts": []')>-1):
                     altered_aj_file.write(linestr.replace('"scripts": []', '"scripts": ['))
-                    altered_aj_file.write(tabs + tabs + tabs +'"./node_modules/jquery/dist/jquery.js",\n')
-                    altered_aj_file.write(tabs + tabs + tabs +'"./node_modules/popper.js/dist/umd/popper.js",\n')
-                    altered_aj_file.write(tabs + tabs + tabs +'"./node_modules/bootstrap/dist/js/bootstrap.js"\n')
+                    altered_aj_file.write(tabs + tabs + tabs +'"node_modules/jquery/dist/jquery.js",\n')
+                    altered_aj_file.write(tabs + tabs + tabs +'"node_modules/popper.js/dist/umd/popper.js",\n')
+                    altered_aj_file.write(tabs + tabs + tabs +'"node_modules/bootstrap/dist/js/bootstrap.js"\n')
                     altered_aj_file.write(tabs+tabs+"]\n")
                     scriptsfound = True
                 else:
@@ -655,7 +623,7 @@ class AngularFileMaker:
             new_app_module_ts_file = open(root_directory+"/src/app/app.module.ts","w")
             for line in old_app_module_ts_file:
                 linestr = str(line)
-                if (linestr.find("XXX") > -1):
+                if (linestr.find("IMPORTS") > -1):
                     counter = 0
                     for item in angular_object.components:
                         new_app_module_ts_file.write(
@@ -673,7 +641,7 @@ class AngularFileMaker:
                             "import { " + item + " } from './modules/" + angular_object.names[counter] + "/" +
                             angular_object.names[counter] + ".component';\n")
                         counter += 1
-                elif(linestr.find("YYY") > -1):
+                elif(linestr.find("ADD_DECLARATIONS") > -1):
                     new_app_module_ts_file.write(tabs+"AppComponent,\n")
                     new_app_module_ts_file.write(tabs + "NavbarComponent,\n")
                     counter = 0
@@ -683,7 +651,7 @@ class AngularFileMaker:
                         if (counter < len(angular_object.components)):
                             new_app_module_ts_file.write(",")
                         new_app_module_ts_file.write("\n")
-                elif(linestr.find("ZZZ") > -1):
+                elif(linestr.find("ADD_MODULES") > -1):
                     new_app_module_ts_file.write(tabs + "BrowserModule,\n")
                     new_app_module_ts_file.write(tabs + "AppRoutingModule,\n")
                     new_app_module_ts_file.write(tabs + "HttpClientModule,\n")
@@ -691,8 +659,8 @@ class AngularFileMaker:
                     new_app_module_ts_file.write(tabs + "FormsModule\n")
                     #new_app_module_ts_file.write(tabs + "// modules added here\n")
                     AngularFileMaker.figureout_module_additions(project, new_app_module_ts_file)
-                elif(linestr.find("WWW") > -1):
-                    new_app_module_ts_file.write(linestr.replace("WWW",",".join(angular_object.services)))
+                elif(linestr.find("ADD_PROVIDERS") > -1):
+                    new_app_module_ts_file.write(linestr.replace("ADD_PROVIDERS",",".join(angular_object.services)))
                 else:
                     new_app_module_ts_file.write(linestr)
         except:
@@ -749,8 +717,8 @@ class AngularFileMaker:
             new_index_file = open(root_directory+"/src/index.html","w")
             for line in old_index_file:
                 linestr = str(line)
-                if (linestr.find("XXX") > -1):
-                    new_index_file.write(linestr.replace("XXX",project.pomname))
+                if linestr.find("APP_TITLE") > -1:
+                    new_index_file.write(linestr.replace("APP_TITLE",project.pomname))
                 else:
                     new_index_file.write(linestr)
         except:
@@ -794,7 +762,7 @@ class AngularFileMaker:
             inputfile = open(filename,"r")
             for line in inputfile:
                 linestr = str(line)
-                if (linestr.find("private") > -1):
+                if linestr.find("private") > -1 and linestr.find(Constants.serial_uid) == -1:
                     fieldarray = linestr.split(" ")
                     key = fieldarray[2].replace(";","").rstrip()
                     print("field name " + key)
@@ -806,12 +774,12 @@ class AngularFileMaker:
                         angular_obj.fieldtypes[outputfilename][key] = "Date"
                     else:
                         angular_obj.fieldtypes[outputfilename][key] = fieldarray[1].lower()
-            counter = 0
+            #counter = 0
             for name in angular_obj.fieldnames[outputfilename]:
-                outputfile.write(tabs + name + "?: " + angular_obj.fieldtypes[outputfilename][name])
-                counter +=1
-                if(counter<len(angular_obj.fieldnames[outputfilename])):
-                    outputfile.write(",")
+                outputfile.write(tabs + name + "?: " + angular_obj.fieldtypes[outputfilename][name]+";")
+                #counter +=1
+                #if(counter<len(angular_obj.fieldnames[outputfilename])):
+                #    outputfile.write(",")
                 outputfile.write("\n")
             outputfile.write("}")
             inputfile.close()
@@ -840,7 +808,7 @@ class AngularFileMaker:
         outputfile = open(root_directory + "/src/app/components/navbar/navbar.component.html", "w")
         for line in inputfile:
             linestr = str(line)
-            if(linestr.find("XXX")>-1):
+            if(linestr.find("ROUTES")>-1):
                 counter = 0
                 for item in angular_project.routes:
                     outputfile.write(tabs+tabs+tabs+'<li class="nav-item">\n')
@@ -875,183 +843,3 @@ class AngularFileMaker:
         outputfile.write(tabs + '<router-outlet></router-outlet>\n')
         outputfile.write(tabs + '</div>')
         outputfile.close()
-
-    """    
-            if(project.is_mid_level == True):
-                angular_object.components.append(project.camelcasejavaname + "Component")
-                angular_object.selectors.append("app-" + project.lowercasename)
-                angular_object.routes.append("/" + project.lowercasename)
-                component_html_file = None
-                output_html_file = None
-                component_ts_file = None
-                output_ts_file = None
-                output_css_file = None
-                try:
-                    component_html_file = open("files/angular/component.html", "r")
-                    if not os.path.exists(root_directory + "/src/app/components/" + project.lowercasename):
-                        os.mkdir(root_directory + "/src/app/components/" + project.lowercasename)
-                    output_html_file = open(
-                        root_directory + "/src/app/components/" + project.lowercasename + "/" + project.lowercasename + ".component.html",
-                        "w")
-                    for line in component_html_file:
-                        linestr = str(line)
-                        if (linestr.find("XXX") > -1):
-                            output_html_file.write(linestr.replace("XXX", project.lowercasename))
-                        else:
-                            output_html_file.write(linestr)
-                    component_ts_file = open("files/angular/component.ts", "r")
-                    output_ts_file = open(
-                        root_directory + "/src/app/components/" + project.lowercasename + "/" + project.lowercasename + ".component.ts",
-                        "w")
-                    for line in component_ts_file:
-                        linestr = str(line)
-                        if(linestr.find("XXX")>-1):
-                            output_ts_file.write("import { " + project.camelcasejavaname+"Service } from '../../services/" + project.lowercasename + ".service';\n")
-                            for item in angular_object.dto_names:
-                                output_ts_file.write("import { " + item + " } from '../../models/" + item + "';\n")
-                        elif(linestr.find("YYY")>-1):
-                            if (len(angular_object.services) > 0):
-                                output_ts_file.write(tabs + tabs + "constructor( ")
-                                count = 0
-                                for item in angular_object.services:
-                                    output_ts_file.write("private " + item.lower() + ": " + item)
-                                    count += 1
-                                    if (count < len(angular_object.services)):
-                                        output_ts_file.write(", ")
-                                output_ts_file.write(" ) { }\n")
-                            else:
-                                output_ts_file.write(tabs+tabs+"constructor() {}\n")
-                        else:
-                            output_ts_file.write(linestr.replace("%", project.camelcasejavaname).replace("&", project.lowercasename))
-                    output_css_file = open(
-                        root_directory + "/src/app/components/" + project.lowercasename + "/" + project.lowercasename + ".component.css",
-                        "w")
-                except:
-                    print("something went wrong inside the AngularFileMaker.make_components method")
-                finally:
-                    if (component_html_file is not None):
-                        component_html_file.close()
-                    if (output_html_file is not None):
-                        output_html_file.close()
-                    if (component_ts_file is not None):
-                        component_ts_file.close()
-                    if (output_ts_file is not None):
-                        output_ts_file.close()
-                    if (output_css_file is not None):
-                        output_css_file.close()
-            else:
-                for name in project.tablenames:
-                    tabledata = project.tabledata[name]
-                    angular_object.components.append(tabledata.camelcasejavaname+"Component")
-                    angular_object.selectors.append("app-"+tabledata.lowercasename)
-                    angular_object.routes.append("/" + tabledata.lowercasename)
-                    component_html_file = None
-                    output_html_file = None
-                    component_ts_file = None
-                    output_ts_file = None
-                    output_css_file = None
-                    try:
-                        component_html_file = open("files/angular/component.html", "r")
-                        if not os.path.exists(root_directory + "/src/app/components/" + tabledata.lowercasename):
-                            os.mkdir(root_directory + "/src/app/components/" + tabledata.lowercasename)
-                        output_html_file = open(root_directory + "/src/app/components/" + tabledata.lowercasename + "/" + tabledata.lowercasename + ".component.html", "w")
-                        for line in component_html_file:
-                            linestr = str(line)
-                            if (linestr.find("XXX") > -1):
-                                output_html_file.write(linestr.replace("XXX",tabledata.lowercasename))
-                            else:
-                                output_html_file.write(linestr)
-                        component_ts_file = open("files/angular/component.ts", "r")
-                        output_ts_file = open(root_directory + "/src/app/components/" + tabledata.lowercasename + "/" + tabledata.lowercasename + ".component.ts", "w")
-                        for line in component_ts_file:
-                            linestr = str(line)
-                            if (linestr.find("XXX") > -1):
-                                output_ts_file.write(
-                                    "import { " + tabledata.camelcasejavaname + "Service } from '../../services/" + tabledata.lowercasename + ".service';\n")
-                                for item in angular_object.dto_names:
-                                    output_ts_file.write(
-                                    "import { " + item + " } from '../../models/" + item + "';\n")
-                            elif (linestr.find("YYY") > -1):
-                                if (len(angular_object.services) > 0):
-                                    output_ts_file.write(tabs + tabs + "constructor( ")
-                                    count = 0
-                                    for item in angular_object.services:
-                                        output_ts_file.write("private " + item.lower() + ": " + item)
-                                        count += 1
-                                        if(count<len(angular_object.services)):
-                                            output_ts_file.write(", ")
-                                    output_ts_file.write(" ) { }\n")
-                                else:
-                                    output_ts_file.write(tabs + tabs + "constructor() {}\n")
-                            else:
-                                output_ts_file.write(linestr.replace("%",tabledata.camelcasejavaname).replace("&",tabledata.lowercasename))
-                        output_css_file = open(root_directory + "/src/app/components/" + tabledata.lowercasename + "/" + tabledata.lowercasename + ".component.css", "w")
-
-                    except:
-                        print("something went wrong inside the AngularFileMaker.make_components method")
-                    finally:
-                        if (component_html_file is not None):
-                            component_html_file.close()
-                        if (output_html_file is not None):
-                            output_html_file.close()
-                        if (component_ts_file is not None):
-                            component_ts_file.close()
-                        if (output_ts_file is not None):
-                            output_ts_file.close()
-                        if (output_css_file is not None):
-                            output_css_file.close()
-            """
-
-    """
-            if (project.is_mid_level == True):
-                angular_object.names.append(project.lowercasename)
-                angular_object.services.append(project.camelcasejavaname + "Service")
-                component_service_file = None
-                output_service_file = None
-                try:
-                    component_service_file = open("files/angular/service.ts", "r")
-                    output_service_file = open(
-                        root_directory + "/src/app/services/" + project.lowercasename + ".service.ts",
-                        "w")
-                    for line in component_service_file:
-                        linestr = str(line)
-                        if (linestr.find("XXX") > -1):
-                            for item in angular_object.dto_names:
-                                output_service_file.write("import { " + item + " } from '../models/" + item + "';\n")
-                        else:
-                            output_service_file.write(linestr.replace("%", project.camelcasejavaname).replace("&", project.lowercasename))
-                except:
-                    print("something went wrong inside the AngularFileMaker.make_services method")
-                finally:
-                    if (component_service_file is not None):
-                        component_service_file.close()
-                    if (output_service_file is not None):
-                        output_service_file.close()
-            else:
-                for name in project.tablenames:
-                    tabledata = project.tabledata[name]
-                    angular_object.names.append(tabledata.lowercasename)
-                    angular_object.services.append(tabledata.camelcasejavaname + "Service")
-                    component_service_file = None
-                    output_service_file = None
-                    try:
-                        component_service_file = open("files/angular/service.ts", "r")
-                        output_service_file = open(
-                            root_directory + "/src/app/services/" + tabledata.lowercasename + ".service.ts",
-                            "w")
-                        for line in component_service_file:
-                            linestr = str(line)
-                            if (linestr.find("XXX") > -1):
-                                for item in angular_object.dto_names:
-                                    output_service_file.write(
-                                        "import { " + item + " } from '../models/" + item + "';\n")
-                            else:
-                                output_service_file.write(linestr.replace("%", tabledata.camelcasejavaname).replace("&", tabledata.lowercasename))
-                    except:
-                        print("something went wrong inside the AngularFileMaker.make_services method")
-                    finally:
-                        if (component_service_file is not None):
-                            component_service_file.close()
-                        if (output_service_file is not None):
-                            output_service_file.close()
-            """

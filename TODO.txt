@@ -1,14 +1,16 @@
 ideas, love-to-haves:
 - get this program to work using different versions of SB and associated dependencies
-- a Django or flash front-end UI that can help guide the user through the configuration process
 - add functionality to generate a basic Android mobile CRUD app
 
 big tasks:
+- a Angular 10 & flask front-end UI that can help guide the user through the configuration process
 - add foreign key functionality, with a setting that will make the program automatically group tables into projects
-    according to foreign key relationships
+    according to foreign key relationships - DONE
 - refactor the JsonUtility.createPostmanCollection() method to create these collection dynamically, so that it can be
     used eventually when making the postman collections for mid-level projects - DONE for mid-level, still needed for CRUD level
 - add Docker functionality - DONE
+- get initial copyright for this application
+- add functionality to allow the user to generate from a partial SQL file
 
 medium tasks:
 - add more Junit testing, not sure atm what is missing
@@ -53,3 +55,4 @@ functionality added:
 04/03/2020 - added spring-cloud sleuth functionality; distributed tracing will be in phase II
 Phase II:
 06/15/2020 - added Docker and Kubernetes functionality for deploying to Google Cloud behind an Ingress
+08/16/2020 - added initial Foreign Key Functionality

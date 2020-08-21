@@ -28,6 +28,10 @@ class JsonUtility:
             currenttable = project.tabledata[name]
             jsonstr += JsonUtility.add_table_json(currenttable, project)
         jsonstr = jsonstr[0:-2] + '\n' + tabs + '],\n' + tabs + '"protocolProfileBehavior": {}\n}'
+        postmanfilelocation = Configuration.postmandirectory
+        if not os.path.exists(postmanfilelocation):
+            print("creating Postman collection : " + postmanfilelocation)
+            Utilities.mkdir(postmanfilelocation)
         postmanfile = open(Configuration.postmandirectory + "/" + project.pomname + ".postman_collection.json", "w")
         #postmanfile = open(project.projectresourcesfolder+project.pomname+".postman_collection.json","w")
         postmanfile.write(jsonstr)

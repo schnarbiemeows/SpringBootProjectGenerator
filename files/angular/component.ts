@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { ResponseMessage } from '../../models/ResponseMessage';
-XXX
+IMPORTS
 
 @Component({
   selector: 'app-&',
@@ -9,7 +9,7 @@ XXX
   styleUrls: ['./&.component.css']
 })
 export class %Component implements OnInit {
-  ZZZ
+  LIST_ITEM_DTO
     p: number = 1;
     showExtended: boolean = true;
     loaded: boolean = false;
@@ -20,14 +20,14 @@ export class %Component implements OnInit {
     addbarmsg: string = 'Add %';
     formmsg: string = 'Add %';
 
-  YYY
+  CONSTRUCTOR
 
   ngOnInit() {
     this.reload();
   }
 
   add%() {
-    VVV
+    CREATE_SERVICE
   }
 
   onSubmit(e) {
@@ -37,7 +37,7 @@ export class %Component implements OnInit {
 
   reload() {
     this.loaded = false;
-    WWW
+    GET_ALL_RECORDS
     this.show%Form = false;
     this.editMode = false;
     this.addbarmsg = 'Add %';
@@ -48,10 +48,10 @@ export class %Component implements OnInit {
     this.editMode = true;
     this.addbarmsg = 'Save changes';
     this.formmsg = 'Edit %';
-    QQQ
+    EDIT_SERVICE
   }
 
   deleteItem(i: number) {
-    SSS
+    DELETE_SERVICE
   }
 }

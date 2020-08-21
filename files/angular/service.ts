@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 
 import { ResponseMessage } from '../models/ResponseMessage';
-XXX
+IMPORTS
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -12,9 +12,9 @@ const httpOptions = {
 
 @Injectable()
 export class %Service {
-    ZZZ
+    URLS
 
     constructor(private http: HttpClient) { }
 
-    YYY
+    SERVICE_CALLS
 }
