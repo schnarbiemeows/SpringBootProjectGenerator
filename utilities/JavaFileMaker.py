@@ -126,7 +126,7 @@ class JavaFileMaker:
         :param table:
         :return:
         """
-        if(Configuration.naming_server_proxy_mode == 2):
+        if Configuration.use_naming_server == True and Configuration.naming_server_proxy_mode == 2:
             for projectname in projectnames:
                 if(projectname != currentprojectdata.pomname):
                     otherproject = projectdata[projectname]
@@ -187,11 +187,11 @@ class JavaFileMaker:
         :return:
         """
         mid_lvl_map = {}
-        for project_name in mid_lvl_proj.tablenames:
+        for project_name in mid_lvl_proj.lowerprojectnames:
             mid_lvl_map[project_name] = "YES"
         for projectname in crud_proj_names:
             currentproject = crud_proj_data[projectname]
-            if currentproject.pomname in mid_lvl_map:
+            if currentproject.referencename in mid_lvl_map:
                 filename = mid_lvl_proj.topmainpackage + "/" + Constants.path_proxy_services + "/" + currentproject.camelcasejavaname + "ServiceProxy.java"
                 resources_file = open(filename, "w")
                 resources_file.write("package " + mid_lvl_proj.rootpackage + "." + Constants.pckg_proxy_services + ";\n\n")
@@ -278,11 +278,11 @@ class JavaFileMaker:
         :return:
         """
         mid_lvl_map = {}
-        for tablename in mid_lvl_proj.tablenames:
+        for tablename in mid_lvl_proj.lowerprojectnames:
             mid_lvl_map[tablename] = "YES"
         for projectname in crud_proj_names:
             currentproject = crud_proj_data[projectname]
-            if currentproject.pomname in mid_lvl_map:
+            if currentproject.referencename in mid_lvl_map:
                 for tablename in currentproject.tablenames:
                     currenttable = currentproject.tabledata[tablename]
                     filename = mid_lvl_proj.topmainpackage + "/" + Constants.path_proxy_dtos + "/" + currenttable.dtoname + ".java"
@@ -351,11 +351,11 @@ class JavaFileMaker:
         :return:
         """
         mid_lvl_map = {}
-        for tablename in mid_lvl_proj.tablenames:
+        for tablename in mid_lvl_proj.lowerprojectnames:
             mid_lvl_map[tablename] = "YES"
         for projectname in crud_proj_names:
             currentproject = crud_proj_data[projectname]
-            if currentproject.pomname in mid_lvl_map:
+            if currentproject.referencename in mid_lvl_map:
                 for tablename in currentproject.tablenames:
                     currenttable = currentproject.tabledata[tablename]
                     filename = mid_lvl_proj.topmainpackage + "/" + Constants.path_proxy_pojos + "/" + currenttable.camelcasejavaname + ".java"

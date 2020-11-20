@@ -42,19 +42,18 @@ class GenerateRepository:
         for symbolname in table.fksymbolnames:
             fklist = table.fksymboldata[symbolname]
             for item in fklist:
-
                 field = table.fielddata[item[0]]
                 compoundFK.append(field.gettername)
                 inputfields.append(Utilities.translateDataType(field.datatype) + ' ' + field.javaname)
                 output_file.write(tabs + Constants.doc_query_fk.replace("z", field.javaname)
                                   .replace("^", table.camelcasejavaname))
-                output_file.write(tabs + 'public Iterable<' + table.camelcasejavaname + '> findBy' +
+                output_file.write(tabs + 'public Iterable<' + table.camelcasejavaname + '> find' + table.camelcasejavaname + 'By' +
                                   field.gettername + '(' + Utilities.translateDataType(
                     field.datatype) + ' ' + field.javaname + ");\n")
                 counter += 1
         if len(compoundFK) > 1:
             compoundFKstr = "And".join(compoundFK)
             output_file.write(tabs + Constants.doc_query_all_fk.replace("^", table.camelcasejavaname))
-            methodtext = tabs + "public Iterable<" + table.camelcasejavaname + "> findBy" + compoundFKstr + "("
+            methodtext = tabs + "public Iterable<" + table.camelcasejavaname + "> find" + table.camelcasejavaname + "By" + compoundFKstr + "("
             methodtext += ",".join(inputfields) + ");\n"
             output_file.write(methodtext)

@@ -19,5 +19,6 @@
 # use-dietary-notes:
 # diet-and-notes:daily-weight,daily-dietary-notes,user-date
 # servings:serv-type-svc
-#interview2:question2,question-category2
-fk-mid:fk1
+# interview2:question2,question-category2
+# mid1:parent1,child1toM,child1to1
+nms-admin:nms-types,nms-ingr

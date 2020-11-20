@@ -82,5 +82,5 @@
 	}
 
 	public static %DTO generateRandom%() {
-		ZZZ
+		RANDOM_DTO_GENERATOR
 	}

@@ -34,6 +34,6 @@ public class %Controller {
 		return ResponseEntity.status(HttpStatus.OK).body("PING!");
 	}
 
-	XXX
+	REST_CALLS
 
 }

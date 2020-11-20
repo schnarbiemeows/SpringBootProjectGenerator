@@ -63,7 +63,7 @@ class BusinessTestGenerator:
         resources_file.write("package " + mid_lvl_proj.rootpackage + "." + Constants.pckg_bus + ";\n\n")
         for line in business_file:
             linestr = str(line)
-            if (linestr.find("XXX")) > -1:
+            if (linestr.find("MAIN_SECTION")) > -1:
                 BusinessTestGenerator.create_business_service_proxy_calls(mid_lvl_proj,
                                         crud_proj_names, crud_proj_data,resources_file)
             else:
@@ -86,11 +86,11 @@ class BusinessTestGenerator:
         """
         tabs = Constants.tab
         mid_lvl_map = {}
-        for project_name in mid_lvl_proj.tablenames:
+        for project_name in mid_lvl_proj.lowerprojectnames:
             mid_lvl_map[project_name] = "YES"
         for projectname in crud_proj_names:
             currentproject = crud_proj_data[projectname]
-            if currentproject.pomname in mid_lvl_map:
+            if currentproject.referencename in mid_lvl_map:
                 filename = mid_lvl_proj.topmainpackage + "/" + Constants.path_proxy_services + \
                            "/" + currentproject.camelcasejavaname + "ServiceProxy.java"
                 source_file = open(filename, "r")

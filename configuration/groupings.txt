@@ -1,9 +1,11 @@
 # grouping format is:
 # <project name> : <comma separated list of sql table names>
 # serv-type-svc:serving_types,serving_type_ratios
-#daily-wt-svc:daily_weight
-#daily-tot-svc:daily_totals,daily_dietary_notes,user_date
-#loc-ingr-svc:local_ingredients,local_recipes,local_recipe_ingredients,local_brands,local_products
-#globl-ingr-svc:brands,products,recipe_ingredients,recipes,ingredient_types,ingredients
-#accounts-svc:users,users_hist,groups,groups_hist,grp_user,grp_user_hist,roles,roles_hist,action_type,rsrc_type,resources
-interview-crud:question,answer,question_category,question_level
+# daily-wt-svc:daily_weight
+# daily-tot-svc:daily_totals,daily_dietary_notes,user_date
+# loc-ingr-svc:local_ingredients,local_recipes,local_recipe_ingredients,local_brands,local_products
+# globl-ingr-svc:brands,products,recipe_ingredients,recipes,ingredient_types,ingredients
+# accounts-svc:users,users_hist,groups,groups_hist,grp_user,grp_user_hist,roles,roles_hist,action_type,rsrc_type,resources
+# interview-crud:question,answer,question_category,question_level
+nms-types:serving_types,serving_type_ratios,brands,brand_type,ingredient_types,brand_ingr_type,payment,payment_type
+nms-ingr:ingredients,recipes,recipe_ingredients

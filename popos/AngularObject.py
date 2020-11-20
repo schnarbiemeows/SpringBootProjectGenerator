@@ -1,10 +1,12 @@
 """
-    This class represents an Angular 8 UI project
+    This class represents an Angular 10 UI project
 """
 class AngularObject:
 
     def __init__(self):
         self.title = ''
+        self.tablenames = []
+        self.tabledata = {}
         self.fieldnames = {}
         self.fieldtypes = {}
         # these 3 fields contain information needed by the app.modules.ts file, and the app-routing.module.ts
@@ -13,9 +15,9 @@ class AngularObject:
         self.selectors = []
         self.routes = []
         self.modules = []
-        self.services = []
+        self.services = set()
         self.dto_names = []
-        self.urls = {}
+        self.dto_tablename_mapping = {}
         self.rest_call_names = {}
         self.rest_call_types = {}
         self.rest_call_parameters = {}

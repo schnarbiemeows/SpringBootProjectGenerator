@@ -29,6 +29,7 @@ class Table:
         self.hasprimary = False
         self.fksymbolnames = []
         self.fksymboldata = {}
+        self.fknames = []
         self.parentkeysymbolnames = []
         self.parentkeysymboldata = {}
         self.primarykeys = []
@@ -42,7 +43,6 @@ class Table:
         configure names for this project
         :return:
         """
-        utilities = Utilities()
         # assume that the table name may have underscores, but no dashes
 
         self.correctedtablename = self.tablename.replace("`","").replace("~|*", "_")
@@ -63,9 +63,9 @@ class Table:
                     toUpper = True
                 else:
                     convertedjavaname += self.correctedtablename[n]
-            self.camelcasejavaname = utilities.capitalize(convertedjavaname)
+            self.camelcasejavaname = Utilities.capitalize(convertedjavaname)
         else:
-            self.camelcasejavaname = utilities.capitalize(self.correctedtablename)
+            self.camelcasejavaname = Utilities.capitalize(self.correctedtablename)
         self.dtoname = self.camelcasejavaname + "DTO"
         #print("converting tablename : " + self.correctedtablename + " to java name = " + self.camelcasejavaname)
         #print("converting tablename : " + self.correctedtablename + " to lower name = " + self.lowercasename)

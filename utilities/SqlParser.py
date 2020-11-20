@@ -313,7 +313,7 @@ class SqlParser:
             # each one of these items could be a column in the table
             itemstr = str(item).strip()
             # print("item string --->: " + itemstr)
-            innerarray = itemstr.split(" ")
+            innerarray = itemstr.replace("\t"," ").split(" ")
             if (len(innerarray) > 1):
                 # if the second field is found in one of the field sets, that means this actually a column definition
                 possiblefield = str(innerarray[1])
@@ -322,7 +322,7 @@ class SqlParser:
                 # print("possible field is: " + str(innerarray[1]))
                 if (possiblefield in SqlParser.mysqlnumberset or possiblefield in SqlParser.mysqldatetypes or
                         possiblefield in SqlParser.mysqlstringtypes or possiblefield in SqlParser.mysqlboolean):
-                    # print("found field : " + innerarray[0])
+                    print("found field : " + innerarray[0])
                     # initialize a FieldProperties object
                     newfield = FieldProperties(innerarray[0].strip())
                     datatypefull = innerarray[1]
@@ -335,13 +335,21 @@ class SqlParser:
                         if datatype.lower().find("varchar") > -1:
                             newfield.lengthreq = True
                             newfield.set_length(datatyperest)
+                        elif datatype.lower().find("decimal") > -1:
+                            numarr = datatyperest[0:datatyperest.find(")")].split("ZYX")
+                            newfield.set_length(numarr[0])
+                            if len(numarr)>1:
+                                newfield.decimals =  int(numarr[1])
+
                     else:
                         datatype = datatypefull
                     signedorno = itemstr.lower().find("unsigned") > -1
-                    # translate the sql data type to java data type
-                    newfield.translate_datatype(datatype, signedorno)
                     # figure out certain other properties of the field
                     newfield.extract_field_properties(innerarray)
+                    # translate the sql data type to java data type
+                    newfield.translate_datatype(datatype, signedorno)
+
+
                     table.fieldnames.append(newfield.name)
                     table.fielddata[newfield.name] = newfield
                 else:

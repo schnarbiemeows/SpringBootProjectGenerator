@@ -10,24 +10,42 @@ IMPORTS
 })
 export class %Component implements OnInit {
   LIST_ITEM_DTO
+  FK_DTO_LISTS
     p: number = 1;
+    itemsPerPage: number = 10;
     showExtended: boolean = true;
     loaded: boolean = false;
     alwaysHidden: boolean = true;
     enableAdd: boolean = false;
     show%Form: boolean = false;
+    addMode: boolean = false;
     editMode: boolean = false;
-    addbarmsg: string = 'Add %';
+    addbarmsg: string = 'Add Field';
+    saveChangesMsg: string = 'Save Changes';
+    cancelMsg: string = 'Cancel';
     formmsg: string = 'Add %';
+    paginationDisabled: boolean = false;
+    MINS_&_MAXS
 
   CONSTRUCTOR
 
   ngOnInit() {
     this.reload();
+    INIT_FK_LISTS
   }
 
-  add%() {
+  initiateAdd() {
+    //console.log("initiating item add ....")
+    this.editMode = false;
+    this.addMode = true;
+    this.show%Form = true;
+    this.paginationDisabled = true;
+    CLEAR_ITEM_DTO
+  }
+
+  saveResults() {
     CREATE_SERVICE
+    this.paginationDisabled = false;
   }
 
   onSubmit(e) {
@@ -40,18 +58,23 @@ export class %Component implements OnInit {
     GET_ALL_RECORDS
     this.show%Form = false;
     this.editMode = false;
-    this.addbarmsg = 'Add %';
-    this.formmsg = 'Add %';
+    this.addMode = false;
+    this.paginationDisabled = false;
   }
 
   editItem(i: number) {
     this.editMode = true;
-    this.addbarmsg = 'Save changes';
+    this.paginationDisabled = true;
     this.formmsg = 'Edit %';
     EDIT_SERVICE
   }
 
   deleteItem(i: number) {
     DELETE_SERVICE
+    this.paginationDisabled = false;
   }
+
+  FOREIGN_KEY_CALLS
+
+  VALIDATOR_CALLS
 }

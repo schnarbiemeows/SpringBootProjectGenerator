@@ -60,12 +60,12 @@ class BusinessGenerator:
                 inputparameters.append("id" + str(counter))
                 output_file.write(tabs + Constants.doc_get_fk.replace("z", field.javaname)
                                      .replace("^", table.camelcasejavaname))
-                output_file.write(tabs + "public List<" + table.camelcasejavaname + "DTO> findBy" +
+                output_file.write(tabs + "public List<" + table.camelcasejavaname + "DTO> find" + table.camelcasejavaname + "By" +
                                   field.gettername + "(" + Utilities.translateDataType(
                                     field.datatype) + " id) throws Exception {\n")
                 if test == False:
                     output_file.write(
-                        tabs * 2 + "Iterable<" + table.camelcasejavaname + "> results = service.findBy" +
+                        tabs * 2 + "Iterable<" + table.camelcasejavaname + "> results = service.find" + table.camelcasejavaname + "By" +
                         field.gettername + "(id);\n")
                     output_file.write(tabs * 2 + "Iterator<" + table.camelcasejavaname +
                                       "> iter = results.iterator();\n")
@@ -81,13 +81,13 @@ class BusinessGenerator:
             compoundFKstr = "And".join(compoundFK)
             output_file.write(tabs + Constants.doc_get_fk.replace("z", compoundFKstr)
                                  .replace("^", table.camelcasejavaname))
-            text = tabs + "public List<" + table.camelcasejavaname + "DTO> findBy" + compoundFKstr + "("
+            text = tabs + "public List<" + table.camelcasejavaname + "DTO> find" + table.camelcasejavaname + "By" + compoundFKstr + "("
             text += ",".join(datatypes)
             text += ") throws Exception {\n"
             output_file.write(text)
             if test == False:
                 output_file.write(
-                    tabs * 2 + "Iterable<" + table.camelcasejavaname + "> results = service.findBy" +
+                    tabs * 2 + "Iterable<" + table.camelcasejavaname + "> results = service.find" + table.camelcasejavaname + "By" +
                     compoundFKstr + "(" + ", ".join(inputparameters) + ");\n")
                 output_file.write(tabs * 2 + "Iterator<" + table.camelcasejavaname +
                                   "> iter = results.iterator();\n")
@@ -137,11 +137,11 @@ class BusinessGenerator:
         """
         tabs = Constants.tab
         mid_lvl_map = {}
-        for project_name in mid_lvl_proj.tablenames:
+        for project_name in mid_lvl_proj.lowerprojectnames:
             mid_lvl_map[project_name] = "YES"
         for projectname in crud_proj_names:
             currentproject = crud_proj_data[projectname]
-            if currentproject.pomname in mid_lvl_map:
+            if currentproject.referencename in mid_lvl_map:
                 filename = mid_lvl_proj.topmainpackage + "/" + Constants.path_proxy_services + \
                            "/" + currentproject.camelcasejavaname + "ServiceProxy.java"
                 resources_file.write(Constants.doc_proxy)

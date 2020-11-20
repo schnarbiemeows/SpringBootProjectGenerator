@@ -66,6 +66,21 @@ class FieldProperties:
                                  "enum": "String",
                                  "set": "String"}
 
+    number_signed_limits = {
+                            "integer" : (-2147483648,2147483647),
+                            "bigint" : (-9223372036854775808,9223372036854775807),
+                            "smallint" : (-32768,32767),
+                            "mediumint" : (-2147483648,2147483647),
+                            "int" : (-2147483648,2147483647)
+                            }
+    number_unsigned_limits = {
+                            "integer" : (-2147483648,2147483647),
+                            "bigint" : (-9223372036854775808,9223372036854775807),
+                            "smallint" : (-2147483648,2147483647),
+                            "mediumint" : (-2147483648,2147483647),
+                            "int" : (-2147483648,2147483647)
+                            }
+
     def __init__(self, name):
         """
         initialization
@@ -88,6 +103,9 @@ class FieldProperties:
         self.unique = False
         self.lengthreq = False
         self.length = 0
+        self.min = None
+        self.max = None
+        self.decimals = 0
         self.importset = set()
 
     def makejavanames(self):
@@ -132,9 +150,25 @@ class FieldProperties:
         if(signed == True):
             self.datatype = FieldProperties.mysql_to_java_conv_signed[datatype]
             print("converting data type : " + datatype + " to --> " + self.datatype)
+            if (datatype.lower().find("integer") > -1 or datatype.lower().find("mediumint") > -1 or
+                datatype.lower().find("bigint") > -1 or datatype.lower().find("smallint") > -1 or
+                datatype.lower().find("int") > -1):
+                if self.isprimary == True or self.isforeignkey == True:
+                    self.min = 0
+                else:
+                    self.min = FieldProperties.number_signed_limits[datatype][0]
+                self.max = FieldProperties.number_signed_limits[datatype][1]
         else:
             self.datatype = FieldProperties.mysql_to_java_conv_unsigned[datatype]
             print("converting data type : " + datatype + " to --> " + self.datatype)
+            if (datatype.lower().find("integer") > -1 or datatype.lower().find("mediumint") > -1 or
+                    datatype.lower().find("bigint") > -1 or datatype.lower().find("smallint") > -1 or
+                    datatype.lower().find("int") > -1):
+                if self.isprimary == True or self.isforeignkey == True:
+                    self.min = 0
+                else:
+                    self.min = FieldProperties.number_unsigned_limits[datatype][0]
+                self.max = FieldProperties.number_unsigned_limits[datatype][1]
 
     def extract_field_properties(self, innerarray):
         """
@@ -148,6 +182,9 @@ class FieldProperties:
         comment_section = False
         not_found = False
         null_found = False
+        key_found = False
+        primary_found = False
+        foreign_found = False
         not_null = True
         auto_increment_found = False
         comment = ''
@@ -155,7 +192,7 @@ class FieldProperties:
         for n in x:
             itemstr = innerarray[n].replace("^&%"," ")
             if (comment_section == True):
-                comment += itemstr
+                comment += itemstr + " "
                 if (itemstr.endswith("\"")):
                     comment_section = False
             elif (itemstr.find("comment") > -1):
@@ -163,11 +200,22 @@ class FieldProperties:
             elif (itemstr.find("primary") > -1):
                 primary_found = True
             elif (itemstr.find("key") > -1):
-                None  # we can ignore this keyword
+                key_found = True
+            elif (itemstr.find("foreign") > -1):
+                foreign_found = True
             elif (itemstr.find("auto_increment") > -1):
                 auto_increment_found = True
+            elif itemstr.find("not") > -1:
+                not_found = True
+            elif itemstr.find("null") > -1:
+                null_found = True
         if (not_found == True and null_found == True):
             not_null = False
+        if primary_found == True and key_found == True:
+            self.isprimary = True
+        if foreign_found == True and key_found == True:
+            self.isforeignkey = True
+
         self.canbenull = not_null
         self.comment = comment
         if (auto_increment_found == True):

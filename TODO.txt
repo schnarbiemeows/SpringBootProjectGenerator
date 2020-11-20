@@ -11,6 +11,7 @@ big tasks:
 - add Docker functionality - DONE
 - get initial copyright for this application
 - add functionality to allow the user to generate from a partial SQL file
+- add try/catch functionality to all methods for more appropriate error handling
 
 medium tasks:
 - add more Junit testing, not sure atm what is missing
@@ -23,6 +24,8 @@ medium tasks:
 - add file path checks to check for "/" at the end, so that when concatenating paths, we correctly have "/" between stuff
 - ADD MORE COMMENTS! incl., check each method to make sure it has a good summary in it
 - get the hysterix functionality added
+- AngularFileMaker.py and AngularObject.py: all the methods in AngularFileMaker need to be refactored to use the project.tabledata
+    instead of dtonames; this is better design
 
 small tasks:
 - take the template files in the files folder and move them to a new folder called templates

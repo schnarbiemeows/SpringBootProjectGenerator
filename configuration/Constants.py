@@ -64,7 +64,7 @@ class Constants:
     doc_create = "/**\n\t * create a new ^\n\t * @param ^\n\t * @return ^\n\t */\n"
     doc_update = "/**\n\t * update a ^\n\t * @param ^\n\t * @return ^\n\t */\n"
     doc_delete = "/**\n\t * delete a ^ by primary key\n\t * @param id\n\t */\n"
-    doc_proxy = "\t"+doc_opn+"\n"+"\t *\n"+"\t * @param\n"+"\t * @return\n"+"\t **/\n"
+    doc_proxy = "\t/**\n"+"\t *\n"+"\t * @param\n"+"\t * @return\n"+"\t **/\n"
     doc_test_get_fk = "/**\n\t * test getting all ^ by foreign key z\n\t * @throws URISyntaxException\n\t*/"
     doc_test_get_by_all_fk = "/**\n\t * test getting all ^ by all foreign keys\n\t * @throws URISyntaxException\n\t*/"
 # pom file

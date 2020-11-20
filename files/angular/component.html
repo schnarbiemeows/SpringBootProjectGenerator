@@ -1,40 +1,47 @@
  <div class="container-fluid border rounded" name="container2">
-    <div class="row" style="height:900px;">
+    <div class="row">
 		<div class="col col-sm-2 mh-100">
 
 		</div>
 		<div class="col col-sm-8 mh-100">
           <div class="card bg-secondary border-info">
-            <h2 class="text-center">XXX</h2>
+            <h2 class="text-center">TABLE_NAME</h2>
           </div>
-          <h4 *ngIf="!loaded">Loading XXX...</h4>
+          <h4 *ngIf="!loaded">Loading TABLE_NAME...</h4>
           <div *ngIf="loaded">
             <div class="card border-info"> <!-- table section -->
               <div class="card-body table-responsive">
-                <table class="table table-bordered table-hover rounded">
+                <table class="table-sm table-bordered table-hover rounded">
                   <thead>
                     <tr>
-                      YYY
+                      TABLE_HEADER
                     </tr>
                   </thead>
                   <tbody *ngFor="let dto of % | paginate: { itemsPerPage: 10, currentPage: p }; let i = index">
-                    <tr>
-                      ZZZ
+                    <tr class="a">
+                      TABLE_BODY
                     </tr>
                   </tbody>
                 </table>
                 <!-- https://www.npmjs.com/package/ngx-pagination -->
-						<pagination-controls (pageChange)="p = $event"></pagination-controls>
+                  <div class="card pagin">
+                      <div class="card-body" *ngIf="!paginationDisabled">
+                            <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                      </div>
+                  </div>
               </div>
             </div>
           </div>
           <div class="card">
-              <button *ngIf="!editMode" (click)="showXXXForm = !showXXXForm" class="btn btn-dark mb-3 mt-3">{{this.addbarmsg}}</button>
-              <div class="card card-body mb-3" *ngIf="showXXXForm">
+              <button *ngIf="!editMode && !addMode" (click)="initiateAdd()" class="btn btn-sm btn-block btn-primary text-white mb-3 font-italic">{{this.addbarmsg}}</button>
+              <div class="card card-body mb-3" *ngIf="showTABLE_NAMEForm">
                 <h2>{{this.formmsg}}</h2>
-                <form (submit)="onSubmit($event)">
-                    WWW
-                  <button (click)="addXXX()" class="btn btn-block mb-3">{{this.addbarmsg}}</button>
+                <form (submit)="onSubmit($event)" #PARENT_FORM="ngForm">
+                    <div class="form-group">
+                    PAGE_FORM
+                    </div>
+                  <button *ngIf="addMode || editMode" [disabled]="PARENT_FORM.invalid" (click)="saveResults()" class="btn btn-sm btn-block btn-success text-white mb-3 font-italic">{{this.saveChangesMsg}}</button>
+                  <button *ngIf="addMode || editMode" (click)="reload()" class="btn btn-sm btn-block btn-danger text-white mb-3 font-italic">{{this.cancelMsg}}</button>
                 </form>
               </div>
           </div>
@@ -42,5 +49,8 @@
         <div class="col col-sm-2 mh-100">
 
         </div>
+    </div>
+    <div class="row">
+        TEST_FK
 	</div>
 </div>

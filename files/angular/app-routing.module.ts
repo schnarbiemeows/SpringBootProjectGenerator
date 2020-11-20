@@ -6,7 +6,7 @@ IMPORTS
 const routes: Routes = [
 ROUTES
 ];
-;
+
 @NgModule({
   exports: [RouterModule],
   imports: [

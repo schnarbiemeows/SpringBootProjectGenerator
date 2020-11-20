@@ -58,9 +58,6 @@ public class %ControllerTest {
     @InjectMocks
     private RestTemplate restTemplate = new RestTemplate();
 
-    YYY
-
-    WWW
-
+    BUSINESS_CALLS
 
 }

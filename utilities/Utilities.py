@@ -126,7 +126,7 @@ class Utilities:
             return temp_array
 
     @staticmethod
-    def handleFieldsWithCommasAndParens( inputstring):
+    def handleFieldsWithCommasAndParens(inputstring):
         """
         the input file that we get may include records that have fields with commas in them
         in this case, the field will be surrounded by double quotes
@@ -170,6 +170,15 @@ class Utilities:
                 outputstr += character
             counter +=1
         """
+        temp_array = inputstring.split("decimal")
+        if len(temp_array)>1:
+            for i in range(0, len(temp_array)):
+                if i>0:
+                    item = str(temp_array[i])
+                    if item.find(",") > -1:
+                        item = item.replace(",", "ZYX",1)
+                        temp_array[i] = item
+        inputstring = "decimal".join(temp_array)
         temp_array = inputstring.split(',')
         for i in range(0, len(temp_array)):
             item = str(temp_array[i])
@@ -179,7 +188,7 @@ class Utilities:
         return temp_array
 
     @staticmethod
-    def parseGroupingsTextFile( filename):
+    def parseGroupingsTextFile(filename):
         inputfile = open(filename)
         projectnames = []
         projecttables = {}
@@ -264,6 +273,26 @@ class Utilities:
             return "int"
         elif type == "String":
             return "String"
+        elif type == "Boolean":
+            return "boolean"
+        else:
+            return "None"
+
+    @staticmethod
+    def translateAngularDataType(type):
+        """
+        this method needs to translate Boxed primitives to javascript data types
+        :param type:
+        :return:
+        """
+        if type == "BigDecimal" or type == "Float" or type == "Double":
+            return "number"
+        elif type == "BigInteger" or type == "Integer":
+            return "number"
+        elif type == "String":
+            return "string"
+        elif type == "Boolean":
+            return "boolean"
         else:
             return "None"
 

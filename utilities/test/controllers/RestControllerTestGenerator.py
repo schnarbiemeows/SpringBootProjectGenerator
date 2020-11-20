@@ -70,7 +70,7 @@ class RestControllerTestGenerator:
         resources_file.write("package " + mid_lvl_proj.rootpackage + "." + Constants.pckg_contr + ";\n\n")
         for line in test_controller:
             linestr = str(line)
-            if (linestr.find("XXX")) > -1:
+            if (linestr.find("IMPORT_SECTION")) > -1:
                 resources_file.write(
                     "import " + mid_lvl_proj.rootpackage + "." + Constants.pckg_proxy_dtos + ".*;\n")
                 resources_file.write(
@@ -79,9 +79,12 @@ class RestControllerTestGenerator:
                     "import " + mid_lvl_proj.rootpackage + "." + Constants.pckg_util + ".Randomizer;\n")
                 resources_file.write(
                     "import " + mid_lvl_proj.rootpackage + "." + Constants.pckg_bus + "." + mid_lvl_proj.camelcasejavaname + "Business;\n")
-            elif (linestr.find("YYY") > -1):
+            elif (linestr.find("BUSINESS_CALLS") > -1):
                 RestControllerTestGenerator.create_controller_business_calls_for_mid_level(mid_lvl_proj,
                         crud_proj_names, crud_proj_data,resources_file)
+            #elif linestr.find("FKSECTION")>-1:
+            #    RestControllerTestGenerator.createForeignKeyCallTestsForMidLvl(mid_lvl_proj,
+            #            crud_proj_names, crud_proj_data,resources_file)
             else:
                 resources_file.write(
                     linestr.replace("$", mid_lvl_proj.rootpackage).replace("%", mid_lvl_proj.camelcasejavaname).replace(
@@ -102,17 +105,17 @@ class RestControllerTestGenerator:
         """
         tabs = Constants.tab
         mid_lvl_map = {}
-        for project_name in mid_lvl_proj.tablenames:
+        for project_name in mid_lvl_proj.lowerprojectnames:
             mid_lvl_map[project_name] = "YES"
         for projectname in crud_proj_names:
             currentproject = crud_proj_data[projectname]
-            if currentproject.pomname in mid_lvl_map:
+            if currentproject.referencename in mid_lvl_map:
                 for tablename in currentproject.tablenames:
                     tabledata = currentproject.tabledata[tablename]
                     tablefile = test_controller = open("files/controller/controller_test_inner.txt", "r")
                     for line in tablefile:
                         linestr = str(line)
-                        if linestr.find("IMPORT_SECTION") > -1:
+                        if linestr.find("RANDOM_DTO_GENERATOR") > -1:
                             PojoAndDtoTestGenerator.create_pojo_and_dto_rand_gen_code(tabledata, resources_file, "dto")
                         else:
                             resources_file.write(

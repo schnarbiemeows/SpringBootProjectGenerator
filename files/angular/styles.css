@@ -1,0 +1,9 @@
+tr.a {
+  line-height: 80%;
+}
+div.pagin {
+  height: 50px;
+}
+.cross-validation-error input {
+  border-left: 5px solid red;
+}

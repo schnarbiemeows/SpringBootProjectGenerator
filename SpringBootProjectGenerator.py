@@ -72,12 +72,12 @@ class SpringBootProjectGenerator:
             print("ONE PROJECT PER TABLE SPECIFIED")
             for name in self.tablenames:
                 currenttable = self.tabledata[name]
-                self.projectsnames.append(currenttable.pomname)
-                project = Project(currenttable.pomname,portnum)
+                self.projectsnames.append(currenttable.correctedtablename)
+                project = Project(currenttable.correctedtablename,portnum)
                 portnum +=1
                 project.tablenames.append(name)
                 project.tabledata[name] = currenttable
-                self.projectdata[currenttable.pomname] = project
+                self.projectdata[currenttable.correctedtablename] = project
         elif(setting == 2):
             self.projectsnames.append(Configuration.project_name)
             project = Project(Configuration.project_name,portnum)
@@ -104,7 +104,7 @@ class SpringBootProjectGenerator:
                         project.tablenames.append(correctedtablename)
                         currenttable = self.tabledata[correctedtablename]
                         project.tabledata[table] = currenttable
-                self.projectdata[correctedtablename] = project
+                self.projectdata[name] = project
         else:
             None
 
@@ -113,19 +113,41 @@ class SpringBootProjectGenerator:
 
         :return:
         """
-        utilities = Utilities()
-        mid_lvl_projects, lwr_lvl_projects = utilities.parseGroupingsTextFile("configuration/mid_level.txt")
+        # parse the mid-level --> lower level projects groupings file
+        # get a list of mid-level project names and a map of mid-lvl-name --> List(lower-lvl-names)
+        mid_lvl_projects, lwr_lvl_projects = Utilities.parseGroupingsTextFile("configuration/mid_level.txt")
+        # get the starting mid-lvl project port #
         portnum = int(Configuration.mid_lvl_port_num)
+        # list of mid-lvl project names
         localprojectsnames = []
+        # map of mid-lvl-name --> Project object
         localprojectdata = {}
+        # for each name found
         for mid_lvl_proj in mid_lvl_projects:
+            # add its name to the name list
             localprojectsnames.append(mid_lvl_proj)
+            # create a Project object
             project = Project(mid_lvl_proj, portnum)
             project.is_mid_level = True
             portnum += 1
+            # get the list of lower level project names for this project
             lwr_lvl_projs = lwr_lvl_projects[mid_lvl_proj]
+            # for each lower level project name
             for lwr_lvl_proj in lwr_lvl_projs:
-                project.tablenames.append(lwr_lvl_proj)
+                # get the lower level project
+                lwr_proj = self.projectdata[lwr_lvl_proj]
+                # get this project's tablenames
+                lwr_tablenames = lwr_proj.tablenames
+                # for each lower level project table name
+                for lwr_tablename in lwr_tablenames:
+                    # get the lower table
+                    lwr_table = lwr_proj.tabledata[lwr_tablename]
+                    # add it's name to the list of lower level table names for the mid-lvl project
+                    project.tablenames.append(lwr_tablename)
+                    # add this table's data to the map of lower level table data for the mid-level project
+                    project.tabledata[lwr_tablename] = lwr_table
+                project.lowerprojectnames.append(lwr_lvl_proj)
+            # add the Project object to the map of project data
             localprojectdata[mid_lvl_proj] = project
         return (localprojectsnames,localprojectdata)
 
@@ -422,13 +444,13 @@ class SpringBootProjectGenerator:
         """
         FileMaker.backup_project(project, self.destinationroot)
 
-    def make_angular_project(self):
+    def make_angular_projects(self):
         """
         this method will create the angular 8 project for a given project
         :param project:
         :return:
         """
-        AngularFileMaker.make_angular_project(self.ang_proj_names,self.ang_proj_data,self.ang_root_dir)
+        AngularFileMaker.make_angular_projects(self.ang_proj_names, self.ang_proj_data, self.ang_root_dir)
 
     def create_docker_file(self, project):
         """
@@ -578,7 +600,7 @@ class SpringBootProjectGenerator:
                 self.make_postman_for_mid_level(currentproject)
                 self.populate_kubernetes_commands_file(currentproject)
         if (Configuration.create_angular_projects == True):
-                self.make_angular_project()
+                self.make_angular_projects()
         if(Configuration.use_docker == True):
             self.generate_ingress_file(localprojectsnames, localprojectdata)
 

@@ -10,10 +10,12 @@ class Project:
             initialization
         """
 
-    def __init__(self, pomname, port):
-        self.root = Configuration.destinationroot+"/" + pomname + "/" + pomname
+    def __init__(self, projectname, port):
+        self.pomname = ''
+        self.referencename = ''
+        self.configure_reference_name(projectname)
+        self.root = Configuration.destinationroot+"/" + self.pomname + "/" + self.pomname
         self.portnum = port
-        self.pomname = pomname
         self.lowercasename = ''
         self.camelcasejavaname = ''
         self.projectresourcesfolder = ''
@@ -22,16 +24,35 @@ class Project:
         self.rootpackage = ''
         self.tablenames = []
         self.tabledata = {}
+        self.lowerprojectnames = []
+        self.lowerprojectdata = {}
         self.configure_names()
         self.is_mid_level = False
         self.service_config = []
+        self.urls = {}
+        self.rest_call_names = {}
+        self.rest_call_types = {}
+        self.rest_call_parameters = {}
+        self.routes = []
+
+    def configure_reference_name(self, projectname):
+        """
+
+        :param projectname:
+        :return:
+        """
+        if Configuration.generation_type == 1:
+            self.referencename = projectname.replace("`","").replace("~|*", "-")
+            self.pomname = self.referencename.lower()
+        else:
+            self.referencename = projectname
+            self.pomname = projectname
 
     def configure_names(self):
         """
         configure names for this project
         :return:
         """
-        utilities = Utilities()
         # assume that the table name may have underscores, but no dashes
         self.lowercasename = sub('[^A-Za-z]+', '', self.pomname).lower()
         print("converting pomname : " + self.pomname + " to lowercase name = " + self.lowercasename)
@@ -48,8 +69,8 @@ class Project:
                     toUpper = True
                 else:
                     convertedjavaname += self.pomname[n]
-            self.camelcasejavaname = utilities.capitalize(convertedjavaname)
+            self.camelcasejavaname = Utilities.capitalize(convertedjavaname)
         else:
-            self.camelcasejavaname = utilities.capitalize(self.pomname)
+            self.camelcasejavaname = Utilities.capitalize(self.pomname)
         print("converting pomname : " + self.pomname + " to java name = " + self.camelcasejavaname)
         print("converting pomname : " + self.pomname + " to lower name = " + self.lowercasename)

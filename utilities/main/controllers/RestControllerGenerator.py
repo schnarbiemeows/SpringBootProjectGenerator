@@ -62,9 +62,9 @@ class RestControllerGenerator:
                 resources_file.write(tabs + Constants.doc_get_fk.replace("z",field.javaname)
                                      .replace("^",table.camelcasejavaname))
                 resources_file.write(tabs + Constants.ann_getfkmapping.replace("^",field.gettername) + "\n")
-                resources_file.write(tabs + "public ResponseEntity<Object> findBy" + field.gettername +
+                resources_file.write(tabs + "public ResponseEntity<Object> find" + table.camelcasejavaname + "By" + field.gettername +
                     "(@PathVariable " + Utilities.translateDataType(field.datatype) + " id) throws Exception {\n")
-                resources_file.write(tabs*2 + "List<" + table.camelcasejavaname + "DTO> results = businessService.findBy" +
+                resources_file.write(tabs*2 + "List<" + table.camelcasejavaname + "DTO> results = businessService.find" + table.camelcasejavaname + "By" +
                     field.gettername + "(id);\n")
                 resources_file.write(tabs * 2 + "return ResponseEntity.status(HttpStatus.OK).body(results);\n" +
                     tabs + "}\n\n")
@@ -74,12 +74,12 @@ class RestControllerGenerator:
             resources_file.write(tabs + Constants.doc_get_fk.replace("z", compoundFKstr)
                                  .replace("^", table.camelcasejavaname))
             resources_file.write(tabs + Constants.ann_get_mult_fk_maps.replace("^", compoundFKstr).replace("X", "{" + "}/{".join(inputparameters) + "}") + "\n")
-            text = tabs + "public ResponseEntity<Object> findBy" + compoundFKstr +"("
-            text += ",".join(datatypes)
+            text = tabs + "public ResponseEntity<Object> find" + table.camelcasejavaname + "By" + compoundFKstr +"("
+            text += ", ".join(datatypes)
             text += ") throws Exception {\n"
             resources_file.write(text)
             resources_file.write(
-                tabs * 2 + "List<" + table.camelcasejavaname + "DTO> results = businessService.findBy" +
+                tabs * 2 + "List<" + table.camelcasejavaname + "DTO> results = businessService.find" + table.camelcasejavaname + "By" +
                 compoundFKstr + "(" + ", ".join(inputparameters) + ");\n")
             resources_file.write(tabs * 2 + "return ResponseEntity.status(HttpStatus.OK).body(results);\n" +
                                  tabs + "}\n\n")
@@ -98,7 +98,7 @@ class RestControllerGenerator:
         resources_file.write("package " + mid_lvl_proj.rootpackage + "." + Constants.pckg_contr + ";\n\n")
         for line in test_controller:
             linestr = str(line)
-            if(linestr.find("XXX")>-1):
+            if(linestr.find("REST_CALLS")>-1):
                 RestControllerGenerator.create_controller_business_calls_for_mid_level(mid_lvl_proj,
                                             crud_proj_names, crud_proj_data,resources_file)
             else:
@@ -118,11 +118,11 @@ class RestControllerGenerator:
         """
         tabs = Constants.tab
         mid_lvl_map = {}
-        for project_name in mid_lvl_proj.tablenames:
+        for project_name in mid_lvl_proj.lowerprojectnames:
             mid_lvl_map[project_name] = "YES"
         for projectname in crud_proj_names:
             currentproject = crud_proj_data[projectname]
-            if currentproject.pomname in mid_lvl_map:
+            if currentproject.referencename in mid_lvl_map:
                 for tablename in currentproject.tablenames:
                     tabledata = currentproject.tabledata[tablename]
                     tablefile = open(currentproject.topmainpackage + "/" + Constants.pckg_contr + "/" + tabledata.camelcasejavaname + "Controller.java","r")
@@ -184,4 +184,4 @@ class RestControllerGenerator:
                             requestmappingfound = True
                     tablefile.close()
             else:
-                print("curd table not in mid-level map!")
+                print("crud table not in mid-level map!")
