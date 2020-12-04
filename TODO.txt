@@ -3,29 +3,30 @@ ideas, love-to-haves:
 - add functionality to generate a basic Android mobile CRUD app
 
 big tasks:
-- a Angular 10 & flask front-end UI that can help guide the user through the configuration process
-- add foreign key functionality, with a setting that will make the program automatically group tables into projects
-    according to foreign key relationships - DONE
+- add Angular 10 front-end UI that can help guide the user through the configuration process
 - refactor the JsonUtility.createPostmanCollection() method to create these collection dynamically, so that it can be
-    used eventually when making the postman collections for mid-level projects - DONE for mid-level, still needed for CRUD level
-- add Docker functionality - DONE
+    used eventually when making the postman collections for mid-level projects - DONE for mid-level, still needed for
+    CRUD level
 - get initial copyright for this application
 - add functionality to allow the user to generate from a partial SQL file
 - add try/catch functionality to all methods for more appropriate error handling
 
 medium tasks:
+- add Logging functionality
 - add more Junit testing, not sure atm what is missing
 - change the JavaFileMaker.create_proxy_class()
-- change the Junit tests to use mock objects instead of actually making changes to the database or proxy calls to other projects
-    this way, a config server and/or naming server does not have to be active in order to perform Junit testing
-- change the beginning_port_num and mid_lvl_port_num configuration variables functionality to instead add either a new config file or
-    add to groupings.txt and mid_level.txt a port # so that the user can manually specify which port # to use for each project
+- change the Junit tests to use mock objects instead of actually making changes to the database or proxy calls to other
+    projects this way, a config server and/or naming server does not have to be active in order to perform Junit testing
+- change the beginning_port_num and mid_lvl_port_num configuration variables functionality to instead add either a new
+    config file or add to groupings.txt and mid_level.txt a port # so that the user can manually specify which port #
+    to use for each project
 - and try/catches to all of the code
-- add file path checks to check for "/" at the end, so that when concatenating paths, we correctly have "/" between stuff
+- add file path checks to check for "/" at the end, so that when concatenating paths, we correctly have "/" between
+    stuff
 - ADD MORE COMMENTS! incl., check each method to make sure it has a good summary in it
 - get the hysterix functionality added
-- AngularFileMaker.py and AngularObject.py: all the methods in AngularFileMaker need to be refactored to use the project.tabledata
-    instead of dtonames; this is better design
+- AngularFileMaker.py and AngularObject.py: all the methods in AngularFileMaker need to be refactored to use the
+    project.tabledata instead of dtonames; this is better design
 
 small tasks:
 - take the template files in the files folder and move them to a new folder called templates
@@ -33,15 +34,18 @@ small tasks:
 - move the data types from SQL_file.py to Configuration.py or Constants.py
 - move the 4 projects(demo,config-server,naming-server,zuul-api-gateway-server) to a new projects folder
 - write methods to actually copy/alter the 3 other projects to the destinationroot, using the groupId config and a new
-    artifactId config, etc..., to give these projects a folder structure and name that the user wants. Maybe add a config
-    option to use these projects "as is"
+    artifactId config, etc..., to give these projects a folder structure and name that the user wants. Maybe add a
+    config option to use these projects "as is"
 - add an MIT license to this project
 - add a better instruction file into the project
-- change the JsonUtility.createPostmanCollection() method to correctly make each REST url if we are using a zuul server - see above
-- complete the bypass_business and bypass_controllers functionality, so that, if a user is working on one of their projects, but they
-    need to regenerate it, any changes they may have made to the controllers/business classes will not be overwritten
+- change the JsonUtility.createPostmanCollection() method to correctly make each REST url if we are using a zuul
+    server - see above
+- complete the bypass_business and bypass_controllers functionality, so that, if a user is working on one of their
+    projects, but they need to regenerate it, any changes they may have made to the controllers/business classes will
+    not be overwritten
 - needs testing amongst the different config server/naming server/zuul server option combinations
-- add an option for just regenerating the postman and the application.properties for when the user wants to eventually deploy to the cloud
+- add an option for just regenerating the postman and the application.properties for when the user wants to eventually
+    deploy to the cloud
 - get the spring-cloud-bus functionality added
 - in the SqlParser.parseOutUniqueKeys method, if the word "unique" is inside a comment, this will cause an error
 - postman issue: find by multiple FKs is creating 1 more parameter in the parameter list in the URL for the GET calls
