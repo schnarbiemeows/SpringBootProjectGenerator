@@ -33,7 +33,7 @@ class Project:
         self.rest_call_names = {}
         self.rest_call_types = {}
         self.rest_call_parameters = {}
-        self.routes = []
+        self.components = []
 
     def configure_reference_name(self, projectname):
         """

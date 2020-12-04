@@ -33,9 +33,9 @@ class JavaFileMaker:
                     resources_file.write(tabs+"public Sampler defaultSampler() {\n")
                     resources_file.write(tabs*2+"return Sampler.ALWAYS_SAMPLE;\n")
                     resources_file.write(tabs +"}\n")
-            elif (linestr.find("XXX") > -1):
+            elif (linestr.find("RIBBON_CLIENT_ANN") > -1):
                 if (Configuration.use_naming_server == True or Configuration.use_docker == True):
-                    resources_file.write(Constants.ann_feign.replace("XXX", project.rootpackage)+"\n")
+                    resources_file.write(Constants.ann_feign.replace("RIBBON_CLIENT_ANN", project.rootpackage)+"\n")
                     resources_file.write(Constants.ann_dc + "\n")
             else:
                 resources_file.write(linestr.replace("^", Configuration.author).replace("%", project.camelcasejavaname))
@@ -136,30 +136,31 @@ class JavaFileMaker:
                     proxy_file = open("files/specific_proxy.txt", "r")
                     for line in proxy_file:
                         linestr = str(line)
+                        # below does not appear in the specific_proxy.txt file - ???
                         if(linestr.find("YYY"))>-1:
                             for tablename in otherproject.tablenames:
                                 proxytable = otherproject.tabledata[tablename]
                                 resources_file.write("import "+currentprojectdata.rootpackage + "." + Constants.pckg_proxy_dtos+"."+proxytable.dtoname+";\n")
-                        elif (linestr.find("ZZZ")) > -1:
+                        elif (linestr.find("PROXY_REST_CALLS")) > -1:
                             JavaFileMaker.create_rest_calls_for_proxy(otherproject, resources_file)
-                        elif(linestr.find("WWW"))>-1:
+                        elif(linestr.find("FEIGN_CLIENT_ANN"))>-1:
                             if(Configuration.use_gateway_server == True):
-                                resources_file.write(linestr.replace("WWW",'@FeignClient(name="zuul-api-gateway-server")'))
+                                resources_file.write(linestr.replace("FEIGN_CLIENT_ANN",'@FeignClient(name="zuul-api-gateway-server")'))
                             elif(Configuration.use_docker == True):
-                                resources_file.write(linestr.replace("WWW", '@FeignClient(name = "'+otherproject.pomname+'", url = "${CURRENCY_EXCHANGE_SERVICE_HOST:http://localhost}:'+str(otherproject.portnum)+'")'))
+                                resources_file.write(linestr.replace("FEIGN_CLIENT_ANN", '@FeignClient(name = "'+otherproject.pomname+'", url = "${CURRENCY_EXCHANGE_SERVICE_HOST:http://localhost}:'+str(otherproject.portnum)+'")'))
                             elif(Configuration.use_naming_server == True):
                                 resources_file.write(
-                                    linestr.replace("WWW", '@FeignClient(name="' + otherproject.pomname + '")'))
+                                    linestr.replace("FEIGN_CLIENT_ANN", '@FeignClient(name="' + otherproject.pomname + '")'))
                             else:
-                                resources_file.write(linestr.replace("WWW", otherproject.pomname))      # this is not correct
-                        elif (linestr.find("XXX")) > -1:
+                                resources_file.write(linestr.replace("FEIGN_CLIENT_ANN", otherproject.pomname))      # this is not correct
+                        elif (linestr.find("RIBBON_CLIENT_ANN")) > -1:
                             if (Configuration.use_naming_server == True):
                                 resources_file.write(
-                                    linestr.replace("XXX", '@RibbonClient(name="' + otherproject.pomname + '")'))
-                        elif (linestr.find("WW1")) > -1:
+                                    linestr.replace("RIBBON_CLIENT_ANN", '@RibbonClient(name="' + otherproject.pomname + '")'))
+                        elif (linestr.find("FEIGN_CLIENT_IMPORT")) > -1:
                             if (Configuration.use_naming_server == True or Configuration.use_gateway_server == True or Configuration.use_docker == True):
                                 resources_file.write("import org.springframework.cloud.openfeign.FeignClient;\n")
-                        elif (linestr.find("XX1")) > -1:
+                        elif (linestr.find("RIBBON_CLIENT_IMPORT")) > -1:
                             if (Configuration.use_naming_server == True):
                                 resources_file.write("import org.springframework.cloud.netflix.ribbon.RibbonClient;\n")
                         else:
@@ -198,30 +199,28 @@ class JavaFileMaker:
                 proxy_file = open("files/specific_proxy.txt", "r")
                 for line in proxy_file:
                     linestr = str(line)
-                    if(linestr.find("YYY")) > -1:
-                        None
-                    elif(linestr.find("ZZZ")) > -1:
+                    if(linestr.find("PROXY_REST_CALLS")) > -1:
                         JavaFileMaker.create_rest_calls_for_proxy(currentproject,resources_file)
-                    elif (linestr.find("WWW")) > -1:
+                    elif (linestr.find("FEIGN_CLIENT_ANN")) > -1:
                         if (Configuration.use_gateway_server == True):
-                            resources_file.write(linestr.replace("WWW", "zuul-api-gateway-server"))
+                            resources_file.write(linestr.replace("FEIGN_CLIENT_ANN", "zuul-api-gateway-server"))
                         elif (Configuration.use_docker == True):
                             service_name = currentproject.pomname.upper().replace("-","_") + "_SERVICE_HOST"
                             mid_lvl_proj.service_config.append(service_name)
-                            text = '@FeignClient(name = "' + currentproject.pomname + '", url = "${' + service_name + ':http://XXX}:' + str(currentproject.portnum) + '")'
-                            resources_file.write(linestr.replace("WWW",text.replace("XXX", "localhost")))
+                            text = '@FeignClient(name = "' + currentproject.pomname + '", url = "${' + service_name + ':http://RIBBON_CLIENT_ANN}:' + str(currentproject.portnum) + '")'
+                            resources_file.write(linestr.replace("FEIGN_CLIENT_ANN",text.replace("RIBBON_CLIENT_ANN", "localhost")))
                         elif (Configuration.use_naming_server == True):
                             resources_file.write(
-                                linestr.replace("WWW", '@FeignClient(name = "' + currentproject.pomname + '")'))
+                                linestr.replace("FEIGN_CLIENT_ANN", '@FeignClient(name = "' + currentproject.pomname + '")'))
                         else:
-                            resources_file.write(linestr.replace("WWW", "//" + currentproject.pomname))                 # this is not correct
-                    elif(linestr.find("XXX")) > -1:
+                            resources_file.write(linestr.replace("FEIGN_CLIENT_ANN", "//" + currentproject.pomname))                 # this is not correct
+                    elif(linestr.find("RIBBON_CLIENT_ANN")) > -1:
                         if (Configuration.use_naming_server == True):
-                            resources_file.write(linestr.replace("XXX", '@RibbonClient(name="'+currentproject.pomname+'")'))
-                    elif (linestr.find("WW1")) > -1:
+                            resources_file.write(linestr.replace("RIBBON_CLIENT_ANN", '@RibbonClient(name="'+currentproject.pomname+'")'))
+                    elif (linestr.find("FEIGN_CLIENT_IMPORT")) > -1:
                         if (Configuration.use_naming_server == True or Configuration.use_gateway_server == True or Configuration.use_docker == True):
                             resources_file.write("import org.springframework.cloud.openfeign.FeignClient;\n")
-                    elif (linestr.find("XX1")) > -1:
+                    elif (linestr.find("RIBBON_CLIENT_IMPORT")) > -1:
                         if (Configuration.use_naming_server == True):
                             resources_file.write("import org.springframework.cloud.netflix.ribbon.RibbonClient;\n")
                     else:
@@ -246,18 +245,27 @@ class JavaFileMaker:
                         filename = currentprojectdata.topmainpackage + "/" + Constants.path_proxy_dtos + "/" + proxytable.dtoname + ".java"
                         resources_file = open(filename, "w")
                         resources_file.write("package " + currentprojectdata.rootpackage + "." + Constants.pckg_proxy_dtos + ";\n\n")
-                        resources_file.write("import java.math.*;\n")
-                        resources_file.write("import java.sql.*;\n")
-                        resources_file.write("import java.util.*;\n")
+                        #resources_file.write("import java.math.*;\n")
+                        #resources_file.write("import java.sql.*;\n")
+                        #resources_file.write("import java.util.*;\n")
                         source_file = open(destinationroot + "/" + otherprojectdata.pomname + "/" + otherprojectdata.pomname + "/src/main/java/" + Configuration.groupid.replace(".","/") + "/" + otherprojectdata.lowercasename + "/dtos/" + proxytable.dtoname + ".java", "r")
                         count = 0
                         proxytablename = proxytable.camelcasejavaname+";"
+                        hasDate, hasTime, hasTimestamp = JavaFileMaker.findDateAndTimeFields(proxytable)
                         for line in source_file:
                             if count > 0:
                                 linestr = str(line)
-                                if (linestr.find(proxytablename))>-1:
+                                if linestr.find(proxytablename) >-1 and linestr.find("import")>-1:
                                     resources_file.write(
                                         "import " + currentprojectdata.rootpackage + "." + Constants.pckg_proxy_pojos + "." + proxytable.camelcasejavaname + ";\n")
+                                elif linestr.find("import java.util.*;") > -1:
+                                    if hasDate == True:
+                                        resources_file.write("import java.util.Date;\n")
+                                elif linestr.find("import java.sql.*;") > -1:
+                                    if hasTime == True:
+                                        resources_file.write("import java.sql.Time;\n")
+                                    if hasTimestamp == True:
+                                        resources_file.write("import java.sql.Timestamp;\n")
                                 else:
                                     resources_file.write(linestr)
                             else:
@@ -266,6 +274,27 @@ class JavaFileMaker:
                         source_file.close()
         else:
             None
+
+    @staticmethod
+    def findDateAndTimeFields(tabledata):
+        """
+        this method will parse the table to find if the table has any Date or Time fields
+        this is used for import statements
+        :param tabledata:
+        :return:
+        """
+        hasDate = False
+        hasTime = False
+        hasTimestamp = False
+        for fieldname in tabledata.fieldnames:
+            fielddata = tabledata.fielddata[fieldname]
+            if fielddata.datatype.lower() == "date":
+                hasDate = True
+            if fielddata.datatype.lower() == "time":
+                hasTime = True
+            if fielddata.datatype.lower() == "timestamp":
+                hasTimestamp = True
+        return (hasDate,hasTime,hasTimestamp)
 
     @staticmethod
     def create_proxy_dtos_for_mid_lvl( destinationroot, mid_lvl_proj, crud_proj_names, crud_proj_data):
@@ -291,12 +320,21 @@ class JavaFileMaker:
                     source_file = open(destinationroot + "/" + currentproject.pomname + "/" + currentproject.pomname + "/src/main/java/" + Configuration.groupid.replace(".","/") + "/" + currentproject.lowercasename + "/dtos/" + currenttable.dtoname + ".java", "r")
                     count = 0
                     proxytablename = currenttable.camelcasejavaname+";"
+                    hasDate, hasTime, hasTimestamp = JavaFileMaker.findDateAndTimeFields(currenttable)
                     for line in source_file:
                         if count > 0:
                             linestr = str(line)
-                            if (linestr.find(proxytablename))>-1:
+                            if linestr.find(proxytablename) >-1 and linestr.find("import")>-1:
                                 resources_file.write(
                                     "import " + mid_lvl_proj.rootpackage + "." + Constants.pckg_proxy_pojos + "." + currenttable.camelcasejavaname + ";\n")
+                            elif linestr.find("import java.util.*;") > -1:
+                                if hasDate == True:
+                                    resources_file.write("import java.util.Date;\n")
+                            elif linestr.find("import java.sql.*;") > -1:
+                                if hasTime == True:
+                                    resources_file.write("import java.sql.Time;\n")
+                                if hasTimestamp == True:
+                                    resources_file.write("import java.sql.Timestamp;\n")
                             else:
                                 resources_file.write(linestr)
                         else:
@@ -320,17 +358,26 @@ class JavaFileMaker:
                         filename = currentprojectdata.topmainpackage + "/" + Constants.path_proxy_pojos + "/" + proxytable.camelcasejavaname + ".java"
                         resources_file = open(filename, "w")
                         resources_file.write("package " + currentprojectdata.rootpackage + "." + Constants.pckg_proxy_pojos + ";\n\n")
-                        resources_file.write("import java.math.*;\n")
-                        resources_file.write("import java.sql.*;\n")
-                        resources_file.write("import java.util.*;\n")
+                        #resources_file.write("import java.math.*;\n")
+                        #resources_file.write("import java.sql.*;\n")
+                        #resources_file.write("import java.util.*;\n")
                         source_file = open(destinationroot + "/" + otherprojectdata.pomname + "/" + otherprojectdata.pomname + "/src/main/java/" + Configuration.groupid.replace(".","/") + "/" + otherprojectdata.lowercasename + "/pojos/" + proxytable.camelcasejavaname + ".java", "r")
                         count = 0
                         proxytablename = proxytable.dtoname+";"
+                        hasDate, hasTime, hasTimestamp = JavaFileMaker.findDateAndTimeFields(proxytable)
                         for line in source_file:
                             if count > 0 :
                                 linestr = str(line)
-                                if (linestr.find(proxytablename))>-1:
+                                if linestr.find(proxytablename) >-1 and linestr.find("import")>-1:
                                     resources_file.write("import " + currentprojectdata.rootpackage + "." + Constants.pckg_proxy_dtos + "." + proxytable.dtoname +";\n")
+                                elif linestr.find("import java.util.*;") > -1:
+                                    if hasDate == True:
+                                        resources_file.write("import java.util.Date;\n")
+                                elif linestr.find("import java.sql.*;") > -1:
+                                    if hasTime == True:
+                                        resources_file.write("import java.sql.Time;\n")
+                                    if hasTimestamp == True:
+                                        resources_file.write("import java.sql.Timestamp;\n")
                                 else:
                                     resources_file.write(linestr)
                             else:
@@ -364,12 +411,21 @@ class JavaFileMaker:
                     source_file = open(destinationroot + "/" + currentproject.pomname + "/" + currentproject.pomname + "/src/main/java/" + Configuration.groupid.replace(".","/") + "/" + currentproject.lowercasename + "/pojos/" + currenttable.camelcasejavaname + ".java", "r")
                     count = 0
                     proxytablename = currenttable.dtoname+";"
+                    hasDate, hasTime, hasTimestamp = JavaFileMaker.findDateAndTimeFields(currenttable)
                     for line in source_file:
                         if count > 0:
                             linestr = str(line)
-                            if (linestr.find(proxytablename))>-1:
+                            if linestr.find(proxytablename) >-1 and linestr.find("import")>-1:
                                 resources_file.write(
                                     "import " + mid_lvl_proj.rootpackage + "." + Constants.pckg_proxy_dtos + "." + currenttable.dtoname + ";\n")
+                            elif linestr.find("import java.util.*;") > -1:
+                                if hasDate == True:
+                                    resources_file.write("import java.util.Date;\n")
+                            elif linestr.find("import java.sql.*;") > -1:
+                                if hasTime == True:
+                                    resources_file.write("import java.sql.Time;\n")
+                                if hasTimestamp == True:
+                                    resources_file.write("import java.sql.Timestamp;\n")
                             else:
                                 resources_file.write(linestr)
                         else:

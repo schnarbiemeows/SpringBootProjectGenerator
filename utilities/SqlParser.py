@@ -492,7 +492,8 @@ class SqlParser:
 
     def parseOutUniqueKeys(self, input):
         """
-
+        this method will search for the word "unique" to locate any unique keys
+        TODO - if the word unique is in a comment, this will cause an error
         :param input:
         :return:
         """

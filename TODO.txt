@@ -43,6 +43,9 @@ small tasks:
 - needs testing amongst the different config server/naming server/zuul server option combinations
 - add an option for just regenerating the postman and the application.properties for when the user wants to eventually deploy to the cloud
 - get the spring-cloud-bus functionality added
+- in the SqlParser.parseOutUniqueKeys method, if the word "unique" is inside a comment, this will cause an error
+- postman issue: find by multiple FKs is creating 1 more parameter in the parameter list in the URL for the GET calls
+- main.txt template still has XXX, YYY, etc... markers, need to switch to better markers
 
 
 functionality added:
@@ -59,3 +62,4 @@ functionality added:
 Phase II:
 06/15/2020 - added Docker and Kubernetes functionality for deploying to Google Cloud behind an Ingress
 08/16/2020 - added initial Foreign Key Functionality
+12/04/2020 - added dropdowns in the Angular code for foreign key references

@@ -74,7 +74,7 @@ class Constants:
     import_dc = "import org.springframework.cloud.client.discovery.EnableDiscoveryClient;"
     import_bean = "import org.springframework.context.annotation.Bean;"
     import_sampler = "import brave.sampler.Sampler;"
-    ann_feign = '@EnableFeignClients("XXX")'
+    ann_feign = '@EnableFeignClients("RIBBON_CLIENT_ANN")'
     ann_dc = "@EnableDiscoveryClient"
 # Swagger file
 

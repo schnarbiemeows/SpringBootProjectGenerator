@@ -10,12 +10,11 @@ class AngularFileMaker:
         None
 
     @staticmethod
-    def make_angular_projects(projectnames, projectdata, root_directory):
+    def make_angular_projects(projectnames, projectdata):
         """
         this method will create the angular 10 code for a given project
         :param projectnames:
         :param projectdata:
-        :param root_directory:
         :return:
         """
         # for each project:
@@ -24,36 +23,32 @@ class AngularFileMaker:
             project = projectdata[projectname]
             # make the base file structure of the project
             root_directory = FileMaker.make_base_angular_project(project)
-            AngularFileMaker.make_folders(project,root_directory)
+            AngularFileMaker.make_folders(root_directory)
             # make an AngularObject - each project has its own AngularObject
             angular_object = AngularObject()
-
-            angular_object.tablenames = project.tablenames
-            angular_object.tabledata = project.tabledata
             # make angular module classes from the DTOs
             AngularFileMaker.make_angular_classes(project, root_directory)
             # parse the controller class to get some important information that we will need in order to make both the service file
             # and the component ts file
             AngularFileMaker.make_angular_classes_for_foreign_keys(projectnames, projectdata, project, root_directory)
-
             # make the services
             AngularFileMaker.make_services(project, angular_object, root_directory)
             AngularFileMaker.make_services_for_foreign_keys(projectnames, projectdata, project, angular_object, root_directory)
             # make the components
-            AngularFileMaker.make_components(projectnames, projectdata,project,angular_object, root_directory)
+            AngularFileMaker.make_components(projectnames, projectdata, project, root_directory)
             # make the navigation bar
-            AngularFileMaker.make_navigation_bar(project, angular_object, root_directory)
+            AngularFileMaker.make_navigation_bar(project, root_directory)
             # make the app-routing.module.ts file
-            AngularFileMaker.make_app_routing_module(angular_object, root_directory)
+            AngularFileMaker.make_app_routing_module(project, root_directory)
             # make the app.module.ts file
-            AngularFileMaker.make_app_modules_ts_file(projectnames, projectdata, project, angular_object, root_directory)
+            AngularFileMaker.make_app_modules_ts_file(project, angular_object, root_directory)
             # make the config files
             AngularFileMaker.make_angularjson_file(project, root_directory)
-            AngularFileMaker.make_packagejson_file(project, root_directory)
+            AngularFileMaker.make_packagejson_file(root_directory)
             # make the index.html files
-            AngularFileMaker.make_app_component_file(project, root_directory)
+            AngularFileMaker.make_app_component_file(root_directory)
             AngularFileMaker.make_index_html_file(project, root_directory)
-            AngularFileMaker.make_style_css_file(project, root_directory)
+            AngularFileMaker.make_style_css_file(root_directory)
 
     @staticmethod
     def translateDataType(input):
@@ -97,10 +92,6 @@ class AngularFileMaker:
             inputfile = open(filename, "r")
             outputfile = open(root_directory + "/src/app/models/" + dtoname + ".ts", "w")
             outputfile.write("export interface " + dtoname + "{\n")
-            #angular_object.dto_names.append(dtoname)
-            #angular_object.dto_tablename_mapping[dtoname] = tablename
-            #angular_object.fieldnames[dtoname] = []
-            #angular_object.fieldtypes[dtoname] = {}
             inputfile.close()
             inputfile = open(filename, "r")
             for line in inputfile:
@@ -195,8 +186,6 @@ class AngularFileMaker:
                 print("Analyzing the Controller class for dtoname : " + dtoname)
                 project.urls[dtoname] = []
                 project.rest_call_names[dtoname] = []
-                #angular_object.rest_call_types[dtoname] = []
-                #angular_object.rest_call_parameters[dtoname] = []
                 if(project.is_mid_level == True):
                     print("This project is mid-level")
                     controller_file = open(project.topmainpackage + "/" + Constants.pckg_contr + "/" + project.camelcasejavaname + "Controller.java","r")
@@ -212,7 +201,6 @@ class AngularFileMaker:
                             print("Which has a rest-call-name of : " + rest_call_name)
                             print("Which we are attempting to put into key = : " + currentdto)
                             project.rest_call_names[currentdto].append(rest_call_name)
-                            #angular_object.rest_call_parameters[currentdto].append(AngularFileMaker.remove_annotations_from_string(linestr))
                             requestfound = False
                         elif linestr.find('Mapping(') > -1:
                             if(linestr.find("health")==-1):
@@ -229,7 +217,6 @@ class AngularFileMaker:
                                         currentdto = dtoname
                                         print("1 - which we are putting into " + dtoname)
                                         project.urls[dtoname].append(full_url)
-                                        #angular_object.rest_call_types[dtoname].append(request_type)
                                     else:
                                         print("which does not qualify")
                                         requestfound = False
@@ -237,7 +224,6 @@ class AngularFileMaker:
                                     currentdto = dtoname
                                     print("2 - which we are putting into " + dtoname)
                                     project.urls[dtoname].append(full_url)
-                                    #angular_object.rest_call_types[dtoname].append(request_type)
                             else:
                                 print("skipping healthcheck")
                     elif linestr.find('@RequestMapping(') > -1:
@@ -249,7 +235,7 @@ class AngularFileMaker:
                 requestmappingfound = False
 
     @staticmethod
-    def remove_annotations_from_string( inputstring):
+    def remove_annotations_from_string(inputstring):
         """
         this method is for the mid-level proxies, it will remove annotations from the method declarations
         :param inputstring:
@@ -266,7 +252,7 @@ class AngularFileMaker:
         return outputstring.rstrip()
 
     @staticmethod
-    def make_app_routing_module(angular_object,root_directory):
+    def make_app_routing_module(project,root_directory):
         """
         this method will make the app-routing.module.ts file
         :param angular_object:
@@ -285,17 +271,17 @@ class AngularFileMaker:
                 linestr = str(line)
                 if (linestr.find("IMPORTS") > -1):
                     counter = 0
-                    for item in angular_object.components:
+                    for item in project.components:
                         lowername = str(item)[0:-9].lower()
                         app_routing_output.write("import { " + item + " } from './components/" + lowername + "/" + lowername + ".component';\n")
                         counter += 1
                 elif (linestr.find("ROUTES") > -1):
                     counter = 0
-                    for item in angular_object.components:
+                    for item in project.components:
                         lowername = str(item)[0:-9].lower()
                         app_routing_output.write("{ path: '" + lowername + "', component: " + item + " }")
                         counter += 1
-                        if(counter<len(angular_object.components)):
+                        if(counter<len(project.components)):
                             app_routing_output.write(",")
                         app_routing_output.write("\n")
                 else:
@@ -309,13 +295,12 @@ class AngularFileMaker:
                 app_routing_output.close()
 
     @staticmethod
-    def make_components(projectnames, projectdata,project, angular_object, root_directory):
+    def make_components(projectnames,projectdata,project,root_directory):
         """
         this method will make all of the component files for a project
         :param projectnames:
         :param projectdata:
         :param project:
-        :param angular_object:
         :param root_directory:
         :return:
         """
@@ -326,9 +311,7 @@ class AngularFileMaker:
             dtoname = tabledata.dtoname
             javaname = dtoname.replace("DTO","")
             lowercasename = dtoname.replace("DTO","").lower()
-            angular_object.components.append(javaname + "Component")
-            #angular_object.selectors.append("app-" + lowercasename)
-            #angular_object.routes.append("/" + lowercasename)
+            project.components.append(javaname + "Component")
             component_html_file = None
             output_html_file = None
             component_ts_file = None
@@ -371,7 +354,7 @@ class AngularFileMaker:
                 for line in component_ts_file:
                     linestr = str(line)
                     if(linestr.find("IMPORTS")>-1):
-                        AngularFileMaker.add_component_imports(projectnames, projectdata, tabledata, output_ts_file)
+                        AngularFileMaker.add_component_imports(tabledata, output_ts_file)
                     elif(linestr.find("MINS_&_MAXS")>-1):
                         AngularFileMaker.makeMinsAndMaxes(tabledata,output_ts_file)
                     elif(linestr.find("CONSTRUCTOR")>-1):
@@ -424,9 +407,10 @@ class AngularFileMaker:
                     output_css_file.close()
 
     @staticmethod
-    def make_fk_names(projectnames, projectdata,tabledata):
+    def make_fk_names(projectnames,projectdata,tabledata):
         """
-
+        this method groups together some important foreign key data for other methods
+        to use later
         :param projectnames:
         :param projectdata:
         :param tabledata:
@@ -464,7 +448,11 @@ class AngularFileMaker:
                     parentkeyname = parentfield.javaname
                     parentnames[parenttable] = "1"
                     displayname = None
-                    if len(parenttable.fieldnames)>1:
+                    if len(parenttable.fieldnames)>2:
+                        descriptorfieldname = parenttable.fieldnames[2]
+                        descriptorfielddata = parenttable.fielddata[descriptorfieldname]
+                        displayname = descriptorfielddata.javaname
+                    else:
                         descriptorfieldname = parenttable.fieldnames[1]
                         descriptorfielddata = parenttable.fielddata[descriptorfieldname]
                         displayname = descriptorfielddata.javaname
@@ -474,11 +462,9 @@ class AngularFileMaker:
                     tabledata.fknames.append((parentdtoname,parentjavaname,parentlowercasename,parentkeyname,displayname,name,parentfield))
 
     @staticmethod
-    def add_component_imports(projectnames, projectdata,tabledata,output_ts_file):
+    def add_component_imports(tabledata,output_ts_file):
         """
         this method adds the imports to the typescript controller
-        :param projectnames:
-        :param projectdata:
         :param tabledata:
         :param dtoname:
         :param javaname:
@@ -505,6 +491,15 @@ class AngularFileMaker:
 
     @staticmethod
     def create_component_constructor(tabledata, javaname, lowercasename, output_ts_file, tabs):
+        """
+        creates the constructor method for the component, adding any service handles needed by the component
+        :param tabledata:
+        :param javaname:
+        :param lowercasename:
+        :param output_ts_file:
+        :param tabs:
+        :return:
+        """
         output_ts_file.write(tabs + "constructor( ")
         services = []
         services.append("private " + lowercasename + "service: " + javaname + "Service")
@@ -519,6 +514,16 @@ class AngularFileMaker:
 
     @staticmethod
     def create_deleteitem_codeblock(tabledata, project, dtoname, lowercasename, output_ts_file, tabs):
+        """
+        creates the body for the delete record method in the component
+        :param tabledata:
+        :param project:
+        :param dtoname:
+        :param lowercasename:
+        :param output_ts_file:
+        :param tabs:
+        :return:
+        """
         fielddata = tabledata.fielddata[tabledata.fieldnames[0]]
         output_ts_file.write(tabs + "this." + lowercasename + "service." +
                              project.rest_call_names[dtoname][
@@ -529,11 +534,29 @@ class AngularFileMaker:
 
     @staticmethod
     def create_updateitem_codeblock(javaname, lowercasename, output_ts_file, tabs):
+        """
+        creates the body for the update record method in the component
+        :param javaname:
+        :param lowercasename:
+        :param output_ts_file:
+        :param tabs:
+        :return:
+        """
         output_ts_file.write(tabs + "this." + lowercasename + " = this." + lowercasename + "list[i];\n")
         output_ts_file.write(tabs + "this.show" + javaname + "Form = true;\n")
 
     @staticmethod
     def create_createitem_codeblock(tabledata, project, dtoname, lowercasename, output_ts_file, tabs):
+        """
+        creates the body for the create record method in the component
+        :param tabledata:
+        :param project:
+        :param dtoname:
+        :param lowercasename:
+        :param output_ts_file:
+        :param tabs:
+        :return:
+        """
         output_ts_file.write(
             tabs + "if(this.addMode) {\n")
         output_ts_file.write(tabs + tabs + "this." + lowercasename + "service." +
@@ -563,6 +586,15 @@ class AngularFileMaker:
 
     @staticmethod
     def create_getall_items_codeblock(project, dtoname, lowercasename, output_ts_file, tabs):
+        """
+        creates the body for the select * method in the component
+        :param project:
+        :param dtoname:
+        :param lowercasename:
+        :param output_ts_file:
+        :param tabs:
+        :return:
+        """
         output_ts_file.write(tabs + "this." + lowercasename + "service." + project.rest_call_names[dtoname][
             0] + "().subscribe(" + lowercasename + "list => {\n")
         output_ts_file.write(tabs + tabs + "this." + lowercasename + "list = " + lowercasename + "list;\n")
@@ -631,7 +663,6 @@ class AngularFileMaker:
             parentfieldname = fktuple[3]
             descriptorfield = fktuple[4]
             output_ts_file.write(tabs + "this." + parentlowercasename + "service.getAll" + parentjavaname + "().subscribe(" + parentlowercasename + "list => {\n")
-            #output_ts_file.write(tabs*2 + "this." + parentlowercasename + "list = " + parentlowercasename + "list;\n")
             output_ts_file.write(tabs * 2 + 'console.log("length of ' + parentlowercasename + 'list = " + ' + parentlowercasename + 'list.length);\n')
             output_ts_file.write(tabs * 2 + "for (let entry of " + parentlowercasename + "list) {\n")
             output_ts_file.write(tabs * 3 + "// change the value of entry.xxxx to be the actual field that you want to display\n")
@@ -646,7 +677,7 @@ class AngularFileMaker:
     @staticmethod
     def add_html_header(tabledata,output_html_file):
         """
-
+        this method creates the table header section in the component.html file
         :param dtoname:
         :param angular_object:
         :param output_html_file:
@@ -669,6 +700,7 @@ class AngularFileMaker:
     @staticmethod
     def add_html_body(tabledata,output_html_file):
         """
+        this method creates the table body section in the component.html file
         :param tabledata:
         :param output_html_file:
         :return:
@@ -677,7 +709,6 @@ class AngularFileMaker:
         print("making the html for dtoname = " + tabledata.dtoname)
         output_html_file.write(tabs*3 + '<td [hidden]="alwaysHidden">{{ i + 1 }}</td>\n')
         fktuples = {}
-        # (parentdtoname,parentjavaname,parentlowercasename,parentkeyname,displayname,name,parentfield)
         for x in range(0, len(tabledata.fknames)):
             tuple = tabledata.fknames[x]
             childfieldname = tuple[5]
@@ -715,7 +746,6 @@ class AngularFileMaker:
         tabs = Constants.tab
         lowercasename = tabledata.lowercasename
         fktuples = {}
-        # (parentdtoname,parentjavaname,parentlowercasename,parentkeyname,displayname,name,parentfield)
         for x in range (0,len(tabledata.fknames)):
             tuple = tabledata.fknames[x]
             childfieldname = tuple[5]
@@ -725,23 +755,13 @@ class AngularFileMaker:
             fielddata = tabledata.fielddata[name]
             if fielddata.isprimary == False:
                 if name in fktuples.keys():
-                    """
-                        <div class="col col-sm-4" *ngIf="!fbb.hideFormat">
-                          <select class="form-control border-info text-center" 
-                          [(ngModel)]="listItemBB.format" 
-                          (change)="changeIncrements($event)" 
-                          name="formatdropdown">
-                            <option *ngFor="let option of datetimeoptions" [value]="option.value">
-                              {{ option.viewValue }}
-                            </option>
-                          </select>
-                        </div>
-                    """
                     tuple = fktuples[name]
                     output_html_file.write(tabs * 4 + '<label>' + fielddata.javaname + '</label>\n')
                     output_html_file.write(tabs * 5 + '<div class="col col-sm-4">\n')
                     output_html_file.write(tabs * 5 + '<select class="form-control border-info text-center"\n')
                     output_html_file.write(tabs * 5 + '[(ngModel)]="' + tabledata.lowercasename + '.' + fielddata.javaname + '"\n')
+                    if fielddata.canbenull == False:
+                        output_html_file.write(tabs * 5 + 'required\n')
                     output_html_file.write(tabs * 5 + 'name="' + fielddata.javaname + '_dropdown">\n')
                     output_html_file.write(tabs * 6 + '<option *ngFor="let option of ' + tuple[2] + 'list" [value]="option.value">\n')
                     output_html_file.write(tabs * 7 + '{{ option.viewValue }}\n')
@@ -749,7 +769,6 @@ class AngularFileMaker:
                     output_html_file.write(tabs * 5 + '</select>\n')
                     output_html_file.write(tabs * 4 + '</div>\n')
                 else:
-                    #output_html_file.write(tabs*3+'<div class="form-group">\n')
                     output_html_file.write(tabs*4 + '<label>'+fielddata.javaname+'</label>\n')
                     type = "text"
                     fieldtype = fielddata.datatype.lower()
@@ -833,9 +852,7 @@ class AngularFileMaker:
         :param output_file:
         :return:
         """
-        tabs = Constants.tab
         compoundFK = []
-        datatypes = []
         inputparameters = []
         counter = 0
         for symbolname in tabledata.fksymbolnames:
@@ -895,11 +912,6 @@ class AngularFileMaker:
         datatypes = []
         inputparameters = []
         counter = 0
-        #editItem(i: number) {
-        #this.child1to1service.getAllChild1to1().subscribe(child1to1list => {
-		#this.child1to1list = child1to1list;
-		#this.loaded = true;
-	    #});
         for symbolname in tabledata.fksymbolnames:
             fklist = tabledata.fksymboldata[symbolname]
             for item in fklist:
@@ -907,9 +919,7 @@ class AngularFileMaker:
                 compoundFK.append(field.gettername)
                 datatypes.append("id" + str(counter) + ": " + Utilities.translateAngularDataType(field.datatype))
                 inputparameters.append('this.' + tabledata.lowercasename + '.' + field.javaname)
-
                 output_file.write(tabs +"findBy" + field.gettername + "() {\n")
-
                 output_file.write(
                     tabs * 2 + 'this.' + tabledata.lowercasename + 'service.find' + tabledata.camelcasejavaname + 'By' + field.gettername +
                     '(this.' + tabledata.lowercasename + '.' + field.javaname + ').subscribe(response => {\n')
@@ -925,9 +935,6 @@ class AngularFileMaker:
             output_file.write(tabs * 2 + 'console.log("back from findBy' + compoundFKstr + '");\n'  +
                               tabs * 2 + 'console.log("array size = " + response.length );\n' +
                               tabs * 2 + "this.reload();\n" + tabs + "});\n" + tabs + "}\n\n")
-
-
-
 
     @staticmethod
     def make_services(project, angular_object, root_directory):
@@ -977,11 +984,6 @@ class AngularFileMaker:
                 if (output_service_file is not None):
                     output_service_file.close()
 
-
-
-        #*********************************************************
-
-
     @staticmethod
     def make_services_for_foreign_keys(projectnames, projectdata, project, angular_object, root_directory):
         """
@@ -1009,7 +1011,6 @@ class AngularFileMaker:
                         dtoname = parenttable.dtoname
                         # TODO - remove this later
                         javaname = dtoname.replace("DTO", "")
-                        lowercasename = dtoname.replace("DTO", "").lower()
                         angular_object.services.add(javaname + "Service")
                         # END TODO
                         component_service_file = None
@@ -1087,12 +1088,10 @@ class AngularFileMaker:
                               "DTO[]>(this.find" + tabledata.camelcasejavaname +
                     "By" + compoundFKstr + "URL);\n" + tabs + "}\n")
 
-
     @staticmethod
-    def make_rest_call_codeblock(tabledata, dtoname, name, type, paramlist, output_service_file):
+    def make_rest_call_codeblock(dtoname, name, type, paramlist, output_service_file):
         """
         this method will make the actual code in the service class that makes the REST calls
-        :param tabledata:
         :param dtoname:
         :param name:
         :param type:
@@ -1146,7 +1145,7 @@ class AngularFileMaker:
             output_service_file.write(tabs + "}\n")
 
     @staticmethod
-    def make_angularjson_file( project, root_directory):
+    def make_angularjson_file(project, root_directory):
         """
         this method generates the angular.json file
         :param project:
@@ -1186,10 +1185,9 @@ class AngularFileMaker:
                 altered_aj_file
 
     @staticmethod
-    def make_packagejson_file(project, root_directory):
+    def make_packagejson_file(root_directory):
         """
         this method generates the package.json file
-        :param project:
         :param root_directory:
         :return:
         """
@@ -1219,10 +1217,9 @@ class AngularFileMaker:
                 altered_pj_file
 
     @staticmethod
-    def make_folders( project, root_directory):
+    def make_folders(root_directory):
         """
         this program makes the src folder and app subfolder and components,models,guards,services subfolders
-        :param project:
         :param root_directory:
         :return:
         """
@@ -1240,11 +1237,9 @@ class AngularFileMaker:
             os.mkdir(root_directory + "/src/app/services")
 
     @staticmethod
-    def make_app_modules_ts_file(projectnames, projectdata, project, angular_object, root_directory):
+    def make_app_modules_ts_file(project, angular_object, root_directory):
         """
         this method will make the app.module.ts file
-        :param projectnames:
-        :param projectdata:
         :param project:
         :param angular_object:
         :param root_directory:
@@ -1260,7 +1255,7 @@ class AngularFileMaker:
                 linestr = str(line)
                 if (linestr.find("IMPORTS") > -1):
                     counter = 0
-                    for item in angular_object.components:
+                    for item in project.components:
                         new_app_module_ts_file.write(
                             "import { " + item + " } from './components/" + angular_object.names[counter] + "/" +
                             angular_object.names[counter] + ".component';\n")
@@ -1279,10 +1274,10 @@ class AngularFileMaker:
                     new_app_module_ts_file.write(tabs+"AppComponent,\n")
                     new_app_module_ts_file.write(tabs + "NavbarComponent,\n")
                     counter = 0
-                    for item in angular_object.components:
+                    for item in project.components:
                         new_app_module_ts_file.write(tabs+tabs+item)
                         counter += 1
-                        if (counter < len(angular_object.components)):
+                        if (counter < len(project.components)):
                             new_app_module_ts_file.write(",")
                         new_app_module_ts_file.write("\n")
                 elif(linestr.find("ADD_MODULES") > -1):
@@ -1291,8 +1286,6 @@ class AngularFileMaker:
                     new_app_module_ts_file.write(tabs + "HttpClientModule,\n")
                     new_app_module_ts_file.write(tabs + "NgxPaginationModule,\n")
                     new_app_module_ts_file.write(tabs + "FormsModule\n")
-                    #new_app_module_ts_file.write(tabs + "// modules added here\n")
-                    AngularFileMaker.figureout_module_additions(project, new_app_module_ts_file)
                 elif(linestr.find("ADD_PROVIDERS") > -1):
                     new_app_module_ts_file.write(linestr.replace("ADD_PROVIDERS",",".join(list(angular_object.services))))
                 else:
@@ -1306,40 +1299,9 @@ class AngularFileMaker:
                 new_app_module_ts_file
 
     @staticmethod
-    def figureout_imports( project, new_app_module_ts_file):
-        """
-
-        :param project:
-        :param new_app_module_ts_file:
-        :return:
-        """
-        new_app_module_ts_file.write("import { NavbarComponent } from './components/navbar/navbar.component';\n")
-
-    @staticmethod
-    def figureout_module_additions( project, new_app_module_ts_file):
-        """
-
-        :param project:
-        :param new_app_module_ts_file:
-        :return:
-        """
-        None
-
-    @staticmethod
-    def figureout_service_additions( project, new_app_module_ts_file):
-        """
-        TODO - remove?
-        :param project:
-        :param new_app_module_ts_file:
-        :return:
-        """
-        None
-
-    @staticmethod
-    def make_style_css_file(project, root_directory):
+    def make_style_css_file(root_directory):
         """
         this method will generate the global css file
-        :param project:
         :param root_directory:
         :return:
         """
@@ -1385,11 +1347,10 @@ class AngularFileMaker:
                 new_index_file
 
     @staticmethod
-    def make_navigation_bar( project, angular_project, root_directory):
+    def make_navigation_bar(project,root_directory):
         """
         this method will make a navigation bar component
         :param project:
-        :param angular_project:
         :param root_directory:
         :return:
         """
@@ -1402,7 +1363,7 @@ class AngularFileMaker:
             linestr = str(line)
             if(linestr.find("ROUTES")>-1):
                 counter = 0
-                for item in angular_project.components:
+                for item in project.components:
                     rootname = str(item)[0:-9]
                     lowername = rootname.lower()
                     outputfile.write(tabs *3 +'<li class="nav-item">\n')
@@ -1423,10 +1384,9 @@ class AngularFileMaker:
         outputfile.close()
 
     @staticmethod
-    def make_app_component_file( project, root_directory):
+    def make_app_component_file(root_directory):
         """
         this method makes the app.component.html file
-        :param project:
         :param root_directory:
         :return:
         """

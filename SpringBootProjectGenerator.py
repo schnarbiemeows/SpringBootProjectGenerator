@@ -450,7 +450,7 @@ class SpringBootProjectGenerator:
         :param project:
         :return:
         """
-        AngularFileMaker.make_angular_projects(self.ang_proj_names, self.ang_proj_data, self.ang_root_dir)
+        AngularFileMaker.make_angular_projects(self.ang_proj_names, self.ang_proj_data)
 
     def create_docker_file(self, project):
         """

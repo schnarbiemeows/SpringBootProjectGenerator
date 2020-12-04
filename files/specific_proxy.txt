@@ -1,5 +1,5 @@
-XX1
-WW1
+RIBBON_CLIENT_IMPORT
+FEIGN_CLIENT_IMPORT
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import javax.validation.*;
@@ -12,9 +12,9 @@ import &.proxy.dtos.*;
  * @author ^
  *
  */
-WWW
-XXX
+FEIGN_CLIENT_ANN
+RIBBON_CLIENT_ANN
 public interface %ServiceProxy {
 
-    ZZZ
+    PROXY_REST_CALLS
 }
