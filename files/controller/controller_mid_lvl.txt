@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import javax.validation.Valid;
 import java.util.*;
-
+LOGGER_IMPORT
 import $.business.%Business;
 import $.proxy.pojos.*;
 import $.proxy.dtos.*;
@@ -18,6 +18,8 @@ import $.proxy.dtos.*;
 @RestController
 @RequestMapping(path="/&")
 public class %Controller {
+
+    SINGLETON_LOGGER
 
 	/**
 	 * JPA Repository handle

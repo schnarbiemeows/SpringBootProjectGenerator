@@ -1,7 +1,9 @@
 import java.io.Serializable;
+LOGGER_IMPORT
 
 public class ResponseMessage implements Serializable {
 
+    SINGLETON_LOGGER
 	private static final long serialVersionUID = 1L;
 	private String message;
 

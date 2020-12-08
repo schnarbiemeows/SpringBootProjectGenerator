@@ -132,6 +132,9 @@ class PojoAndDtoGenerator:
         file.write("import java.math.*;\n")
         file.write("import java.sql.*;\n")
         file.write("import java.util.*;\n\n")
+        if Configuration.use_logging == True:
+            file.write(Constants.import_logger_1 + "\n")
+            file.write(Constants.import_logger_2 + "\n")
 
     @staticmethod
     def create_class_decl(table, file, src):
@@ -160,10 +163,14 @@ class PojoAndDtoGenerator:
             file.write("public class " + table.camelcasejavaname + " implements Serializable {\n" +
                 tabs + "// default serial version id, required for serializable classes\n" +
                 tabs + "private static final long serialVersionUID = 1L;\n\n")
+            if Configuration.use_logging == True:
+                file.write(tabs + Constants.logger_singleton + "\n\n")
         else:
             file.write("public class " + table.dtoname + " implements Serializable {\n" +
                 tabs + "// default serial version id, required for serializable classes\n" +
                 tabs + "private static final long serialVersionUID = 1L;\n\n")
+            if Configuration.use_logging == True:
+                file.write(tabs + Constants.logger_singleton + "\n\n")
 
     @staticmethod
     def create_the_fields(table, file, src, tabledata):

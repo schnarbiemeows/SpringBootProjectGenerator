@@ -7,5 +7,12 @@
 # globl-ingr-svc:brands,products,recipe_ingredients,recipes,ingredient_types,ingredients
 # accounts-svc:users,users_hist,groups,groups_hist,grp_user,grp_user_hist,roles,roles_hist,action_type,rsrc_type,resources
 # interview-crud:question,answer,question_category,question_level
-nms-types:serving_types,serving_type_ratios,brands,brand_type,ingredient_types,brand_ingr_type,payment,payment_type
-nms-ingr:ingredients,recipes,recipe_ingredients
+nms-accounts:action_type,groups,groups_hist,grp_user,grp_user_hist,resources,rsrc_type,roles,roles_hist,users,users_hist,user_config
+nms-types:serving_types,serving_type_ratios,brands,ingredient_types,brand_ingr_type
+nms-ingr:ingredients,recipes,recipe_ingredients,rec_eq_type,recipe_equip,rec_equip_join,recipe_steps
+nms-daily-diet:daily_dietary_notes,daily_weight,daily_diet,daily_diet_totals,bldst_table
+nms-events:user_calendar,events_table,messages,message_types,notifications,period_ext,periods,period_type
+nms-goals:goal_categories,goal_types,goal_groups,goal_event,goals
+nms-exer:steps,wrkt_recs,workouts,lift_steps,lift_equip,lift_lift_eqp,lifts,exercise_type,muscles,muscle_groups
+nms-img:image_loc
+nms-pay:payment,payment_type

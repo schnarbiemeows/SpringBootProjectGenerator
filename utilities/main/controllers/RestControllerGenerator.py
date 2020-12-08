@@ -22,6 +22,7 @@ class RestControllerGenerator:
         :param table:
         :return:
         """
+        tabs = Constants.tab
         # create the file and open
         filename = table.topmainpackage + "/" + Constants.pckg_contr + "/" + table.camelcasejavaname + "Controller.java"
         resources_file = open(filename, "w")
@@ -32,6 +33,13 @@ class RestControllerGenerator:
             if linestr.find("FKSECTION")>-1:
                 if len(table.fksymbolnames)>0:
                     RestControllerGenerator.createForeignKeyCalls(table,resources_file)
+            elif linestr.find("LOGGER_IMPORT") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(Constants.import_logger_1 + "\n")
+                    resources_file.write(Constants.import_logger_2 + "\n")
+            elif linestr.find("SINGLETON_LOGGER") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(tabs + Constants.logger_singleton + "\n")
             else:
                 resources_file.write(linestr.replace("$", table.rootpackage).replace("%", table.camelcasejavaname).replace("&", table.lowercasename).replace("^",Configuration.author))
         resources_file.close()
@@ -91,6 +99,7 @@ class RestControllerGenerator:
         :param mid_lvl_proj:
         :return:
         """
+        tabs = Constants.tab
         # create the file and open
         filename = mid_lvl_proj.topmainpackage + "/" + Constants.pckg_contr + "/" + mid_lvl_proj.camelcasejavaname + "Controller.java"
         resources_file = open(filename, "w")
@@ -101,6 +110,13 @@ class RestControllerGenerator:
             if(linestr.find("REST_CALLS")>-1):
                 RestControllerGenerator.create_controller_business_calls_for_mid_level(mid_lvl_proj,
                                             crud_proj_names, crud_proj_data,resources_file)
+            elif linestr.find("LOGGER_IMPORT") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(Constants.import_logger_1 + "\n")
+                    resources_file.write(Constants.import_logger_2 + "\n")
+            elif linestr.find("SINGLETON_LOGGER") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(tabs + Constants.logger_singleton + "\n")
             else:
                 resources_file.write(linestr.replace("$",mid_lvl_proj.rootpackage).replace("%", mid_lvl_proj.camelcasejavaname).replace("&", mid_lvl_proj.lowercasename).replace("^", Configuration.author))
         resources_file.close()

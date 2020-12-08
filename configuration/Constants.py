@@ -74,6 +74,9 @@ class Constants:
     import_dc = "import org.springframework.cloud.client.discovery.EnableDiscoveryClient;"
     import_bean = "import org.springframework.context.annotation.Bean;"
     import_sampler = "import brave.sampler.Sampler;"
+    import_logger_1 = "import org.apache.logging.log4j.LogManager;"
+    import_logger_2 = "import org.apache.logging.log4j.Logger;"
+    logger_singleton = 'private static final Logger logger = LogManager.getLogger("FileAppender");'
     ann_feign = '@EnableFeignClients("RIBBON_CLIENT_ANN")'
     ann_dc = "@EnableDiscoveryClient"
 # Swagger file

@@ -4,7 +4,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Random;
-
+LOGGER_IMPORT
 /**
  *
  * @author ^
@@ -13,6 +13,7 @@ import java.util.Random;
 public class Randomizer {
 
 	public static final String letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	SINGLETON_LOGGER
 	private static Random rand = new Random();
 
 	/**

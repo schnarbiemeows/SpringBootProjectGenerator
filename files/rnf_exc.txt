@@ -1,5 +1,6 @@
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
+LOGGER_IMPORT
 
 /**
  * class for the 404 exception
@@ -8,6 +9,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class ResourceNotFoundException extends RuntimeException {
+
+    SINGLETON_LOGGER
 
 	public ResourceNotFoundException(String message) {
 		super(message);

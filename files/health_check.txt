@@ -1,9 +1,12 @@
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+LOGGER_IMPORT
 
 @RestController
 public class HealthCheckController {
+
+    SINGLETON_LOGGER
 
 	/**
 	 * healthcheck

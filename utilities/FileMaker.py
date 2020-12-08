@@ -92,8 +92,8 @@ class FileMaker:
                       destinationroot + "/" + project.pomname + "/" + project.pomname + "/.mvn/wrapper/MavenWrapperDownloader.java")
 
         Utilities.mkdir(destinationroot + "/" + project.pomname + "/" + project.pomname + "/src")
-        Utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.gitIgnore",
-                      destinationroot + "/" + project.pomname + "/" + project.pomname + "/.gitIgnore")
+        #Utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.gitIgnore",
+        #              destinationroot + "/" + project.pomname + "/" + project.pomname + "/.gitIgnore")
         Utilities.cpy(sourceprojectfolder + "/" + artifactid + "/HELP.md",
                       destinationroot + "/" + project.pomname + "/" + project.pomname + "/HELP.md")
         Utilities.cpy(sourceprojectfolder + "/" + artifactid + "/mvnw",
@@ -162,7 +162,9 @@ class FileMaker:
         project.toptestpackage = projecttestfolder + toptestpackage
         # rootpackage is for the individual Java files' "package ..." statement
         project.rootpackage = topmainpackage.replace("/", ".")
-        FileMaker.create_pom_file(project, sourceprojectfolder, artifactid, destinationroot)
+        FileMaker.create_pom_file(project, destinationroot)
+        if Configuration.use_logging == True:
+            FileMaker.create_logging_file(project, destinationroot)
 
     @staticmethod
     def create_application_resources_file( project, otherprojectnamesotherprojects = None):
@@ -261,7 +263,7 @@ class FileMaker:
         destinationfile.close()
 
     @staticmethod
-    def create_pom_file( project, sourceroot, artifactId, destinationroot):
+    def create_pom_file(project, destinationroot):
         """
         this method will copy the pom.xml while changing some things
         - it needs to change the groupId, artifactId, description, and name fields
@@ -269,8 +271,6 @@ class FileMaker:
         - it needs to add in the com.fasterxml.jackson.dataformat dependency(from dependencies.xml file)
         - it needs to add in the sonarqube and jacoco stuff(from jacoco_props.xml file and sonar_jacoco.xml file)
         :param project:
-        :param sourceroot:
-        :param artifactId:
         :param destinationroot:
         :return:
         """
@@ -284,17 +284,25 @@ class FileMaker:
                 if(itemstr.find("</parent>")>-1):
                     parentpassed = True
             else:
-                if(itemstr.find("GGG") > -1):
-                   newpom.write(itemstr.replace("GGG", Configuration.groupid))
-                elif (itemstr.find("VVV") > -1):
-                    newpom.write(itemstr.replace("VVV", Configuration.version))
-                elif (itemstr.find("AAA") > -1):
-                    newpom.write(itemstr.replace("AAA", project.pomname))
-                elif (itemstr.find("NNN") > -1):
-                    newpom.write(itemstr.replace("NNN", project.pomname))
-                elif (itemstr.find("DDD") > -1):
-                    newpom.write(itemstr.replace("DDD", "CRUD application for the " + project.pomname + " project"))
-                elif (itemstr.find("</properties>") > -1):
+                if itemstr.find("ADD_GROUP_ID") > -1:
+                   newpom.write(itemstr.replace("ADD_GROUP_ID", Configuration.groupid))
+                elif itemstr.find("ADD_VERSION") > -1:
+                    newpom.write(itemstr.replace("ADD_VERSION", Configuration.version))
+                elif itemstr.find("ADD_ARTIFACT_ID") > -1:
+                    newpom.write(itemstr.replace("ADD_ARTIFACT_ID", project.pomname))
+                elif itemstr.find("ADD_PROJECT_NAME") > -1:
+                    newpom.write(itemstr.replace("ADD_PROJECT_NAME", project.pomname))
+                elif itemstr.find("ADD_PROJECT_DESCRIPTION") > -1:
+                    newpom.write(itemstr.replace("ADD_PROJECT_DESCRIPTION", "CRUD application for the " + project.pomname + " project"))
+                elif itemstr.find("IS_LOGGING_ENABLED_1") > -1:
+                    if Configuration.use_logging == True:
+                        FileMaker.addLoggingExclusion(newpom)
+                elif itemstr.find("IS_LOGGING_ENABLED_2") > -1:
+                    if Configuration.use_logging == True:
+                        FileMaker.addLoggingDependency(newpom)
+                elif itemstr.find("SUREFIRE_PLUGIN") > -1:
+                    FileMaker.addSurefirePlugin(newpom)
+                elif itemstr.find("</properties>") > -1:
                     # jaccoco properties
                     if(Configuration.use_sonar_jacoco == True):
                         jacocoprops = open("files/maven/jacoco_props.xml","r")
@@ -378,6 +386,35 @@ class FileMaker:
                 else:
                     newpom.write(itemstr)
         newpom.close()
+
+    @staticmethod
+    def create_logging_file(project, destinationroot):
+        """
+        this method will create the log4j2 logging file in the src/main/resources directory
+        it will also create a single FileAppender log file that is size
+        :param project:
+        :param destinationroot:
+        :return:
+        """
+        inputloggingfile = open("files/logging/logging.xml", "r")
+        outputloggingfile = open(project.projectresourcesfolder + "/log4j2.xml", "w")
+        for line in inputloggingfile:
+            linestr = str(line)
+            if linestr.find("PATTERN_CONFIG")>-1:
+                outputloggingfile.write(linestr.replace("PATTERN_CONFIG",Configuration.log_pattern))
+            elif linestr.find("ABS_FILE_NAME")>-1:
+                filepath = Configuration.root_logging_path
+                if filepath[-1:] != "/":
+                    filepath = filepath + "/"
+                outputloggingfile.write(linestr.replace("ABS_FILE_NAME",filepath + project.pomname + "/" + project.pomname))
+            elif linestr.find("LOG_SIZE") > -1:
+                outputloggingfile.write(linestr.replace("LOG_SIZE", str(Configuration.log_size)))
+            elif linestr.find("MAX_LOG_FILES") > -1:
+                outputloggingfile.write(linestr.replace("MAX_LOG_FILES", str(Configuration.max_Log_files)))
+            else:
+                outputloggingfile.write(linestr)
+        inputloggingfile.close()
+        outputloggingfile.close()
 
     @staticmethod
     def create_docker_file( project):
@@ -585,3 +622,42 @@ class FileMaker:
         """
         property_array = property.split("=")
         return property_array[0] + "=${kub_"+ property_array[0] + ":" + property_array[1] + "}"
+
+    @staticmethod
+    def addLoggingExclusion(newpom):
+        """
+        this method will add the logging exclusion needed in order to use a specialized logger
+        :param newpom:
+        :return:
+        """
+        inputfile = open("files/pom/logging_exclusion.xml")
+        for line in inputfile:
+            linestr = str(line)
+            newpom.write(linestr)
+        inputfile.close()
+
+    @staticmethod
+    def addLoggingDependency(newpom):
+        """
+        this method will add the logging dependency needed in order to use a specialized logger
+        :param newpom:
+        :return:
+        """
+        inputfile = open("files/pom/logging_dependency.xml")
+        for line in inputfile:
+            linestr = str(line)
+            newpom.write(linestr)
+        inputfile.close()
+
+    @staticmethod
+    def addSurefirePlugin(newpom):
+        """
+        this method will add the logging dependency needed in order to use a specialized logger
+        :param newpom:
+        :return:
+        """
+        inputfile = open("files/pom/bypass_testing_plugin.xml")
+        for line in inputfile:
+            linestr = str(line)
+            newpom.write(linestr)
+        inputfile.close()

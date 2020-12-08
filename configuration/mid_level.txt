@@ -1,24 +1,6 @@
 # grouping format is:
 # <project name> : <comma separated list of lower level project names>
 #
-# create a new account
-# create-account:action_type,users,users_hist,groups,groups_hist,
-# login to application
-# login-action:
-# determine a user's permissions
-# roles-service:users,
-# add daily weight measurement and retrieve weight data
-# use-daily-weight:daily_weight,
-# view everything eaten on a given day
-# view-daily-totals:
-# add an item to a daily totals
-# add-item-to-daily:action_type,
-# find a recipe/ingredient
-# find-food-item:
-# add a dietary note and retrieve notes
-# use-dietary-notes:
-# diet-and-notes:daily-weight,daily-dietary-notes,user-date
-# servings:serv-type-svc
-# interview2:question2,question-category2
-# mid1:parent1,child1toM,child1to1
-nms-admin:nms-types,nms-ingr
+#nms-admin:nms-accounts,nms-types,nms-ingr,nms-daily-diet,nms-events,nms-goals,nms-exer,nms-img,nms-pay
+#nms-client:nms-accounts,nms-types,nms-ingr,nms-daily-diet,nms-events,nms-goals,nms-exer,nms-img,nms-pay
+interview:question,answer,question_category,question_level

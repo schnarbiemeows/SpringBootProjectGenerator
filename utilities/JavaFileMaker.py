@@ -20,14 +20,20 @@ class JavaFileMaker:
         resources_file.write("package " + project.rootpackage + ";\n\n")
         for line in main_file:
             linestr = str(line)
-            if (linestr.find("YYY") > -1):
-                if(Configuration.use_naming_server == True or Configuration.use_docker == True):
+            if linestr.find("IMPORTS") > -1:
+                if Configuration.use_naming_server == True or Configuration.use_docker == True:
                     resources_file.write(Constants.import_feign+"\n")
                     resources_file.write(Constants.import_dc + "\n")
-                    if(Configuration.use_distributed_tracing == True):
+                    if Configuration.use_distributed_tracing == True:
                         resources_file.write(Constants.import_bean + "\n")
                         resources_file.write(Constants.import_sampler + "\n")
-            elif (linestr.find("ZZZ") > -1):
+                if Configuration.use_logging == True:
+                    resources_file.write(Constants.import_logger_1 + "\n")
+                    resources_file.write(Constants.import_logger_2 + "\n")
+            elif linestr.find("LOGGER_IMPORT")>-1:
+                if Configuration.use_logging == True:
+                    resources_file.write(tabs + Constants.logger_singleton + "\n")
+            elif linestr.find("MAIN_BODY") > -1:
                 if (Configuration.use_distributed_tracing == True):
                     resources_file.write(tabs+"@Bean\n")
                     resources_file.write(tabs+"public Sampler defaultSampler() {\n")
@@ -49,6 +55,7 @@ class JavaFileMaker:
         :param project:
         :return:
         """
+        tabs = Constants.tab
         filename = project.topmainpackage + "/" + Constants.pckg_exc + "/ExceptionResponse.java"
         exception_file = open("files/exception.txt", "r")
         resources_file = open(filename, "w")
@@ -57,6 +64,13 @@ class JavaFileMaker:
             linestr = str(line)
             if (linestr.find("^") > -1):
                 resources_file.write(linestr.replace("^", Configuration.author))
+            elif linestr.find("LOGGER_IMPORT") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(Constants.import_logger_1 + "\n")
+                    resources_file.write(Constants.import_logger_2 + "\n")
+            elif linestr.find("SINGLETON_LOGGER") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(tabs + Constants.logger_singleton + "\n")
             else:
                 resources_file.write(linestr)
         resources_file.close()
@@ -69,6 +83,7 @@ class JavaFileMaker:
         :param table:
         :return:
         """
+        tabs = Constants.tab
         filename = table.topmainpackage + "/" + Constants.pckg_exc + "/ResourceNotFoundException.java"
         exception_file = open("files/rnf_exc.txt", "r")
         resources_file = open(filename, "w")
@@ -77,6 +92,13 @@ class JavaFileMaker:
             linestr = str(line)
             if (linestr.find("^") > -1):
                 resources_file.write(linestr.replace("^", Configuration.author))
+            elif linestr.find("LOGGER_IMPORT") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(Constants.import_logger_1 + "\n")
+                    resources_file.write(Constants.import_logger_2 + "\n")
+            elif linestr.find("SINGLETON_LOGGER") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(tabs + Constants.logger_singleton + "\n")
             else:
                 resources_file.write(linestr)
         resources_file.close()
@@ -89,6 +111,7 @@ class JavaFileMaker:
         :param table:
         :return:
         """
+        tabs = Constants.tab
         filename = table.topmainpackage + "/" + Constants.pckg_exc + "/SpecializedExceptionHandler.java"
         exception_file = open("files/spec_eh.txt", "r")
         resources_file = open(filename, "w")
@@ -97,6 +120,13 @@ class JavaFileMaker:
             linestr = str(line)
             if (linestr.find("^") > -1):
                 resources_file.write(linestr.replace("^", Configuration.author))
+            elif linestr.find("LOGGER_IMPORT") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(Constants.import_logger_1 + "\n")
+                    resources_file.write(Constants.import_logger_2 + "\n")
+            elif linestr.find("SINGLETON_LOGGER") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(tabs + Constants.logger_singleton + "\n")
             else:
                 resources_file.write(linestr)
         resources_file.close()
@@ -109,13 +139,22 @@ class JavaFileMaker:
         :param project:
         :return:
         """
+        tabs = Constants.tab
         filename = project.topmainpackage + "/" + Constants.pckg_util + "/" + "Randomizer.java"
         randomizer_file = open("files/randomizer_text.txt", "r")
         resources_file = open(filename, "w")
         resources_file.write("package " + project.rootpackage + "." + Constants.pckg_util + ";\n\n")
         for line in randomizer_file:
             linestr = str(line).replace("^", Configuration.author)
-            resources_file.write(linestr)
+            if linestr.find("LOGGER_IMPORT")>-1:
+                if Configuration.use_logging == True:
+                    resources_file.write(Constants.import_logger_1 + "\n")
+                    resources_file.write(Constants.import_logger_2 + "\n")
+            elif linestr.find("SINGLETON_LOGGER")>-1:
+                if Configuration.use_logging == True:
+                    resources_file.write(tabs + Constants.logger_singleton + "\n")
+            else:
+                resources_file.write(linestr)
         resources_file.close()
         randomizer_file.close()
 
@@ -126,6 +165,7 @@ class JavaFileMaker:
         :param table:
         :return:
         """
+        tabs = Constants.tab
         if Configuration.use_naming_server == True and Configuration.naming_server_proxy_mode == 2:
             for projectname in projectnames:
                 if(projectname != currentprojectdata.pomname):
@@ -187,6 +227,7 @@ class JavaFileMaker:
         :param mid_lvl_proj:
         :return:
         """
+        tabs = Constants.tab
         mid_lvl_map = {}
         for project_name in mid_lvl_proj.lowerprojectnames:
             mid_lvl_map[project_name] = "YES"
@@ -201,6 +242,13 @@ class JavaFileMaker:
                     linestr = str(line)
                     if(linestr.find("PROXY_REST_CALLS")) > -1:
                         JavaFileMaker.create_rest_calls_for_proxy(currentproject,resources_file)
+                    elif linestr.find("LOGGER_IMPORT") > -1:
+                        if Configuration.use_logging == True:
+                            resources_file.write(Constants.import_logger_1 + "\n")
+                            resources_file.write(Constants.import_logger_2 + "\n")
+                    elif linestr.find("SINGLETON_LOGGER") > -1:
+                        if Configuration.use_logging == True:
+                            resources_file.write(tabs + Constants.logger_singleton + "\n")
                     elif (linestr.find("FEIGN_CLIENT_ANN")) > -1:
                         if (Configuration.use_gateway_server == True):
                             resources_file.write(linestr.replace("FEIGN_CLIENT_ANN", "zuul-api-gateway-server"))
@@ -458,25 +506,34 @@ class JavaFileMaker:
         swagger_file.close()
 
     @staticmethod
-    def create_health_check_controller( project):
+    def create_health_check_controller(project):
         """
         this method will create a health check controller for the project
         :param project:
         :return:
         """
         # create the file and open
+        tabs = Constants.tab
         filename = project.topmainpackage + "/" + Constants.pckg_contr + "/HealthCheckController.java"
         resources_file = open(filename, "w")
         controller_file = open("files/health_check.txt")
         resources_file.write("package " + project.rootpackage + "." + Constants.pckg_contr + ";\n\n")
         for line in controller_file:
             linestr = str(line)
-            resources_file.write(linestr)
+            if linestr.find("LOGGER_IMPORT") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(Constants.import_logger_1 + "\n")
+                    resources_file.write(Constants.import_logger_2 + "\n")
+            elif linestr.find("SINGLETON_LOGGER") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(tabs + Constants.logger_singleton + "\n")
+            else:
+                resources_file.write(linestr)
         resources_file.close()
         controller_file.close()
 
     @staticmethod
-    def create_rest_calls_for_proxy( project, file):
+    def create_rest_calls_for_proxy(project, file):
         """
         this method will create the REST service calls to all tables of the proxy for the given project
         :param project:
@@ -516,13 +573,22 @@ class JavaFileMaker:
         :param table:
         :return:
         """
+        tabs = Constants.tab
         filename = project.topmainpackage + "/" + Constants.pckg_pojos + "/ResponseMessage.java"
         main_file = open("files/response_message.txt", "r")
         resources_file = open(filename, "w")
         resources_file.write("package " + project.rootpackage + "." + Constants.pckg_pojos + ";\n\n")
         for line in main_file:
             linestr = str(line)
-            resources_file.write(linestr)
+            if linestr.find("LOGGER_IMPORT") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(Constants.import_logger_1 + "\n")
+                    resources_file.write(Constants.import_logger_2 + "\n")
+            elif linestr.find("SINGLETON_LOGGER") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(tabs + Constants.logger_singleton + "\n")
+            else:
+                resources_file.write(linestr)
         resources_file.close()
         main_file.close()
 
@@ -533,12 +599,21 @@ class JavaFileMaker:
         :param table:
         :return:
         """
+        tabs = Constants.tab
         filename = project.topmainpackage + "/" + Constants.path_proxy_pojos + "/ResponseMessage.java"
         main_file = open("files/response_message.txt", "r")
         resources_file = open(filename, "w")
         resources_file.write("package " + project.rootpackage + "." + Constants.pckg_proxy_pojos + ";\n\n")
         for line in main_file:
             linestr = str(line)
-            resources_file.write(linestr)
+            if linestr.find("LOGGER_IMPORT") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(Constants.import_logger_1 + "\n")
+                    resources_file.write(Constants.import_logger_2 + "\n")
+            elif linestr.find("SINGLETON_LOGGER") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(tabs + Constants.logger_singleton + "\n")
+            else:
+                resources_file.write(linestr)
         resources_file.close()
         main_file.close()

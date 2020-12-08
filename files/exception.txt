@@ -1,5 +1,6 @@
 import java.util.Date;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+LOGGER_IMPORT
 
 /**
  *
@@ -7,6 +8,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  *
  */
 public class ExceptionResponse extends ResponseEntityExceptionHandler {
+
+    SINGLETON_LOGGER
 
 	/**
 	 * time the exception occurred

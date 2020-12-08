@@ -16,5 +16,7 @@ FEIGN_CLIENT_ANN
 RIBBON_CLIENT_ANN
 public interface %ServiceProxy {
 
+
+
     PROXY_REST_CALLS
 }
