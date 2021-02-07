@@ -9,6 +9,17 @@
           </div>
           <h4 *ngIf="!loaded">Loading TABLE_NAME...</h4>
           <div *ngIf="loaded">
+            <!--<div class="row">--> <!-- mb-3 float-right -->
+                <div class="card border-info">
+
+                        <form class="form-inline my-2 my-lg-0 justify-content-right">
+                            <input name="searchTerm" #searchInput="ngModel" class="form-control mr-sm-2" ngModel
+                               (ngModelChange)="searchTABLE_NAME(searchInput.value)"
+                               type="search" placeholder="Search TABLE_NAME...">
+                        </form>
+
+                </div>
+            <!--</div>-->
             <div class="card border-info"> <!-- table section -->
               <div class="card-body table-responsive">
                 <table class="table-sm table-bordered table-hover rounded">

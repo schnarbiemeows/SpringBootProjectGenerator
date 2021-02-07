@@ -170,4 +170,6 @@ class Constants:
 
 # Angular stuff
     serial_uid = "serialVersionUID"
+    private = "private"
+    logger = "Logger"
 

@@ -72,12 +72,12 @@ class SpringBootProjectGenerator:
             print("ONE PROJECT PER TABLE SPECIFIED")
             for name in self.tablenames:
                 currenttable = self.tabledata[name]
-                self.projectsnames.append(currenttable.correctedtablename)
-                project = Project(currenttable.correctedtablename,portnum)
+                self.projectsnames.append(currenttable.pomname)
+                project = Project(currenttable.pomname,portnum)
                 portnum +=1
                 project.tablenames.append(name)
                 project.tabledata[name] = currenttable
-                self.projectdata[currenttable.correctedtablename] = project
+                self.projectdata[currenttable.pomname] = project
         elif(setting == 2):
             self.projectsnames.append(Configuration.project_name)
             project = Project(Configuration.project_name,portnum)

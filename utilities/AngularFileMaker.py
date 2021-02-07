@@ -69,6 +69,8 @@ class AngularFileMaker:
             fieldtype = "Date"
         elif (input.lower() == "boolean"):
             fieldtype = "boolean"
+        if input.lower().find("[]") > -1:
+            fieldtype += "[]"
         return fieldtype
 
     @staticmethod
@@ -96,7 +98,7 @@ class AngularFileMaker:
             inputfile = open(filename, "r")
             for line in inputfile:
                 linestr = str(line)
-                if linestr.find("private") > -1 and linestr.find(Constants.serial_uid) == -1:
+                if linestr.find(Constants.private) > -1 and linestr.find(Constants.serial_uid) == -1 and linestr.find(Constants.logger) == -1:
                     fieldarray = linestr.split(" ")
                     key = fieldarray[2].replace(";", "").rstrip()
                     print("field name " + key)
@@ -362,6 +364,8 @@ class AngularFileMaker:
                     elif (linestr.find("LIST_ITEM_DTO") > -1):
                         AngularFileMaker.initialize_ts_object(tabledata, output_ts_file, True)
                         output_ts_file.write(tabs+ lowercasename + "list: " + dtoname + "[];\n")
+                        # a full list needed by the search feature
+                        output_ts_file.write(tabs + "full" + lowercasename + "list: " + dtoname + "[];\n")
                     elif (linestr.find("FK_DTO_LISTS") > -1):
                         AngularFileMaker.create_fk_dto_lists(tabledata, output_ts_file)
                     elif (linestr.find("INIT_FK_LISTS") > -1):
@@ -369,8 +373,9 @@ class AngularFileMaker:
                     elif (linestr.find("CLEAR_ITEM_DTO") > -1):
                         AngularFileMaker.initialize_ts_object(tabledata, output_ts_file, False)
                     elif (linestr.find("GET_ALL_RECORDS") > -1):
-                        AngularFileMaker.create_getall_items_codeblock(project, dtoname, lowercasename,
-                                                                       output_ts_file, tabs)
+                        AngularFileMaker.create_getall_items_codeblock(project, dtoname, lowercasename, javaname,output_ts_file, tabs)
+                    elif (linestr.find("NULL_OR_UNDEFINED") > -1):
+                        AngularFileMaker.make_null_or_undefined_method(output_ts_file)
                     elif (linestr.find("CREATE_SERVICE") > -1):
                         AngularFileMaker.create_createitem_codeblock(tabledata, project, dtoname, lowercasename,
                                                                      output_ts_file, tabs)
@@ -384,6 +389,8 @@ class AngularFileMaker:
                             AngularFileMaker.make_test_fk_ts_section(tabledata, output_ts_file)
                     elif linestr.find("VALIDATOR_CALLS") >-1:
                         AngularFileMaker.make_validator_calls(tabledata, output_ts_file)
+                    elif linestr.find("SEARCH_FEATURE")>-1:
+                        AngularFileMaker.make_search(tabledata, output_ts_file)
                     else:
                         output_ts_file.write(linestr.replace("%", javaname).replace("&", lowercasename))
 
@@ -525,12 +532,15 @@ class AngularFileMaker:
         :return:
         """
         fielddata = tabledata.fielddata[tabledata.fieldnames[0]]
-        output_ts_file.write(tabs + "this." + lowercasename + "service." +
+        output_ts_file.write(tabs * 2 + "this.subscriptions.push(\n")
+        output_ts_file.write(tabs * 3 + "this." + lowercasename + "service." +
                              project.rest_call_names[dtoname][
                                  4] + "(this." + lowercasename + "list[i]." + fielddata.javaname +
                              ").subscribe(response => {\n")
-        output_ts_file.write(tabs + tabs + "this.reload();\n")
-        output_ts_file.write(tabs + "});\n")
+        output_ts_file.write(tabs * 3 + "this.reload();\n")
+        output_ts_file.write(tabs * 3 + "this.paginationDisabled = false;\n")
+        output_ts_file.write(tabs * 3 + "})\n")
+        output_ts_file.write(tabs * 2 + ");\n")
 
     @staticmethod
     def create_updateitem_codeblock(javaname, lowercasename, output_ts_file, tabs):
@@ -557,35 +567,93 @@ class AngularFileMaker:
         :param tabs:
         :return:
         """
+        AngularFileMaker.array_converter(tabledata,output_ts_file)
         output_ts_file.write(
             tabs + "if(this.addMode) {\n")
-        output_ts_file.write(tabs + tabs + "this." + lowercasename + "service." +
+        output_ts_file.write(tabs * 2 + "this.subscriptions.push(\n")
+        output_ts_file.write(tabs * 3 + "this." + lowercasename + "service." +
                              project.rest_call_names[dtoname][
                                  2] + "(this." + lowercasename + ").subscribe(" + lowercasename + " => {\n")
         output_ts_file.write(
-            tabs + tabs + "this." + lowercasename + " = " + lowercasename + ";\n")
-        output_ts_file.write(tabs + tabs + "this.reload();\n")
-        output_ts_file.write(tabs + "});\n")
+            tabs * 3 + "this." + lowercasename + " = " + lowercasename + ";\n")
+        output_ts_file.write(tabs * 2 + "this.reload();\n")
+        counter = 0
+        AngularFileMaker.initialize_blank_form_object(lowercasename, output_ts_file, tabledata)
+        output_ts_file.write(tabs * 2 + "this.paginationDisabled = false;\n")
+        output_ts_file.write(tabs * 2 + "})\n")
+        output_ts_file.write(tabs + ");\n")
         output_ts_file.write(tabs + "} else if(this.editMode) {\n")
-        output_ts_file.write(tabs + tabs + "this." + lowercasename + "service." +
+        output_ts_file.write(tabs * 2 + "this.subscriptions.push(\n")
+        output_ts_file.write(tabs * 3 + "this." + lowercasename + "service." +
                              project.rest_call_names[dtoname][
                                  3] + "(this." + lowercasename + ").subscribe(" + lowercasename + " => {\n")
         output_ts_file.write(
-            tabs + tabs + "this." + lowercasename + " = " + lowercasename + ";\n")
-        output_ts_file.write(tabs + tabs + "this.reload();\n")
-        output_ts_file.write(tabs + "});\n")
-        output_ts_file.write(tabs + "}\n")
+            tabs * 3 + "this." + lowercasename + " = " + lowercasename + ";\n")
+        output_ts_file.write(tabs * 3 + "this.reload();\n")
         counter = 0
+        AngularFileMaker.initialize_blank_form_object(lowercasename, output_ts_file, tabledata)
+        output_ts_file.write(tabs * 2 + "this.paginationDisabled = false;\n")
+        output_ts_file.write(tabs * 2 + "})\n")
+        output_ts_file.write(tabs + ");\n")
+        output_ts_file.write(tabs + "}\n")
+
+    @staticmethod
+    def initialize_blank_form_object(lowercasename, output_ts_file, tabledata):
+        tabs = Constants.tab
         for name in tabledata.fieldnames:
             fielddata = tabledata.fielddata[name]
             fieldtype = AngularFileMaker.translateDataType(fielddata.datatype)
-            if (fieldtype == 'number' or fieldtype == 'Date' or fieldtype == 'boolean'):
-                output_ts_file.write(tabs + "this." + lowercasename + "." + fielddata.javaname + " = null;\n")
+            if fieldtype.find("[]") > -1:
+                output_ts_file.write(tabs * 2 + "this." + lowercasename + "." + fielddata.javaname + " = [];\n")
+            elif (fieldtype == 'number' or fieldtype == 'Date' or fieldtype == 'boolean'):
+                output_ts_file.write(tabs * 2 + "this." + lowercasename + "." + fielddata.javaname + " = null;\n")
             else:
-                output_ts_file.write(tabs + "this." + lowercasename + "." + fielddata.javaname + " = '';\n")
+                output_ts_file.write(tabs * 2 + "this." + lowercasename + "." + fielddata.javaname + " = '';\n")
 
     @staticmethod
-    def create_getall_items_codeblock(project, dtoname, lowercasename, output_ts_file, tabs):
+    def make_search(tabledata, output_ts_file):
+        """
+        this method creates the search feature code block
+        :param tabledata:
+        :param output_ts_file:
+        :return:
+        """
+        tabs = Constants.tab
+        javaname = tabledata.dtoname.replace("DTO", "")
+        lowercasename = javaname.lower()
+        output_ts_file.write(tabs * 2 + "const results: " + javaname + "DTO[] = [];\n")
+        output_ts_file.write(tabs * 2 + "for (const " + lowercasename + " of this.full" + lowercasename + "list) {\n")
+        liststr = tabs * 3 + "if("
+        number_of_fields = len(tabledata.fieldnames)
+        count = 1
+        for name in tabledata.fieldnames:
+            fielddata = tabledata.fielddata[name]
+            if count == number_of_fields:
+                if fielddata.datatype == "String":
+                    liststr += "!this.isNullOrUndefined(" + lowercasename + "." + fielddata.javaname + ") && "
+                    liststr += lowercasename + "." + fielddata.javaname + ".toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {\n"
+                else:
+                    liststr += "!this.isNullOrUndefined(" + lowercasename + "." + fielddata.javaname + ") && "
+                    liststr += lowercasename + "." + fielddata.javaname + ".toString().toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {\n"
+            else:
+                count += 1
+                if fielddata.datatype == "String":
+                    liststr += "!this.isNullOrUndefined(" + lowercasename + "." + fielddata.javaname + ") && "
+                    liststr += lowercasename + "." + fielddata.javaname + ".toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||\n" + tabs * 4
+                else:
+                    liststr += "!this.isNullOrUndefined(" + lowercasename + "." + fielddata.javaname + ") && "
+                    liststr += lowercasename + "." + fielddata.javaname + ".toString().toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||\n" + tabs * 4
+        output_ts_file.write(liststr)
+        output_ts_file.write(tabs * 4 + "results.push(" + lowercasename + ");\n")
+        output_ts_file.write(tabs * 3 + "}\n")
+        output_ts_file.write(tabs * 2 + "}\n")
+        output_ts_file.write(tabs * 2 + "this." + lowercasename + "list = results;\n")
+        output_ts_file.write(tabs * 2 + "if (results.length === 0 || !searchTerm) {\n")
+        output_ts_file.write(tabs * 3 + "this." + lowercasename + "list = this.full" + lowercasename + "list;\n")
+        output_ts_file.write(tabs * 2 + "}\n")
+
+    @staticmethod
+    def create_getall_items_codeblock(project, dtoname, lowercasename, javaname, output_ts_file, tabs):
         """
         creates the body for the select * method in the component
         :param project:
@@ -595,11 +663,18 @@ class AngularFileMaker:
         :param tabs:
         :return:
         """
-        output_ts_file.write(tabs + "this." + lowercasename + "service." + project.rest_call_names[dtoname][
+        output_ts_file.write(tabs * 2 + "this.subscriptions.push(\n")
+        output_ts_file.write(tabs * 3 + "this." + lowercasename + "service." + project.rest_call_names[dtoname][
             0] + "().subscribe(" + lowercasename + "list => {\n")
-        output_ts_file.write(tabs + tabs + "this." + lowercasename + "list = " + lowercasename + "list;\n")
-        output_ts_file.write(tabs + tabs + "this.loaded = true;\n")
-        output_ts_file.write(tabs + "});\n")
+        output_ts_file.write(tabs * 3 + "this." + lowercasename + "list = " + lowercasename + "list;\n")
+        output_ts_file.write(tabs * 3 + "this.full" + lowercasename + "list = " + lowercasename + "list;\n")
+        output_ts_file.write(tabs * 3 + "this.loaded = true;\n")
+        output_ts_file.write(tabs * 3 + "this.show" + javaname + "Form = false;\n")
+        output_ts_file.write(tabs * 3 + "this.editMode = false;\n")
+        output_ts_file.write(tabs * 3 + "this.addMode = false;\n")
+        output_ts_file.write(tabs * 3 + "this.paginationDisabled = false;\n")
+        output_ts_file.write(tabs * 2 + "})\n")
+        output_ts_file.write(tabs + ");\n")
 
     @staticmethod
     def initialize_ts_object(tabledata,output_ts_file,new=False):
@@ -620,7 +695,9 @@ class AngularFileMaker:
         for name in tabledata.fieldnames:
             fielddata = tabledata.fielddata[name]
             fieldtype = AngularFileMaker.translateDataType(fielddata.datatype)
-            if(fieldtype == 'number' or fieldtype == 'Date' or fieldtype == 'boolean'):
+            if fieldtype.find("[]") > -1:
+                output_ts_file.write(tabs * 2 + fielddata.javaname + ": []")
+            elif(fieldtype == 'number' or fieldtype == 'Date' or fieldtype == 'boolean'):
                 output_ts_file.write(tabs * 2 + fielddata.javaname + ": null")
             else:
                 output_ts_file.write(tabs * 2 + fielddata.javaname + ": ''")
@@ -662,6 +739,7 @@ class AngularFileMaker:
             parentlowercasename = fktuple[2]
             parentfieldname = fktuple[3]
             descriptorfield = fktuple[4]
+            output_ts_file.write(tabs + "this.subscriptions.push(\n")
             output_ts_file.write(tabs + "this." + parentlowercasename + "service.getAll" + parentjavaname + "().subscribe(" + parentlowercasename + "list => {\n")
             output_ts_file.write(tabs * 2 + 'console.log("length of ' + parentlowercasename + 'list = " + ' + parentlowercasename + 'list.length);\n')
             output_ts_file.write(tabs * 2 + "for (let entry of " + parentlowercasename + "list) {\n")
@@ -672,7 +750,8 @@ class AngularFileMaker:
             output_ts_file.write(tabs * 3 + "this." + parentlowercasename + "list.push(optionDTO);\n")
             output_ts_file.write(tabs * 3 + "this." + parentlowercasename + "map.set(entry." + parentfieldname + ",entry." + descriptorfield + ");\n")
             output_ts_file.write(tabs * 2 + "}\n")
-            output_ts_file.write(tabs + "});\n")
+            output_ts_file.write(tabs + "})\n")
+            output_ts_file.write(tabs + ");\n")
 
     @staticmethod
     def add_html_header(tabledata,output_html_file):
@@ -772,33 +851,50 @@ class AngularFileMaker:
                     output_html_file.write(tabs*4 + '<label>'+fielddata.javaname+'</label>\n')
                     type = "text"
                     fieldtype = fielddata.datatype.lower()
-                    if (fieldtype == "integer" or fieldtype == "long"  or fieldtype == "biginteger"):
+                    if fieldtype == "integer" or fieldtype == "long"  or fieldtype == "biginteger":
                         type = "number"
                     elif (fieldtype == "date" or fieldtype == "datetime"
                               or fieldtype == "timestamp" or fieldtype == "time"):
                         type = "date"
                     elif (fieldtype == 'decimal' or fieldtype == "float" or fieldtype == "double" or fieldtype == "bigdecimal"):
                         type = "text"
-                    output_html_file.write(tabs*4+'<input type="'+type+'" class="form-control" [(ngModel)]="'+
-                            lowercasename+'.'+fielddata.javaname+'" name="'+name+'" #'+
-                            name+'="ngModel"\n')
-                    if (fieldtype == 'decimal' or fieldtype == "float" or fieldtype == "double" or fieldtype == "bigdecimal"):
-                        output_html_file.write(tabs * 5 + '(keyup)="make' + fielddata.javaname + 'PositiveDecimalOnly()"\n')
-                    if fielddata.canbenull == False:
-                        output_html_file.write(tabs * 5 + 'required\n')
-                    if fielddata.lengthreq == True:
-                        output_html_file.write(tabs * 5 + 'maxlength=' + str(fielddata.length) + '\n')
-                    output_html_file.write(tabs*4+'>\n')
-                    if fielddata.canbenull == False:
-                        output_html_file.write(tabs * 4 +'<div *ngIf="'+
-                            name + '.invalid && (' + name +
-                            '.dirty || '+ name + '.touched)"\n')
-                        output_html_file.write(tabs * 5 + 'class="alert alert-danger">\n')
-                        output_html_file.write(tabs * 5 +'<div *ngIf="'+
-                            name + '.errors.required">\n')
-                        output_html_file.write(tabs * 6 + fielddata.javaname + ' is required.\n')
-                        output_html_file.write(tabs * 5 + '</div>\n')
-                        output_html_file.write(tabs * 4 + "</div>\n")
+                    elif fieldtype == 'boolean':
+                        type = "boolean"
+                    if type != "boolean":
+                        output_html_file.write(tabs*4+'<input type="'+type+'" class="form-control" [(ngModel)]="'+
+                                lowercasename+'.'+fielddata.javaname+'" name="'+fielddata.javaname+'" #'+
+                                fielddata.javaname+'="ngModel"\n')
+                        if (fieldtype == 'decimal' or fieldtype == "float" or fieldtype == "double" or fieldtype == "bigdecimal"):
+                            output_html_file.write(tabs * 5 + '(keyup)="make' + fielddata.javaname + 'PositiveDecimalOnly()"\n')
+                        if fielddata.canbenull == False:
+                            output_html_file.write(tabs * 5 + 'required\n')
+                        if fielddata.lengthreq == True:
+                            output_html_file.write(tabs * 5 + 'maxlength=' + str(fielddata.length) + '\n')
+                        output_html_file.write(tabs*4+'>\n')
+                        if fielddata.canbenull == False:
+                            output_html_file.write(tabs * 4 +'<div *ngIf="'+
+                                name + '.invalid && (' + fielddata.javaname +
+                                '.dirty || '+ fielddata.javaname + '.touched)"\n')
+                            output_html_file.write(tabs * 5 + 'class="alert alert-danger">\n')
+                            output_html_file.write(tabs * 5 +'<div *ngIf="'+
+                                fielddata.javaname + '.errors.required">\n')
+                            output_html_file.write(tabs * 6 + fielddata.javaname + ' is required.\n')
+                            output_html_file.write(tabs * 5 + '</div>\n')
+                            output_html_file.write(tabs * 4 + "</div>\n")
+                    else:
+                        output_html_file.write(tabs * 5 + '<div class="col col-sm-4">\n')
+                        output_html_file.write(tabs * 5 + '<select class="form-control border-info text-center"\n')
+                        output_html_file.write(
+                            tabs * 5 + '[(ngModel)]="' + tabledata.lowercasename + '.' + fielddata.javaname + '"\n')
+                        if fielddata.canbenull == False:
+                            output_html_file.write(tabs * 5 + 'required\n')
+                        output_html_file.write(tabs * 5 + 'name="' + fielddata.javaname + '_dropdown">\n')
+                        output_html_file.write(
+                            tabs * 6 + '<option [value]="true">true</option>\n')
+                        output_html_file.write(
+                            tabs * 6 + '<option [value]="false">false</option>\n')
+                        output_html_file.write(tabs * 5 + '</select>\n')
+                        output_html_file.write(tabs * 4 + '</div>\n')
                     #output_html_file.write(tabs * 3 + "</div>\n")
 
     @staticmethod
@@ -920,21 +1016,27 @@ class AngularFileMaker:
                 datatypes.append("id" + str(counter) + ": " + Utilities.translateAngularDataType(field.datatype))
                 inputparameters.append('this.' + tabledata.lowercasename + '.' + field.javaname)
                 output_file.write(tabs +"findBy" + field.gettername + "() {\n")
+
+                output_file.write(tabs * 2 + "this.subscriptions.push(\n")
                 output_file.write(
-                    tabs * 2 + 'this.' + tabledata.lowercasename + 'service.find' + tabledata.camelcasejavaname + 'By' + field.gettername +
+                    tabs * 3 + 'this.' + tabledata.lowercasename + 'service.find' + tabledata.camelcasejavaname + 'By' + field.gettername +
                     '(this.' + tabledata.lowercasename + '.' + field.javaname + ').subscribe(response => {\n')
-                output_file.write(tabs * 2 + 'console.log("back from findBy' + field.gettername + '");\n' +
-                                tabs * 2 + 'console.log("array size = " + response.length );\n' +
-                                  tabs * 2 + "this.reload();\n" + tabs + "});\n" + tabs + "}\n\n")
+                output_file.write(tabs * 4 + 'console.log("back from findBy' + field.gettername + '");\n' +
+                                tabs * 4 + 'console.log("array size = " + response.length );\n' +
+                                  tabs * 4 + "this.reload();\n" + tabs * 3 + "})\n")
+                output_file.write(tabs * 2 + ");\n" + tabs + "}\n\n")
+
                 counter += 1
         if len(compoundFK) > 1:
             compoundFKstr = "And".join(compoundFK)
             output_file.write(tabs + "findBy" + compoundFKstr + "() {\n")
-            output_file.write(tabs * 2 + 'this.' + tabledata.lowercasename + 'service.find' + tabledata.camelcasejavaname + 'By' + compoundFKstr +
+            output_file.write(tabs * 2 + "this.subscriptions.push(\n")
+            output_file.write(tabs * 3 + 'this.' + tabledata.lowercasename + 'service.find' + tabledata.camelcasejavaname + 'By' + compoundFKstr +
                 '(' + ",".join(inputparameters) + ').subscribe(response => {\n')
-            output_file.write(tabs * 2 + 'console.log("back from findBy' + compoundFKstr + '");\n'  +
-                              tabs * 2 + 'console.log("array size = " + response.length );\n' +
-                              tabs * 2 + "this.reload();\n" + tabs + "});\n" + tabs + "}\n\n")
+            output_file.write(tabs * 4 + 'console.log("back from findBy' + compoundFKstr + '");\n'  +
+                              tabs * 4 + 'console.log("array size = " + response.length );\n' +
+                              tabs * 4 + "this.reload();\n" + tabs * 3 + "})\n")
+            output_file.write(tabs * 2 + ");\n" + tabs + "}\n\n")
 
     @staticmethod
     def make_services(project, angular_object, root_directory):
@@ -1412,3 +1514,36 @@ class AngularFileMaker:
         outputfile.write(tabs + 'viewValue: any;\n')
         outputfile.write('}')
         outputfile.close()
+
+    @staticmethod
+    def make_null_or_undefined_method(output_file):
+        """
+        this will make a method in each typescript component that will return a true if the
+        input component being tested is null or undefined
+        :param output_file:
+        :return:
+        """
+        tabs = Constants.tab
+        output_file.write(tabs + "private isNullOrUndefined(input: any): boolean {\n")
+        output_file.write(tabs * 2 + "if(input === 'undefined') return true;\n")
+        output_file.write(tabs *2 + "if(input == null) return true;\n")
+        output_file.write(tabs * 2 + "return false;\n")
+        output_file.write(tabs + "}\n")
+
+    @staticmethod
+    def array_converter(tabledata, output_file):
+        """
+        this method is used whenever one of our fields is an array of something
+        it will convert the input field to an array
+        :param tabledata:
+        :param output_file:
+        :return:
+        """
+        tabs = Constants.tab
+        for fieldname in tabledata.fieldnames:
+            fielddata = tabledata.fielddata[fieldname]
+            if fielddata.datatype .find("[]") > -1:
+                output_file.write(tabs * 2 + "let " + fielddata.javaname + "temp = this." + tabledata.lowercasename + "." + fielddata.javaname + ".toString();\n")
+                output_file.write(
+                    tabs * 2 + 'this.' + tabledata.lowercasename + '.' + fielddata.javaname + ' = ' + fielddata.javaname + 'temp.split(",");\n')
+

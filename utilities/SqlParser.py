@@ -16,7 +16,7 @@ class SqlParser:
 
     mysqlnumberset = set(["numeric", "decimal", "integer", "bigint", "smallint", "mediumint", "float", "real", "dec", "int", "fixed", "double precision", "double", "bit"])
     mysqldatetypes = set(["date" , "datetime" , "timestamp", "time", "year"])
-    mysqlstringtypes = set(["varchar" , "char" , "binary" , "varbinary" , "blob" , "text" , "enum" , "set"])
+    mysqlstringtypes = set(["varchar" , "char" , "binary" , "varbinary" , "tinyblob", "blob" , "text" , "enum" , "set"])
     mysqlboolean = set(["boolean"])
     pound_sign = "#"
     semi_quote = ";"

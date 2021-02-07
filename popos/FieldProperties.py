@@ -22,9 +22,9 @@ class FieldProperties:
                            "int" : "Integer",
                            "fixed" : "BigDecimal",
                            "double" : "Double",
-                           "bit" : "byte[]",
+                           "bit" : "boolean",
                            "date" : "Date",
-                           "datetime" : "Timestamp",
+                           "datetime" : "Date",
                            "timestamp" : "Timestamp",
                            "time" : "Time",
                            "year" : "Date ",
@@ -33,7 +33,8 @@ class FieldProperties:
                            "char" : "String",
                            "binary" : "byte[]",
                            "varbinary" : "byte[]",
-                           "blob" : "byte[]",
+                           "tinyblob": "String[]",
+                           "blob" : "String[]",
                            "text" : "String",
                            "enum" : "String",
                            "set" : "String" }
@@ -47,12 +48,12 @@ class FieldProperties:
                                  "float": "Float",
                                  "real": "Float",
                                  "dec": "BigDecimal",
-                                 "int": "Long",
+                                 "int": "Integer",
                                  "fixed": "BigDecimal",
                                  "double": "Double",
-                                 "bit": "byte[]",
+                                 "bit": "boolean",
                                  "date": "Date",
-                                 "datetime": "Timestamp",
+                                 "datetime": "Date",
                                  "timestamp": "Timestamp",
                                  "time": "Time",
                                  "year": "Date ",
@@ -61,7 +62,8 @@ class FieldProperties:
                                  "char": "String",
                                  "binary": "byte[]",
                                  "varbinary": "byte[]",
-                                 "blob": "byte[]",
+                                 "tinyblob": "String[]",
+                                 "blob": "String[]",
                                  "text": "String",
                                  "enum": "String",
                                  "set": "String"}
@@ -190,7 +192,7 @@ class FieldProperties:
         comment = ''
         x = range(2, len(innerarray))
         for n in x:
-            itemstr = innerarray[n].replace("^&%"," ")
+            itemstr = innerarray[n].replace("^&%"," ").lower()
             if (comment_section == True):
                 comment += itemstr + " "
                 if (itemstr.endswith("\"")):

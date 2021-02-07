@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import {Subscription} from 'rxjs';
 import { ResponseMessage } from '../../models/ResponseMessage';
 IMPORTS
 
@@ -8,7 +8,8 @@ IMPORTS
   templateUrl: './&.component.html',
   styleUrls: ['./&.component.css']
 })
-export class %Component implements OnInit {
+export class %Component implements OnInit, OnDestroy {
+    private subscriptions: Subscription[] = [];
   LIST_ITEM_DTO
   FK_DTO_LISTS
     p: number = 1;
@@ -34,6 +35,10 @@ export class %Component implements OnInit {
     INIT_FK_LISTS
   }
 
+  public search%(searchTerm: string): void {
+    SEARCH_FEATURE
+  }
+
   initiateAdd() {
     //console.log("initiating item add ....")
     this.editMode = false;
@@ -45,7 +50,6 @@ export class %Component implements OnInit {
 
   saveResults() {
     CREATE_SERVICE
-    this.paginationDisabled = false;
   }
 
   onSubmit(e) {
@@ -56,10 +60,6 @@ export class %Component implements OnInit {
   reload() {
     this.loaded = false;
     GET_ALL_RECORDS
-    this.show%Form = false;
-    this.editMode = false;
-    this.addMode = false;
-    this.paginationDisabled = false;
   }
 
   editItem(i: number) {
@@ -71,10 +71,15 @@ export class %Component implements OnInit {
 
   deleteItem(i: number) {
     DELETE_SERVICE
-    this.paginationDisabled = false;
   }
 
   FOREIGN_KEY_CALLS
 
   VALIDATOR_CALLS
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  NULL_OR_UNDEFINED
 }

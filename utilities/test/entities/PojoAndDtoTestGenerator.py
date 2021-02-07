@@ -61,6 +61,7 @@ class PojoAndDtoTestGenerator:
             resources_file.write("package " + table.rootpackage + "." + Constants.pckg_pojos + ";\n\n")
         else:
             resources_file.write("package " + table.rootpackage + "." + Constants.pckg_dtos + ";\n\n")
+        resources_file.write("import " + table.rootpackage + "." + Constants.pckg_util + ".Randomizer;\n")
         for line in test_pojo:
             linestr = str(line)
             if (linestr.find("SETTER_STMT")) > -1:
@@ -70,20 +71,21 @@ class PojoAndDtoTestGenerator:
             else:
                 if src == "pojo":
                     resources_file.write(
-                        linestr.replace("&", table.camelcasejavaname).replace("%", table.tablename)
+                        linestr.replace("&", table.camelcasejavaname).replace("%", Constants.cut)
                             .replace("^",Configuration.author))
                 else:
-                    resources_file.write(linestr.replace("&", table.dtoname).replace("%", table.tablename)
+                    resources_file.write(linestr.replace("&", table.dtoname).replace("%", Constants.cut)
                         .replace("^",Configuration.author))
         resources_file.close()
 
+    """
     @staticmethod
     def get_str_from_datatype(datatype):
-        """
+        
         get the string from the data type
         :param datatype: 
         :return: 
-        """
+        
         if (datatype == "BigDecimal"):
             return "new BigDecimal(1.00));\n"
         elif (datatype == "BigInteger"):
@@ -108,6 +110,7 @@ class PojoAndDtoTestGenerator:
             return '"a");\n'
         elif (datatype == "Long"):
             return "new Long(1));\n"
+    """
 
     @staticmethod
     def create_pojo_setters_stmt( table, file, setter, tabledata):
@@ -221,31 +224,38 @@ class PojoAndDtoTestGenerator:
         for field in table.fieldnames:
             fielddata = table.fielddata[field]
             if setter == "Y":
-                file.write(tabs + tabs + table.tablename + ".set" + fielddata.gettername + "(")
-                if (fielddata.datatype == "BigDecimal"):
-                    file.write("new BigDecimal(1.00));\n")
-                elif (fielddata.datatype == "BigInteger"):
-                    file.write("new BigInteger(1));\n")
-                elif (fielddata.datatype == "Integer"):
-                    file.write("new Integer(1));\n")
-                elif (fielddata.datatype == "Float"):
-                    file.write("1.0f);\n")
-                elif (fielddata.datatype == "Double"):
-                    file.write("1.0);\n")
-                elif (fielddata.datatype == "Date"):
-                    file.write("new Date());\n")
-                elif (fielddata.datatype == "Timestamp"):
-                    file.write("new Timestamp(1000));\n")
-                elif (fielddata.datatype == "Time"):
-                    file.write("new java.sql.Time(1000));\n")
-                elif (fielddata.datatype == "byte[]"):
-                    file.write('"a".getBytes());\n')
-                elif (fielddata.datatype == "String"):
-                    file.write('"a");\n')
-                elif (fielddata.datatype == "Long"):
-                    file.write("new Long(1));\n")
+                if fielddata.datatype == "String[]":
+                    file.write(tabs*2 +'String[] stringarray = new String[1];\n')
+                    file.write(tabs*2 +'stringarray[0] = Randomizer.randomString(3);\n')
+                    file.write(tabs*2 + Constants.cut + ".set" + fielddata.gettername + "(stringarray);\n")
+                else:
+                    file.write(tabs + tabs + Constants.cut + ".set" + fielddata.gettername + "(")
+                    if (fielddata.datatype == "BigDecimal"):
+                        file.write("new BigDecimal(1.00));\n")
+                    elif (fielddata.datatype == "BigInteger"):
+                        file.write("new BigInteger(1));\n")
+                    elif (fielddata.datatype == "Integer"):
+                        file.write("new Integer(1));\n")
+                    elif (fielddata.datatype == "Float"):
+                        file.write("1.0f);\n")
+                    elif (fielddata.datatype == "Double"):
+                        file.write("1.0);\n")
+                    elif (fielddata.datatype == "Date"):
+                        file.write("new Date());\n")
+                    elif (fielddata.datatype == "Timestamp"):
+                        file.write("new Timestamp(1000));\n")
+                    elif (fielddata.datatype == "Time"):
+                        file.write("new java.sql.Time(1000));\n")
+                    elif (fielddata.datatype == "byte[]"):
+                        file.write('"a".getBytes());\n')
+                    elif (fielddata.datatype == "String"):
+                        file.write('"a");\n')
+                    elif (fielddata.datatype == "Long"):
+                        file.write("new Long(1));\n")
+                    elif fielddata.datatype == "boolean":
+                        file.write("true);\n")
             else:
-                text += tabs + tabs + table.tablename + ".get" + fielddata.gettername + "(),\n"
+                text += tabs + tabs + Constants.cut + ".get" + fielddata.gettername + "(),\n"
         if setter == 'N':
             text = text[0:-2] + ");\n"
             file.write(text)
@@ -266,31 +276,38 @@ class PojoAndDtoTestGenerator:
         for field in table.fieldnames:
             fielddata = table.fielddata[field]
             if set == "Y":
-                file.write(tabs*2 + Constants.cut + ".set" + fielddata.gettername+"(")
-                if (fielddata.datatype == "BigDecimal"):
-                    file.write("new BigDecimal(1.00));\n")
-                elif (fielddata.datatype == "BigInteger"):
-                    file.write("new BigInteger(1));\n")
-                elif (fielddata.datatype == "Integer"):
-                    file.write("new Integer(1));\n")
-                elif (fielddata.datatype == "Float"):
-                    file.write("1.0f);\n")
-                elif (fielddata.datatype == "Double"):
-                    file.write("1.0);\n")
-                elif (fielddata.datatype == "Date"):
-                    file.write("new Date());\n")
-                elif (fielddata.datatype == "boolean"):
-                    file.write('true);\n')
-                elif (fielddata.datatype == "Timestamp"):
-                    file.write("new Timestamp(1000));\n")
-                elif (fielddata.datatype == "Time"):
-                    file.write("new java.sql.Time(1000));\n")
-                elif (fielddata.datatype == "byte[]"):
-                    file.write('"a".getBytes());\n')
-                elif (fielddata.datatype == "String"):
-                    file.write('"a");\n')
-                elif (fielddata.datatype == "Long"):
-                    file.write("new Long(1));\n")
+                if fielddata.datatype == "String[]":
+                    file.write(tabs * 2 + 'String[] stringarray = new String[1];\n')
+                    file.write(tabs * 2 + 'stringarray[0] = Randomizer.randomString(3);\n')
+                    file.write(tabs * 2 + Constants.cut + ".set" + fielddata.gettername + "(stringarray);\n")
+                else:
+                    file.write(tabs*2 + Constants.cut + ".set" + fielddata.gettername+"(")
+                    if (fielddata.datatype == "BigDecimal"):
+                        file.write("new BigDecimal(1.00));\n")
+                    elif (fielddata.datatype == "BigInteger"):
+                        file.write("new BigInteger(1));\n")
+                    elif (fielddata.datatype == "Integer"):
+                        file.write("new Integer(1));\n")
+                    elif (fielddata.datatype == "Float"):
+                        file.write("1.0f);\n")
+                    elif (fielddata.datatype == "Double"):
+                        file.write("1.0);\n")
+                    elif (fielddata.datatype == "Date"):
+                        file.write("new Date());\n")
+                    elif (fielddata.datatype == "boolean"):
+                        file.write('true);\n')
+                    elif (fielddata.datatype == "Timestamp"):
+                        file.write("new Timestamp(1000));\n")
+                    elif (fielddata.datatype == "Time"):
+                        file.write("new java.sql.Time(1000));\n")
+                    elif (fielddata.datatype == "byte[]"):
+                        file.write('"a".getBytes());\n')
+                    elif (fielddata.datatype == "String"):
+                        file.write('"a");\n')
+                    elif (fielddata.datatype == "Long"):
+                        file.write("new Long(1));\n")
+                    elif fielddata.datatype == "boolean":
+                        file.write("true);\n")
             else:
                 text += tabs*2 + Constants.cut + ".get" + fielddata.gettername + "(),\n"
         if set == 'N':
@@ -316,36 +333,42 @@ class PojoAndDtoTestGenerator:
         for field in table.fieldnames:
             fielddata = table.fielddata[field]
             if fielddata.isprimary == False:
-                file.write(tabs + tabs + Constants.record + ".set" + fielddata.gettername+"(")
-                if (fielddata.datatype == "BigDecimal"):
-                    file.write('Randomizer.randomBigDecimal("1000"));\n')
-                elif (fielddata.datatype == "BigInteger"):
-                    file.write('Randomizer.randomBigInteger("1000"));\n')
-                elif (fielddata.datatype == "Integer"):
-                    file.write('Randomizer.randomInt(1000));\n')
-                elif (fielddata.datatype == "Long"):
-                    file.write('Randomizer.randomLong(1000L));\n')
-                elif (fielddata.datatype == "Float"):
-                    file.write('Randomizer.randomFloat(1000F));\n')
-                elif (fielddata.datatype == "Double"):
-                    file.write('Randomizer.randomDouble(1000D));\n')
-                elif (fielddata.datatype == "Date"):
-                    file.write('Randomizer.randomDate());\n')
-                elif (fielddata.datatype == "boolean"):
-                    file.write('Randomizer.randomBoolean());\n')
-                elif (fielddata.datatype == "Timestamp"):
-                    file.write('Randomizer.randomTimestamp(1000));\n')
-                elif (fielddata.datatype == "Time"):
-                    file.write('Randomizer.randomTime(1000));\n')
-                elif (fielddata.datatype == "byte[]"):
-                    file.write('Randomizer.randomBytes(20));\n')
-                elif (fielddata.datatype == "String"):
-                    if fielddata.lengthreq == True:
-                        if fielddata.length<20:
-                            file.write('Randomizer.randomString('+str(fielddata.length)+'));\n')
+                if fielddata.datatype == "String[]":
+                    file.write(tabs*2 +'String[] stringarray = new String[1];\n')
+                    file.write(tabs*2 +'stringarray[0] = Randomizer.randomString(3);\n')
+                    file.write(tabs*2 + Constants.record + ".set" + fielddata.gettername + "(stringarray);\n")
+                else:
+                    file.write(tabs + tabs + Constants.record + ".set" + fielddata.gettername+"(")
+                    if (fielddata.datatype == "BigDecimal"):
+                        file.write('Randomizer.randomBigDecimal("1000"));\n')
+                    elif (fielddata.datatype == "BigInteger"):
+                        file.write('Randomizer.randomBigInteger("1000"));\n')
+                    elif (fielddata.datatype == "Integer"):
+                        file.write('Randomizer.randomInt(1000));\n')
+                    elif (fielddata.datatype == "Long"):
+                        file.write('Randomizer.randomLong(1000L));\n')
+                    elif (fielddata.datatype == "Float"):
+                        file.write('Randomizer.randomFloat(1000F));\n')
+                    elif (fielddata.datatype == "Double"):
+                        file.write('Randomizer.randomDouble(1000D));\n')
+                    elif (fielddata.datatype == "Date"):
+                        file.write('Randomizer.randomDate());\n')
+                    elif (fielddata.datatype == "boolean"):
+                        file.write('Randomizer.randomBoolean());\n')
+                    elif (fielddata.datatype == "Timestamp"):
+                        file.write('Randomizer.randomTimestamp(1000));\n')
+                    elif (fielddata.datatype == "Time"):
+                        file.write('Randomizer.randomTime(1000));\n')
+                    elif (fielddata.datatype == "byte[]"):
+                        file.write('Randomizer.randomBytes(20));\n')
+                    elif (fielddata.datatype == "String"):
+                        if fielddata.lengthreq == True:
+                            if fielddata.length<20:
+                                file.write('Randomizer.randomString('+str(fielddata.length)+'));\n')
+                            else:
+                                file.write('Randomizer.randomString(20));\n')
                         else:
                             file.write('Randomizer.randomString(20));\n')
-                    else:
-                        file.write('Randomizer.randomString(20));\n')
+
         file.write(tabs + tabs + "return " + Constants.record + ";\n")
     
