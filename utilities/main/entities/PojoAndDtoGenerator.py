@@ -800,3 +800,55 @@ class PojoAndDtoGenerator:
                 else:
                     file.write(tabs*2 + "hash = hash * prime + this." + fielddata.javaname + ".hashCode();\n")
         file.write(tabs*2 + "return hash;\n" + tabs + "}\n")
+
+    @staticmethod
+    def create_pojo_response_class(project):
+        """
+        this method creates a ResponseMessage object that is needed by the DELETE REST calls
+        :param table:
+        :return:
+        """
+        tabs = Constants.tab
+        filename = project.topmainpackage + "/" + Constants.pckg_pojos + "/ResponseMessage.java"
+        main_file = open("files/response_message.txt", "r")
+        resources_file = open(filename, "w")
+        resources_file.write("package " + project.rootpackage + "." + Constants.pckg_pojos + ";\n\n")
+        for line in main_file:
+            linestr = str(line)
+            if linestr.find("LOGGER_IMPORT") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(Constants.import_logger_1 + "\n")
+                    resources_file.write(Constants.import_logger_2 + "\n")
+            elif linestr.find("SINGLETON_LOGGER") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(tabs + Constants.logger_singleton + "\n")
+            else:
+                resources_file.write(linestr)
+        resources_file.close()
+        main_file.close()
+
+    @staticmethod
+    def create_pojo_response_class_for_mid_level(project):
+        """
+        this method creates a ResponseMessage object that is needed by the DELETE REST calls
+        :param table:
+        :return:
+        """
+        tabs = Constants.tab
+        filename = project.topmainpackage + "/" + Constants.pckg_pojos + "/ResponseMessage.java"
+        main_file = open("files/response_message.txt", "r")
+        resources_file = open(filename, "w")
+        resources_file.write("package " + project.rootpackage + "." + Constants.pckg_pojos + ";\n\n")
+        for line in main_file:
+            linestr = str(line)
+            if linestr.find("LOGGER_IMPORT") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(Constants.import_logger_1 + "\n")
+                    resources_file.write(Constants.import_logger_2 + "\n")
+            elif linestr.find("SINGLETON_LOGGER") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(tabs + Constants.logger_singleton + "\n")
+            else:
+                resources_file.write(linestr)
+        resources_file.close()
+        main_file.close()

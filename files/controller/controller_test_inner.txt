@@ -81,6 +81,8 @@
 		assertEquals(200, result.getStatusCodeValue());
 	}
 
+    FKSECTION
+
 	public static %DTO generateRandom%() {
 		RANDOM_DTO_GENERATOR
 	}

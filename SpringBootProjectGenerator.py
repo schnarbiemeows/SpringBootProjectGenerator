@@ -5,6 +5,7 @@ from configuration.Configuration import *
 from utilities.AngularFileMaker import *
 from utilities.main.business.BusinessGenerator import BusinessGenerator
 from utilities.main.entities.PojoAndDtoGenerator import *
+from utilities.main.proxy.ProxyGenerator import *
 from utilities.test.business.BusinessTestGenerator import BusinessTestGenerator
 from utilities.test.entities.PojoAndDtoTestGenerator import *
 from utilities.main.controllers.RestControllerGenerator import *
@@ -230,7 +231,7 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        JavaFileMaker.create_proxy_class(currentproject, projectnames, projectdata)
+        ProxyGenerator.create_proxy_class(currentproject, projectnames, projectdata)
 
     def create_proxy_classes_for_mid_levels(self, mid_level_proj):
         """
@@ -238,7 +239,7 @@ class SpringBootProjectGenerator:
         :param mid_level_proj:
         :return:
         """
-        JavaFileMaker.create_proxy_classes_for_mid_levels(mid_level_proj, self.projectsnames, self.projectdata)
+        ProxyGenerator.create_proxy_classes_for_mid_levels(mid_level_proj, self.projectsnames, self.projectdata)
 
     def create_proxy_dtos(self, currentproject, projectnames, projectdata):
         """
@@ -246,8 +247,7 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        None
-        JavaFileMaker.create_proxy_dtos(self.destinationroot, currentproject, projectnames, projectdata)
+        ProxyGenerator.create_proxy_dtos(self.destinationroot, currentproject, projectnames, projectdata)
 
     def create_proxy_dtos_for_mid_lvl(self, currentproject):
         """
@@ -255,8 +255,7 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        None
-        JavaFileMaker.create_proxy_dtos_for_mid_lvl(self.destinationroot, currentproject, self.projectsnames, self.projectdata)
+        ProxyGenerator.create_proxy_dtos_for_mid_lvl(self.destinationroot, currentproject, self.projectsnames, self.projectdata)
 
     def create_proxy_pojos(self, currentproject, projectnames, projectdata):
         """
@@ -264,8 +263,7 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        None
-        JavaFileMaker.create_proxy_pojos(self.destinationroot, currentproject, projectnames, projectdata)
+        ProxyGenerator.create_proxy_pojos(self.destinationroot, currentproject, projectnames, projectdata)
 
     def create_proxy_pojos_for_mid_lvl(self, currentproject):
         """
@@ -273,8 +271,7 @@ class SpringBootProjectGenerator:
         :param table:
         :return:
         """
-        None
-        JavaFileMaker.create_proxy_pojos_for_mid_lvl(self.destinationroot, currentproject, self.projectsnames, self.projectdata)
+        ProxyGenerator.create_proxy_pojos_for_mid_lvl(self.destinationroot, currentproject, self.projectsnames, self.projectdata)
 
     def create_pojo_class(self, table):
         """
@@ -284,22 +281,6 @@ class SpringBootProjectGenerator:
         """
         PojoAndDtoGenerator.create_pojo_and_dto_classes(table, "pojo", self.tabledata)
 
-    def create_pojo_response_class(self, project):
-        """
-        this method creates the POJO Java file in the project
-        :param table:
-        :return:
-        """
-        JavaFileMaker.create_pojo_response_class(project)
-
-    def create_pojo_resonse_class_for_mid_level(self, project):
-        """
-        this method creates the POJO Java file in the project
-        :param table:
-        :return:
-        """
-        JavaFileMaker.create_pojo_response_class_for_mid_level(project)
-
     def create_dto_class(self, table):
         """
         this method creates the DTO Java file in the project
@@ -307,6 +288,22 @@ class SpringBootProjectGenerator:
         :return:
         """
         PojoAndDtoGenerator.create_pojo_and_dto_classes(table, "dto", self.tabledata)
+
+    def create_pojo_response_class(self, project):
+        """
+        this method creates the POJO Java file in the project
+        :param table:
+        :return:
+        """
+        PojoAndDtoGenerator.create_pojo_response_class(project)
+
+    def create_pojo_resonse_class_for_mid_level(self, project):
+        """
+        this method creates the POJO Java file in the project
+        :param table:
+        :return:
+        """
+        PojoAndDtoGenerator.create_pojo_response_class_for_mid_level(project)
 
     def create_health_check_controller(self, project):
         """

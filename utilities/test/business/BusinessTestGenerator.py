@@ -97,16 +97,18 @@ class BusinessTestGenerator:
                 utilities = Utilities()
                 for line in source_file:
                     linestr = str(line)
-                    if(linestr.find("public ResponseEntity<Object>")) > -1:
+                    if(linestr.find("public ResponseEntity")) > -1:
+                        templine = linestr.replace("public ResponseEntity<","").strip()
+                        return_type = templine[0:templine.find(" ")-1]
                         method_name = utilities.remove_datatypes_from_string(linestr)
                         resources_file.write(Constants.doc_proxy)
                         resources_file.write(utilities.remove_annotations_from_string(linestr)
                                              .replace(";","{")+"\n")
                         if(linestr.find("create")>-1):
                             resources_file.write(
-                                tabs + tabs + "return new ResponseEntity<Object>(HttpStatus.CREATED);\n" +
+                                tabs + tabs + "return new ResponseEntity<" + return_type + ">(HttpStatus.CREATED);\n" +
                                 tabs + "}\n\n")
                         else:
                             resources_file.write(tabs+tabs+
-                                "return new ResponseEntity<Object>(HttpStatus.OK);\n"+tabs+"}\n\n")
+                                "return new ResponseEntity<" + return_type + ">(HttpStatus.OK);\n"+tabs+"}\n\n")
                 source_file.close()

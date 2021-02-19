@@ -5,7 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import com.schnarbiesnmeowers.&.exceptions.ResourceNotFoundException;
-LOGGER_IMPORT
+import java.util.List;
+import $.pojos.ResponseMessage;
 import $.proxy.services.*;
 import $.proxy.pojos.*;
 import $.proxy.dtos.*;
@@ -18,8 +19,6 @@ import $.proxy.dtos.*;
  */
 @Component
 public class %Business {
-
-    SINGLETON_LOGGER
 
     MAIN_SECTION
 

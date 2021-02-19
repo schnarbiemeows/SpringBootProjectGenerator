@@ -112,11 +112,13 @@ class RestControllerTestGenerator:
             if currentproject.referencename in mid_lvl_map:
                 for tablename in currentproject.tablenames:
                     tabledata = currentproject.tabledata[tablename]
-                    tablefile = test_controller = open("files/controller/controller_test_inner.txt", "r")
+                    tablefile = open("files/controller/controller_test_inner.txt", "r")
                     for line in tablefile:
                         linestr = str(line)
                         if linestr.find("RANDOM_DTO_GENERATOR") > -1:
                             PojoAndDtoTestGenerator.create_pojo_and_dto_rand_gen_code(tabledata, resources_file, "dto")
+                        elif linestr.find("FKSECTION") > -1:
+                            RestControllerTestGenerator.createForeignKeyCallsTests(tabledata, resources_file)
                         else:
                             resources_file.write(
                             linestr.replace("%",tabledata.camelcasejavaname).replace(

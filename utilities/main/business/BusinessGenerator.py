@@ -169,7 +169,7 @@ class BusinessGenerator:
                 utilities = Utilities()
                 for line in source_file:
                     linestr = str(line)
-                    if(linestr.find("public ResponseEntity<Object>")) > -1:
+                    if(linestr.find("public ResponseEntity")) > -1:
                         method_name = utilities.remove_datatypes_from_string(linestr)
                         resources_file.write(Constants.doc_proxy)
                         resources_file.write(utilities.remove_annotations_from_string(linestr)

@@ -203,13 +203,14 @@ class Utilities:
         return (projectnames,projecttables)
 
     @staticmethod
-    def remove_datatypes_from_string( inputstring):
+    def remove_datatypes_from_string(inputstring):
         """
         this method is for the mid-level business classes; it will remove the data types from an input parameter string
         :param inputstring:
         :return:
         """
-        tempstring = inputstring[inputstring.find("public ResponseEntity<Object>") + 30:]
+        tempstring1 = inputstring.replace("public ResponseEntity","")
+        tempstring = tempstring1[tempstring1.find(" ") + 1:]
         methodname = tempstring[0:tempstring.find("(")]
         parameterlist = tempstring[tempstring.find("("):tempstring.find(")")]
         paramsstring = ''

@@ -70,7 +70,7 @@ class RestControllerGenerator:
                 resources_file.write(tabs + Constants.doc_get_fk.replace("z",field.javaname)
                                      .replace("^",table.camelcasejavaname))
                 resources_file.write(tabs + Constants.ann_getfkmapping.replace("^",field.gettername) + "\n")
-                resources_file.write(tabs + "public ResponseEntity<Object> find" + table.camelcasejavaname + "By" + field.gettername +
+                resources_file.write(tabs + "public ResponseEntity<List<" + table.camelcasejavaname + "DTO>> find" + table.camelcasejavaname + "By" + field.gettername +
                     "(@PathVariable " + Utilities.translateDataType(field.datatype) + " id) throws Exception {\n")
                 resources_file.write(tabs*2 + "List<" + table.camelcasejavaname + "DTO> results = businessService.find" + table.camelcasejavaname + "By" +
                     field.gettername + "(id);\n")
@@ -82,7 +82,7 @@ class RestControllerGenerator:
             resources_file.write(tabs + Constants.doc_get_fk.replace("z", compoundFKstr)
                                  .replace("^", table.camelcasejavaname))
             resources_file.write(tabs + Constants.ann_get_mult_fk_maps.replace("^", compoundFKstr).replace("X", "{" + "}/{".join(inputparameters) + "}") + "\n")
-            text = tabs + "public ResponseEntity<Object> find" + table.camelcasejavaname + "By" + compoundFKstr +"("
+            text = tabs + "public ResponseEntity<List<" + table.camelcasejavaname + "DTO>> find" + table.camelcasejavaname + "By" + compoundFKstr +"("
             text += ", ".join(datatypes)
             text += ") throws Exception {\n"
             resources_file.write(text)
@@ -145,6 +145,10 @@ class RestControllerGenerator:
                     requestmappingfound = False
                     linecount = 0
                     is_create = False
+                    is_update = False
+                    is_delete = False
+                    is_find_by_id = False
+                    find_by_id_count = 0
                     for line in tablefile:
                         linestr = str(line)
                         if requestmappingfound == True:
@@ -155,7 +159,7 @@ class RestControllerGenerator:
                                     elif(linecount == 7):
                                         resources_file.write(tabs*2+"try{\n")
                                     elif (linecount == 6):
-                                        newlinestr = tabs*3 + "Object result = " + linestr[linestr.find(
+                                        newlinestr = tabs*3 + tabledata.camelcasejavaname + "DTO result = " + linestr[linestr.find(
                                             "businessService"):linestr.find(";")] + ".getBody();\n"
                                         resources_file.write(newlinestr)
                                     elif (linecount == 5):
@@ -179,7 +183,12 @@ class RestControllerGenerator:
                                     if(linecount == 4):
                                         resources_file.write(linestr)
                                     elif(linecount == 3):
-                                        newlinestr = tabs*2+"Object result = " + linestr[linestr.find("businessService"):linestr.find(";")] + ".getBody();\n"
+                                        if is_update == True or is_find_by_id == True and find_by_id_count == 1:
+                                            newlinestr = tabs*2+ "" + tabledata.camelcasejavaname + "DTO result = " + linestr[linestr.find("businessService"):linestr.find(";")] + ".getBody();\n"
+                                        elif is_delete == True :
+                                            newlinestr = tabs * 2 + "ResponseMessage result = " + linestr[linestr.find("businessService"):linestr.find(";")] + ".getBody();\n"
+                                        else:
+                                            newlinestr = tabs * 2 + "List<" + tabledata.camelcasejavaname + "DTO> result = " + linestr[linestr.find("businessService"):linestr.find(";")] + ".getBody();\n"
                                         resources_file.write(newlinestr)
                                     elif(linecount == 2):
                                         resources_file.write(tabs*2+"return ResponseEntity.status(HttpStatus.OK).body(result);\n")
@@ -188,8 +197,18 @@ class RestControllerGenerator:
                                     linecount -= 1
                             elif linestr.find('Mapping(') > -1:
                                 is_create = False
+                                is_update = False
+                                is_delete = False
+                                is_find_by_id = False
                                 if(linestr.find("/create")>-1):
                                     is_create = True
+                                elif (linestr.find("/update") > -1):
+                                    is_update = True
+                                elif (linestr.find("/delete") > -1):
+                                    is_delete = True
+                                elif (linestr.find("/findBy") > -1):
+                                    is_find_by_id = True
+                                    find_by_id_count += 1
                                 linecount = 4
                                 if is_create == True:
                                     linecount = 8

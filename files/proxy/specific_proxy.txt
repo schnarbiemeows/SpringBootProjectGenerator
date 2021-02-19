@@ -3,7 +3,8 @@ FEIGN_CLIENT_IMPORT
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import javax.validation.*;
-
+import java.util.List;
+import &.pojos.ResponseMessage;
 import &.proxy.pojos.*;
 import &.proxy.dtos.*;
 

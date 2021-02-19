@@ -11,7 +11,7 @@ LOGGER_IMPORT
 import $.dtos.%DTO;
 import $.pojos.%;
 import $.services.%Repository;
-
+import java.util.List;
 /**
  * this class retrieves data from the controller class
  * most business logic should be put in this class

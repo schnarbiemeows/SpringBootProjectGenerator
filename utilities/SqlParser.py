@@ -74,6 +74,10 @@ class SqlParser:
             for item in tempUniqueKeysList:
                 uniqueKeysList.append(item)
         uniqueKeyDrops = list(map(lambda x: self.parseOutUniqueDropsByLambda(x), possibleUniqueDropList))
+        primaryKeysList = self.reconcilePrimaryKeys(self.tabledata,primaryKeysList)
+        uniqueKeysList = self.reconcileUniqueKeys(self.tabledata, uniqueKeysList)
+        uniqueKeyDrops = self.reconcileUniqueDrops(self.tabledata, uniqueKeysList, uniqueKeyDrops)
+        foreignKeysList = self.reconcileForeignKeys(self.tabledata,foreignKeysList)
         self.applyPrimaryKeysToTables(self.tabledata,primaryKeysList)
         self.applyForeignKeysToTables(self.tabledata,foreignKeysList)
         self.applyUniqueKeysToTables(self.tabledata, uniqueKeysList, uniqueKeyDrops)
@@ -196,7 +200,7 @@ class SqlParser:
     def parseOutPrimaryKeyByLambda(self, input):
         """
         this method will return a tuple list item of (<table name>,<primary key field name list>)
-        if "drop prmary key" is encountered, add the word "drop" to the list, later when we find it,
+        if "drop primary key" is encountered, add the word "drop" to the list, later when we find it,
         we will clear the Table primary key list(self.primarykeys = [])
         :param input:
         :return:
@@ -320,8 +324,8 @@ class SqlParser:
                 if (possiblefield.find("(") > -1):
                     possiblefield = possiblefield[0:possiblefield.find("(")]
                 # print("possible field is: " + str(innerarray[1]))
-                if (possiblefield in SqlParser.mysqlnumberset or possiblefield in SqlParser.mysqldatetypes or
-                        possiblefield in SqlParser.mysqlstringtypes or possiblefield in SqlParser.mysqlboolean):
+                if (possiblefield.lower() in SqlParser.mysqlnumberset or possiblefield.lower() in SqlParser.mysqldatetypes or
+                        possiblefield.lower() in SqlParser.mysqlstringtypes or possiblefield.lower() in SqlParser.mysqlboolean):
                     print("found field : " + innerarray[0])
                     # initialize a FieldProperties object
                     newfield = FieldProperties(innerarray[0].strip())
@@ -342,12 +346,12 @@ class SqlParser:
                                 newfield.decimals =  int(numarr[1])
 
                     else:
-                        datatype = datatypefull
+                        datatype = datatypefull.lower()
                     signedorno = itemstr.lower().find("unsigned") > -1
                     # figure out certain other properties of the field
                     newfield.extract_field_properties(innerarray)
                     # translate the sql data type to java data type
-                    newfield.translate_datatype(datatype, signedorno)
+                    newfield.translate_datatype(datatype.lower(), signedorno)
 
 
                     table.fieldnames.append(newfield.name)
@@ -499,7 +503,6 @@ class SqlParser:
         """
         totaluniquekeys = []
         tablename = self.getTableName(input)
-
         if input.lower().find("alter table") > -1:
             # [0:self.findIndexOfGivenPhrase(input,"foreign key")]
             beforeuk = input[0:self.findIndexOfGivenPhrase(input,"unique")]
@@ -523,12 +526,16 @@ class SqlParser:
                 # we have to first find any comma right before the next instance of "unique"
                 commaindex = input.find(",")
                 ukindex = input.lower().find("unique")
-                while commaindex < ukindex:
+                while commaindex > -1 and commaindex < ukindex:
                     input = input[input.find(",") + 1:]
                     commaindex = input.find(",")
                     ukindex = input.lower().find("unique")
+                # at this point, we have to figure out
                 wordsbeforeuk = input[0:input.lower().find("unique")].strip()
-                wordsafteruk = input[input.lower().find("unique") + 6:].lstrip()
+                wordsafteruk = input.replace("UNIQUE KEY","UNIQUE")\
+                    .replace("unique key","unique")\
+                    .replace("UNIQUE key","UNIQUE")\
+                    .replace("unique KEY","unique")[input.lower().find("unique") + 6:].lstrip()
                 if wordsafteruk[0:1] == "(":
                     # scenarios 2 and 3
                     fieldnames = wordsafteruk.split(")")[0].replace("(", "").split(",")
@@ -578,6 +585,114 @@ class SqlParser:
             tbllen = len(tablenametemp)
             tablename = tablenametemp[tbllen - 1].strip()
         return tablename
+
+    def reconcilePrimaryKeys(self, tabledata, primaryKeysList):
+        """
+        because primary key definitions are not case sensitive, we need to check
+        each primary key field name against all of the fields in the table, and adjust it
+        if needed
+        :param tabledata:
+        :param primaryKeysList:
+        :return:
+        """
+        newPrimaryKeysList = []
+        for primakry_key_definition in primaryKeysList:
+            tablename = primakry_key_definition[0]
+            keys = primakry_key_definition[1]   # this is a list
+            if len(keys)==1 and keys[0] == "drop":
+                newPrimaryKeysList.append((tablename,keys))
+            else:
+                # what we have to do here is compare each key name to each fieldname and when we
+                # find a match, replace the keyname with the fieldname
+                newkeys = []
+                for key in keys:
+                    for fieldname in tabledata[tablename].fieldnames:
+                        if fieldname.lower() == key.lower():
+                            newkeys.append(fieldname)
+                            break
+                newPrimaryKeysList.append((tablename, newkeys))
+        return newPrimaryKeysList
+
+    def reconcileUniqueKeys(self, tabledata, uniqueKeysList):
+        """
+        because unique key definitions are not case sensitive, we need to check
+        each unique key field name against all of the fields in the table, and adjust it
+        if needed
+        :param tabledata:
+        :param uniqueKeysList:
+        :return:
+        """
+        # totaluniquekeys.append((tablename, fieldnames, symbolname))
+        newUniqueKeyList = []
+        for newUniqueKey in newUniqueKeyList:
+            tablename = newUniqueKey[0]
+            fieldKeyname = newUniqueKey[1]
+            symbolname = newUniqueKey[2]
+            for fieldname in tabledata[tablename].fieldnames:
+                if fieldname.lower() == fieldKeyname.lower():
+                    fieldKeyname = fieldname
+                    break
+            newUniqueKeyList.append((tablename, fieldKeyname, symbolname))
+        return newUniqueKeyList
+
+
+    def reconcileUniqueDrops(self, tabledata, uniqueKeysList, uniqueKeyDrops):
+        """
+        because unique drops definitions are not case sensitive, we need to check
+        each symbolname against all of the symbolnames in the uniqueKeysList, and adjust it
+        if needed
+        :param tabledata:
+        :param uniqueKeysList:
+        :param uniqueKeyDrops:
+        :return:
+        """
+        # drops are : return tablename, indexname
+        # keys are : totaluniquekeys.append((tablename, fieldnames, symbolname))
+        newUniqueKeyDrops = []
+        for unique_drop_definition in uniqueKeyDrops:
+            tablename = unique_drop_definition[0]
+            symbolname = unique_drop_definition[1]
+            for key in uniqueKeysList:
+                keysymbolname = key[2]
+                if keysymbolname.lower() == symbolname.lower():
+                    symbolname = keysymbolname
+                    break
+            newUniqueKeyDrops.append((tablename,symbolname))
+        return newUniqueKeyDrops
+
+    def reconcileForeignKeys(self, tabledata, foreignKeysList):
+        """
+        because foreign key definitions are not case sensitive, we need to:
+        1. check the child field name against the field names in the child table,
+        and adjust it if needed
+        2. check the parent field name against the field names in the parent table,
+        and adjust it if needed
+        :param tabledata:
+        :param foreignKeysList:
+        :return:
+        """
+        # totalforeignkeys.append((tablename, fieldname, symbolname, parenttablename, parentfieldname))
+        newForeignKeysList = []
+        for foreignKeyDefinition in foreignKeysList:
+            childtable = foreignKeyDefinition[0]
+            childfields = foreignKeyDefinition[1]    # a list of fields
+            symbolname = foreignKeyDefinition[2]
+            parenttable = foreignKeyDefinition[3]
+            parentfields = foreignKeyDefinition[4]   # a list of fields
+            newchildfieldlist = []
+            newparentfieldlist = []
+            for childfield in childfields:
+                for fieldname in tabledata[childtable].fieldnames:
+                    if fieldname.lower() == childfield.lower():
+                        newchildfieldlist.append(fieldname)
+                        break
+            for parentfield in parentfields:
+                for fieldname in tabledata[parenttable].fieldnames:
+                    if fieldname.lower() == parentfield.lower():
+                        newparentfieldlist.append(fieldname)
+                        break
+            newForeignKeysList.append((childtable,newchildfieldlist,symbolname,parenttable,newparentfieldlist))
+        return newForeignKeysList
 
     def applyPrimaryKeysToTables(self, tabledata, primaryKeysList):
         """

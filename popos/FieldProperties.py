@@ -152,9 +152,9 @@ class FieldProperties:
         if(signed == True):
             self.datatype = FieldProperties.mysql_to_java_conv_signed[datatype]
             print("converting data type : " + datatype + " to --> " + self.datatype)
-            if (datatype.lower().find("integer") > -1 or datatype.lower().find("mediumint") > -1 or
-                datatype.lower().find("bigint") > -1 or datatype.lower().find("smallint") > -1 or
-                datatype.lower().find("int") > -1):
+            if (datatype.find("integer") > -1 or datatype.find("mediumint") > -1 or
+                datatype.find("bigint") > -1 or datatype.find("smallint") > -1 or
+                datatype.find("int") > -1):
                 if self.isprimary == True or self.isforeignkey == True:
                     self.min = 0
                 else:
@@ -163,9 +163,9 @@ class FieldProperties:
         else:
             self.datatype = FieldProperties.mysql_to_java_conv_unsigned[datatype]
             print("converting data type : " + datatype + " to --> " + self.datatype)
-            if (datatype.lower().find("integer") > -1 or datatype.lower().find("mediumint") > -1 or
-                    datatype.lower().find("bigint") > -1 or datatype.lower().find("smallint") > -1 or
-                    datatype.lower().find("int") > -1):
+            if (datatype.find("integer") > -1 or datatype.find("mediumint") > -1 or
+                    datatype.find("bigint") > -1 or datatype.find("smallint") > -1 or
+                    datatype.find("int") > -1):
                 if self.isprimary == True or self.isforeignkey == True:
                     self.min = 0
                 else:
