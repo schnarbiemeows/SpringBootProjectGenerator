@@ -336,7 +336,7 @@ class JsonUtility:
             json += tabs * 5 + '"protocol" : ' + protocol + ',\n'
             json += tabs * 5 + '"host": [ "localhost" ],\n'
             json += tabs * 5 + '"port" : "' + str(project.portnum) + '",\n'
-            json += tabs * 5 + '"path": [ "' + path + '", "findBy' + urlText + '", "1" ]\n'
+            json += tabs * 5 + '"path": [ "' + path + '", "findBy' + urlText + '" ]\n'
             json += tabs * 4 + '}\n'
             json += tabs * 3 + '},\n'
             json += tabs * 3 + '"response": []\n'
