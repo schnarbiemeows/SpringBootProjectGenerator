@@ -314,3 +314,42 @@ class Utilities:
                     return fielddata.gettername
                 else:
                     return "get" + fielddata.gettername+"()"
+
+    @staticmethod
+    def does_table_have_primary_key(table):
+        """
+        this method tells us if the table has a primary key
+        :param table:
+        :return:
+        """
+        for fieldname in table.fieldnames:
+            field = table[fieldname]
+            if field.isprimary == True:
+                return True
+        return False
+
+    @staticmethod
+    def does_table_have_foreign_key(table):
+        """
+        this method tells us if the table has a primary key
+        :param table:
+        :return:
+        """
+        for fieldname in table.fieldnames:
+            field = table[fieldname]
+            if field.isforeignkey == True:
+                return True
+        return False
+
+    @staticmethod
+    def does_table_have_unique_key(table):
+        """
+        this method tells us if the table has a primary key
+        :param table:
+        :return:
+        """
+        for fieldname in table.fieldnames:
+            field = table[fieldname]
+            if field.unique == True:
+                return True
+        return False

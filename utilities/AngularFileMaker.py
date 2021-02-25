@@ -95,13 +95,14 @@ class AngularFileMaker:
             outputfile = open(root_directory + "/src/app/models/" + dtoname + ".ts", "w")
             outputfile.write("export interface " + dtoname + "{\n")
             inputfile.close()
+            print("making the Angular DTO for : " + dtoname)
             inputfile = open(filename, "r")
             for line in inputfile:
                 linestr = str(line)
                 if linestr.find(Constants.private) > -1 and linestr.find(Constants.serial_uid) == -1 and linestr.find(Constants.logger) == -1:
                     fieldarray = linestr.split(" ")
                     key = fieldarray[2].replace(";", "").rstrip()
-                    print("field name " + key)
+                    print("DTO field name " + key)
                     fieldtype = AngularFileMaker.translateDataType(fieldarray[1])
                     outputfile.write(tabs + key + "?: " + fieldtype + ";\n")
             outputfile.write("}")
@@ -148,7 +149,7 @@ class AngularFileMaker:
                         outputfile.write("export interface " + dtoname + "{\n")
                         for line in inputfile:
                             linestr = str(line)
-                            if linestr.find("private") > -1 and linestr.find(Constants.serial_uid) == -1:
+                            if linestr.find("private") > -1 and linestr.find(Constants.serial_uid) == -1 and linestr.find(Constants.logger) == -1:
                                 fieldarray = linestr.split(" ")
                                 key = fieldarray[2].replace(";", "").rstrip()
                                 print("field name " + key)
@@ -198,7 +199,8 @@ class AngularFileMaker:
                     linestr = str(line)
                     if requestmappingfound == True:
                         if requestfound == True:
-                            linestr = linestr.replace("public ResponseEntity<Object> ","")
+                            linestrtemp = linestr.replace(">>",">")
+                            linestr = linestrtemp[linestr.find(">")+1:]
                             rest_call_name = linestr[0:linestr.find("(")].lstrip()
                             print("Which has a rest-call-name of : " + rest_call_name)
                             print("Which we are attempting to put into key = : " + currentdto)

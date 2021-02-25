@@ -117,7 +117,7 @@ class FieldProperties:
         """
         javaname = ''
         gettername = ''
-        self.correctedtablename = self.name.replace("`","").replace("~|*", "_")
+        self.correctedtablename = self.name.replace("`","").replace("~|*", "_").lower()
         if (self.correctedtablename.find("_") > -1):
             index = 0
             convertedjavaname = ''
