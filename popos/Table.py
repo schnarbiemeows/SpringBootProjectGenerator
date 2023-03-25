@@ -44,7 +44,6 @@ class Table:
         :return:
         """
         # assume that the table name may have underscores, but no dashes
-
         self.correctedtablename = self.tablename.replace("`","").replace("~|*", "_")
         self.pomname = self.correctedtablename.lower().replace("_","-")
         self.projectname = self.pomname

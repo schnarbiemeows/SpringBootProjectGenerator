@@ -45,7 +45,7 @@ class FileMaker:
             copy_tree(destinationroot+"/"+project.pomname, destinationroot+"/backup/"+project.pomname)
 
     @staticmethod
-    def make_base_angular_project( project):
+    def make_base_angular_project(project):
         """
         this method will backup a project that has already been generated before, so that the user can retrieve the various files
         that will get overwritten with the current generation
@@ -58,10 +58,10 @@ class FileMaker:
         for items in destination_dir_array:
             if len(items)>0:
                 directory += "/"+items
-            if len(directory)>1 and not os.path.exists(directory):
+            if len(directory) > 1 and not os.path.exists(directory):
                 Utilities.mkdir(directory)
         destinationroot = directory
-        if(not destinationroot.endswith("/")):
+        if not destinationroot.endswith("/"):
             destinationroot += "/"
         if not os.path.exists(destinationroot+project.pomname):
             print("creating Angular project : " + project.pomname)
@@ -69,7 +69,7 @@ class FileMaker:
         return destinationroot+project.pomname
 
     @staticmethod
-    def create_base_project_folders( project, sourceprojectfolder, destinationroot, artifactid, groupid):
+    def create_base_project_folders(project, sourceprojectfolder, destinationroot, artifactid, groupid):
         """
         this method will create the basic folder structure of a SB project
         :param project:
@@ -79,6 +79,7 @@ class FileMaker:
         :param groupid:
         :return:
         """
+        Utilities.mkdir(destinationroot)
         Utilities.mkdir(destinationroot + "/" + project.pomname)
         Utilities.mkdir(destinationroot + "/" + project.pomname + "/" + project.pomname)
         Utilities.mkdir(destinationroot + "/" + project.pomname + "/" + project.pomname + "/.mvn")
@@ -94,8 +95,6 @@ class FileMaker:
         Utilities.mkdir(destinationroot + "/" + project.pomname + "/" + project.pomname + "/src")
         #Utilities.cpy(sourceprojectfolder + "/" + artifactid + "/.gitIgnore",
         #              destinationroot + "/" + project.pomname + "/" + project.pomname + "/.gitIgnore")
-        Utilities.cpy(sourceprojectfolder + "/" + artifactid + "/HELP.md",
-                      destinationroot + "/" + project.pomname + "/" + project.pomname + "/HELP.md")
         Utilities.cpy(sourceprojectfolder + "/" + artifactid + "/mvnw",
                       destinationroot + "/" + project.pomname + "/" + project.pomname + "/mvnw")
         Utilities.cpy(sourceprojectfolder + "/" + artifactid + "/mvnw.cmd",
@@ -132,14 +131,14 @@ class FileMaker:
         Utilities.mkdir(projectmainfolder + topmainpackage + "/config")
         Utilities.mkdir(projectmainfolder + topmainpackage + "/controllers")
         Utilities.mkdir(projectmainfolder + topmainpackage + "/exceptions")
-        Utilities.mkdir(projectmainfolder + topmainpackage + "/business")
+        Utilities.mkdir(projectmainfolder + topmainpackage + "/services")
         Utilities.mkdir(projectmainfolder + topmainpackage + "/dtos")
         Utilities.mkdir(projectmainfolder + topmainpackage + "/proxy")
         Utilities.mkdir(projectmainfolder + topmainpackage + "/proxy/dtos")
         Utilities.mkdir(projectmainfolder + topmainpackage + "/proxy/pojos")
         Utilities.mkdir(projectmainfolder + topmainpackage + "/proxy/services")
         Utilities.mkdir(projectmainfolder + topmainpackage + "/pojos")
-        Utilities.mkdir(projectmainfolder + topmainpackage + "/services")
+        Utilities.mkdir(projectmainfolder + topmainpackage + "/repositories")
         Utilities.mkdir(projectmainfolder + topmainpackage + "/utilities")
 
         Utilities.mkdir(projecttestfolder + toptestpackage)
@@ -147,14 +146,14 @@ class FileMaker:
         Utilities.mkdir(projecttestfolder + toptestpackage + "/config")
         Utilities.mkdir(projecttestfolder + toptestpackage + "/controllers")
         Utilities.mkdir(projecttestfolder + toptestpackage + "/exceptions")
-        Utilities.mkdir(projecttestfolder + toptestpackage + "/business")
+        Utilities.mkdir(projecttestfolder + toptestpackage + "/services")
         Utilities.mkdir(projecttestfolder + toptestpackage + "/dtos")
         Utilities.mkdir(projecttestfolder + toptestpackage + "/proxy")
         Utilities.mkdir(projecttestfolder + toptestpackage + "/proxy/dtos")
         Utilities.mkdir(projecttestfolder + toptestpackage + "/proxy/pojos")
         Utilities.mkdir(projecttestfolder + toptestpackage + "/proxy/services")
         Utilities.mkdir(projecttestfolder + toptestpackage + "/pojos")
-        Utilities.mkdir(projecttestfolder + toptestpackage + "/services")
+        Utilities.mkdir(projecttestfolder + toptestpackage + "/repositories")
         Utilities.mkdir(projecttestfolder + toptestpackage + "/utilities")
 
         # set the Table object's main java and test package roots
@@ -199,7 +198,7 @@ class FileMaker:
             resources_file.write(Configuration.app_port + str(project.portnum) + "\n")
             resources_file.write(Configuration.spring_cloud_config_uri+"\n")
             resources_file.close()
-            resources_file = open("/nms-config-server-git/"+project.pomname+".properties", "w")
+            resources_file = open(Configuration.config_server_git+"/"+project.pomname+".properties", "w")
             resources_file.write(Configuration.app_log + "\n")
             resources_file.write(Configuration.app_jpa + "\n")
             resources_file.write(Configuration.app_jpa_show + "\n")
@@ -234,7 +233,7 @@ class FileMaker:
             resources_file.close()
 
     @staticmethod
-    def populate_kubernetes_commands_file( project):
+    def populate_kubernetes_commands_file(project):
         """
         this method will add certain command line commands to run to make our lives easier
         :param project:
@@ -244,7 +243,7 @@ class FileMaker:
         destinationfile.write("cd /c" + project.root.replace("C:\\", "/").replace("\\", "/") + "\n")
         docker_cmd = "docker run -d -p " + str(project.portnum) + ":" + str(project.portnum) + " "
         docker_cmd += Configuration.docker_remote_repo_name + "/" + project.pomname + ":" + Configuration.version + " "
-        if (project.is_mid_level == True and Configuration.use_docker == True):
+        if project.is_mid_level and Configuration.use_docker:
             for item in project.service_config:
                 docker_cmd += "--" + item + "=" + Configuration.docker_localhost_url + " "
         destinationfile.write("-- run the project as a docker image\n")

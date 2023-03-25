@@ -119,8 +119,20 @@ class PojoAndDtoGenerator:
         create the imports
         :param table:
         :param file:
+        :param src:
         :return:
         """
+        hastimefield = False
+        hasdatefield = False
+        hastimestampfield = False;
+        for field in table.fieldnames:
+            fielddata = table.fielddata[field]
+            if fielddata.datatype == "Time":
+                hastimefield = True
+            if fielddata.datatype == "Date":
+                hasdatefield = True
+            if fielddata.datatype == "Timestamp":
+                hastimestampfield = True
         if src == "pojo":
             file.write("import " + table.rootpackage + "." + Constants.pckg_dtos + "." + table.dtoname + ";\n")
             file.write("import javax.persistence.*;\n")
@@ -130,9 +142,13 @@ class PojoAndDtoGenerator:
         file.write("import java.io.Serializable;\n")
         file.write("import com.google.gson.Gson;\n")
         file.write("import java.math.*;\n")
-        #file.write("import java.sql.*;\n")
-        file.write("import java.util.*;\n\n")
-        if Configuration.use_logging == True:
+        if hastimefield:
+            file.write("import java.sql.Time;\n")
+        if hastimestampfield:
+            file.write("import java.sql.Timestamp;\n")
+        if hasdatefield:
+            file.write("import java.util.*;\n\n")
+        if Configuration.use_logging:
             file.write(Constants.import_logger_1 + "\n")
             file.write(Constants.import_logger_2 + "\n")
 

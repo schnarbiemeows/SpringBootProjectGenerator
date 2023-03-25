@@ -76,7 +76,7 @@ class Constants:
     import_sampler = "import brave.sampler.Sampler;"
     import_logger_1 = "import org.apache.logging.log4j.LogManager;"
     import_logger_2 = "import org.apache.logging.log4j.Logger;"
-    logger_singleton = 'private static final Logger logger = LogManager.getLogger("FileAppender");'
+    logger_singleton = '//private static final Logger applicationLogger = LogManager.getLogger("FileAppender");'
     ann_feign = '@EnableFeignClients("RIBBON_CLIENT_ANN")'
     ann_dc = "@EnableDiscoveryClient"
 # Swagger file
@@ -144,18 +144,18 @@ class Constants:
 
 # business classes
 
-    pckg_bus = "business"
+    pckg_bus = "services"
     import_comp = "import org.springframework.stereotype.Component;"
     ann_comp = "@Component"
 
 # repository classes
 
-    pckg_services = "services"
-    import_repo = "import org.springframework.data.repository.CrudRepository;"
+    pckg_services = "repositories"
+    import_repo = "import org.springframework.data.jpa.repository.JpaRepository;"
     import_query = "import org.springframework.data.jpa.repository.Query;"
     import_param = "import org.springframework.data.repository.query.Param;"
     import_pojo = "import %;"
-    class_decl_repo = "public interface *Repository extends CrudRepository<*, Integer>{\n\n"
+    class_decl_repo = "public interface *Repository extends JpaRepository<*, Integer>{\n\n"
     query = "@Query"
     tilde_l_star = "~|*"
 
@@ -170,6 +170,6 @@ class Constants:
 
 # Angular stuff
     serial_uid = "serialVersionUID"
-    private = "private"
+    privateval = "private"
     logger = "Logger"
 

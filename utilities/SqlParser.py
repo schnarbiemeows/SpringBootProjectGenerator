@@ -624,15 +624,17 @@ class SqlParser:
         """
         # totaluniquekeys.append((tablename, fieldnames, symbolname))
         newUniqueKeyList = []
-        for newUniqueKey in newUniqueKeyList:
+        for newUniqueKey in uniqueKeysList:
             tablename = newUniqueKey[0]
             fieldKeyname = newUniqueKey[1]
             symbolname = newUniqueKey[2]
-            for fieldname in tabledata[tablename].fieldnames:
-                if fieldname.lower() == fieldKeyname.lower():
-                    fieldKeyname = fieldname
-                    break
-            newUniqueKeyList.append((tablename, fieldKeyname, symbolname))
+            newFieldKeyNames = []
+            for uniqueKeyFieldName in fieldKeyname:
+                for fieldname in tabledata[tablename].fieldnames:
+                    if fieldname.lower() == uniqueKeyFieldName.lower():
+                        uniqueKeyFieldName = fieldname
+                        newFieldKeyNames.append(uniqueKeyFieldName)
+            newUniqueKeyList.append((tablename, newFieldKeyNames, symbolname))
         return newUniqueKeyList
 
 

@@ -17,25 +17,25 @@ class BusinessGenerator:
         tabs = Constants.tab
         # create the file and open
         filename = table.topmainpackage + "/" + Constants.pckg_bus + "/" + table.camelcasejavaname + \
-                   "Business.java"
+                   "Service.java"
         resources_file = open(filename, "w")
         business_file = open("files/business/business.txt")
         resources_file.write("package " + table.rootpackage + "." + Constants.pckg_bus + ";\n\n")
         for line in business_file:
             linestr = str(line)
-            if linestr.find("PRIMARY_KEY")>-1:
+            if linestr.find("PRIMARY_KEY") > -1:
                 text = Utilities.create_get_pk_stmt(table)
                 resources_file.write(linestr.replace("%", table.camelcasejavaname).replace("&",
                                                                                            table.lowercasename)
                                      .replace("PRIMARY_KEY",text))
             elif linestr.find("LOGGER_IMPORT") > -1:
-                if Configuration.use_logging == True:
+                if Configuration.use_logging:
                     resources_file.write(Constants.import_logger_1 + "\n")
                     resources_file.write(Constants.import_logger_2 + "\n")
             elif linestr.find("SINGLETON_LOGGER") > -1:
-                if Configuration.use_logging == True:
+                if Configuration.use_logging:
                     resources_file.write(tabs + Constants.logger_singleton + "\n")
-            elif linestr.find("FKSECTION")>-1:
+            elif linestr.find("FKSECTION") > -1:
                 BusinessGenerator.create_fk_section(table,resources_file)
             else:
                 resources_file.write(linestr.replace("$", table.rootpackage).replace("%",
@@ -117,21 +117,20 @@ class BusinessGenerator:
         tabs = Constants.tab
         # create the file and open
         filename = mid_lvl_proj.topmainpackage + "/" + Constants.pckg_bus + "/" + \
-                   mid_lvl_proj.camelcasejavaname + "Business.java"
+                   mid_lvl_proj.camelcasejavaname + "Service.java"
         resources_file = open(filename, "w")
         business_file = open("files/business/business_mid_lvl.txt")
         resources_file.write("package " + mid_lvl_proj.rootpackage + "." + Constants.pckg_bus + ";\n\n")
         for line in business_file:
             linestr = str(line)
             if (linestr.find("MAIN_SECTION")) > -1:
-                BusinessGenerator.create_business_service_proxy_calls(mid_lvl_proj, crud_proj_names,
-                                                                      crud_proj_data,resources_file)
+                BusinessGenerator.create_business_service_proxy_calls(mid_lvl_proj, crud_proj_names,crud_proj_data,resources_file)
             elif linestr.find("LOGGER_IMPORT") > -1:
-                if Configuration.use_logging == True:
+                if Configuration.use_logging:
                     resources_file.write(Constants.import_logger_1 + "\n")
                     resources_file.write(Constants.import_logger_2 + "\n")
             elif linestr.find("SINGLETON_LOGGER") > -1:
-                if Configuration.use_logging == True:
+                if Configuration.use_logging:
                     resources_file.write(tabs + Constants.logger_singleton + "\n")
             else:
                 resources_file.write(linestr.replace("%", mid_lvl_proj.camelcasejavaname)

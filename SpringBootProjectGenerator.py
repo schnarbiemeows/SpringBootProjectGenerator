@@ -54,14 +54,14 @@ class SpringBootProjectGenerator:
         """
         FileMaker.create_base_project_folders(project, self.sourceprojectfolder, self.destinationroot, self.artifactid, Configuration.groupid)
 
-    def parsesqlfile(self):
+    def parseSqlFile(self):
         """
         this method parses the main SQL file
         :return:
         """
         self.tablenames,self.tabledata = self.sqlparser.processSQL(self.sourcesqlfile)
 
-    def parsesqlfileToGroupProjects(self):
+    def parseSqlFileToGroupProjects(self):
         """
         this method checks the Configuration.
         :return:
@@ -361,21 +361,21 @@ class SpringBootProjectGenerator:
         """
         PojoAndDtoTestGenerator.create_pojo_test_class(table,"dto",self.tabledata)
 
-    def create__exceptions_test_class(self, table):
+    def create__exceptions_test_class(self, project):
         """
         this method creates the exceptions test Java file
-        :param table:
+        :param project:
         :return:
         """
-        TestFileMaker.create__exceptions_test_class(table)
+        TestFileMaker.create__exceptions_test_class(project)
 
-    def create_randomizer_test_class(self, table):
+    def create_randomizer_test_class(self, project):
         """
         this method creates the randomizer test Java file
         :param table:
         :return:
         """
-        TestFileMaker.create_randomizer_test_class(table)
+        TestFileMaker.create_randomizer_test_class(project)
 
     def create_controller_test_file(self, table):
         """
@@ -505,8 +505,8 @@ class SpringBootProjectGenerator:
         localprojectdata = []
         if(Configuration.use_docker == True):
             self.initialize_kubernetes_file()
-        self.parsesqlfile()
-        self.parsesqlfileToGroupProjects()
+        self.parseSqlFile()
+        self.parseSqlFileToGroupProjects()
         for project in self.projectsnames:
             currentproject = self.projectdata[project]
             if(Configuration.create_angular_projects == True):

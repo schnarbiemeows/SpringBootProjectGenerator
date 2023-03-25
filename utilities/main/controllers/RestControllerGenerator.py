@@ -72,7 +72,7 @@ class RestControllerGenerator:
                 resources_file.write(tabs + Constants.ann_getfkmapping.replace("^",field.gettername) + "\n")
                 resources_file.write(tabs + "public ResponseEntity<List<" + table.camelcasejavaname + "DTO>> find" + table.camelcasejavaname + "By" + field.gettername +
                     "(@PathVariable " + Utilities.translateDataType(field.datatype) + " id) throws Exception {\n")
-                resources_file.write(tabs*2 + "List<" + table.camelcasejavaname + "DTO> results = businessService.find" + table.camelcasejavaname + "By" +
+                resources_file.write(tabs*2 + "List<" + table.camelcasejavaname + "DTO> results = service.find" + table.camelcasejavaname + "By" +
                     field.gettername + "(id);\n")
                 resources_file.write(tabs * 2 + "return ResponseEntity.status(HttpStatus.OK).body(results);\n" +
                     tabs + "}\n\n")
@@ -87,7 +87,7 @@ class RestControllerGenerator:
             text += ") throws Exception {\n"
             resources_file.write(text)
             resources_file.write(
-                tabs * 2 + "List<" + table.camelcasejavaname + "DTO> results = businessService.find" + table.camelcasejavaname + "By" +
+                tabs * 2 + "List<" + table.camelcasejavaname + "DTO> results = service.find" + table.camelcasejavaname + "By" +
                 compoundFKstr + "(" + ", ".join(inputparameters) + ");\n")
             resources_file.write(tabs * 2 + "return ResponseEntity.status(HttpStatus.OK).body(results);\n" +
                                  tabs + "}\n\n")
@@ -160,7 +160,7 @@ class RestControllerGenerator:
                                         resources_file.write(tabs*2+"try{\n")
                                     elif (linecount == 6):
                                         newlinestr = tabs*3 + tabledata.camelcasejavaname + "DTO result = " + linestr[linestr.find(
-                                            "businessService"):linestr.find(";")] + ".getBody();\n"
+                                            "service"):linestr.find(";")] + ".getBody();\n"
                                         resources_file.write(newlinestr)
                                     elif (linecount == 5):
                                         if(is_create):
@@ -184,11 +184,11 @@ class RestControllerGenerator:
                                         resources_file.write(linestr)
                                     elif(linecount == 3):
                                         if is_update == True or is_find_by_id == True and find_by_id_count == 1:
-                                            newlinestr = tabs*2+ "" + tabledata.camelcasejavaname + "DTO result = " + linestr[linestr.find("businessService"):linestr.find(";")] + ".getBody();\n"
+                                            newlinestr = tabs*2+ "" + tabledata.camelcasejavaname + "DTO result = " + linestr[linestr.find("service"):linestr.find(";")] + ".getBody();\n"
                                         elif is_delete == True :
-                                            newlinestr = tabs * 2 + "ResponseMessage result = " + linestr[linestr.find("businessService"):linestr.find(";")] + ".getBody();\n"
+                                            newlinestr = tabs * 2 + "ResponseMessage result = " + linestr[linestr.find("service"):linestr.find(";")] + ".getBody();\n"
                                         else:
-                                            newlinestr = tabs * 2 + "List<" + tabledata.camelcasejavaname + "DTO> result = " + linestr[linestr.find("businessService"):linestr.find(";")] + ".getBody();\n"
+                                            newlinestr = tabs * 2 + "List<" + tabledata.camelcasejavaname + "DTO> result = " + linestr[linestr.find("service"):linestr.find(";")] + ".getBody();\n"
                                         resources_file.write(newlinestr)
                                     elif(linecount == 2):
                                         resources_file.write(tabs*2+"return ResponseEntity.status(HttpStatus.OK).body(result);\n")
