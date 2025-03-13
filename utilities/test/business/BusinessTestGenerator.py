@@ -17,7 +17,7 @@ class BusinessTestGenerator:
         :return:
         """
         # create the file and open
-        filename = table.toptestpackage + "/" + Constants.pckg_bus + "/" + table.camelcasejavaname + "Business.java"
+        filename = table.toptestpackage + "/" + Constants.pckg_bus + "/" + table.camelcasejavaname + "Service.java"
         resources_file = open(filename, "w")
         business_file = open("files/business/business_test.txt")
         resources_file.write("package " + table.rootpackage + "." + Constants.pckg_bus + ";\n\n")
@@ -57,7 +57,7 @@ class BusinessTestGenerator:
         """
         # create the file and open
         filename = mid_lvl_proj.toptestpackage + "/" + Constants.pckg_bus + "/" + \
-                   mid_lvl_proj.camelcasejavaname + "Business.java"
+                   mid_lvl_proj.camelcasejavaname + "Service.java"
         resources_file = open(filename, "w")
         business_file = open("files/business/business_mid_lvl.txt")
         resources_file.write("package " + mid_lvl_proj.rootpackage + "." + Constants.pckg_bus + ";\n\n")
@@ -66,6 +66,13 @@ class BusinessTestGenerator:
             if (linestr.find("MAIN_SECTION")) > -1:
                 BusinessTestGenerator.create_business_service_proxy_calls(mid_lvl_proj,
                                         crud_proj_names, crud_proj_data,resources_file)
+            elif linestr.find("LOGGER_IMPORT") > -1:
+                if Configuration.use_logging:
+                    resources_file.write(Constants.import_logger_1 + "\n")
+                    resources_file.write(Constants.import_logger_2 + "\n")
+            elif linestr.find("SINGLETON_LOGGER") > -1:
+                if Configuration.use_logging:
+                    resources_file.write(Constants.tab + Constants.logger_singleton + "\n")
             else:
                 resources_file.write(linestr.replace("%", mid_lvl_proj.camelcasejavaname)
                                      .replace("&", mid_lvl_proj.lowercasename)
