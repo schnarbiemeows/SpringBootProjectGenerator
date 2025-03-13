@@ -25,7 +25,7 @@ class RestControllerTestGenerator:
                 resources_file.write("import " + table.rootpackage + "." + Constants.pckg_pojos + "." + table.camelcasejavaname + ";\n")
                 resources_file.write("import " + table.rootpackage + "." + Constants.pckg_dtos + "." + table.dtoname + ";\n")
                 resources_file.write(
-                    "import " + table.rootpackage + "." + Constants.pckg_bus + "." + table.camelcasejavaname + "Business;\n")
+                    "import " + table.rootpackage + "." + Constants.pckg_bus + "." + table.camelcasejavaname + "Service;\n")
                 resources_file.write("import " + table.rootpackage + "." + Constants.pckg_util + ".Randomizer;\n")
             elif linestr.find("RANDOM_DTO_GENERATOR")>-1:
                 PojoAndDtoTestGenerator.create_pojo_and_dto_rand_gen_code(table, resources_file, "dto")
@@ -78,7 +78,7 @@ class RestControllerTestGenerator:
                 resources_file.write(
                     "import " + mid_lvl_proj.rootpackage + "." + Constants.pckg_util + ".Randomizer;\n")
                 resources_file.write(
-                    "import " + mid_lvl_proj.rootpackage + "." + Constants.pckg_bus + "." + mid_lvl_proj.camelcasejavaname + "Business;\n")
+                    "import " + mid_lvl_proj.rootpackage + "." + Constants.pckg_bus + "." + mid_lvl_proj.camelcasejavaname + "Service;\n")
             elif (linestr.find("BUSINESS_CALLS") > -1):
                 RestControllerTestGenerator.create_controller_business_calls_for_mid_level(mid_lvl_proj,
                         crud_proj_names, crud_proj_data,resources_file)
@@ -148,7 +148,7 @@ class RestControllerTestGenerator:
                 resources_file.write(tabs + Constants.doc_test_get_fk.replace("z",field.javaname)
                                      .replace("^",table.camelcasejavaname)+"\n")
                 resources_file.write(tabs + "@Test\n")
-                resources_file.write(tabs + "public void testGetBy" + field.gettername +
+                resources_file.write(tabs + "public void testGet"+table.camelcasejavaname +"By" + field.gettername +
                     "() throws URISyntaxException {\n")
                 resources_file.write(tabs*2 + "int num = 1;\n")
                 resources_file.write(tabs*2 +
@@ -166,7 +166,7 @@ class RestControllerTestGenerator:
             resources_file.write(tabs + Constants.doc_test_get_by_all_fk.replace("z", compoundFKstr)
                                  .replace("^", table.camelcasejavaname)+"\n")
             resources_file.write(tabs + "@Test\n")
-            text = tabs + "public void testGetBy" + compoundFKstr +"() throws URISyntaxException {\n"
+            text = tabs + "public void testGet"+table.camelcasejavaname +"By" + compoundFKstr +"() throws URISyntaxException {\n"
             resources_file.write(text)
             # resources_file.write(tabs + Constants.ann_get_mult_fk_maps.replace("^", compoundFKstr)
             # .replace("X", "{" + "}/{".join(inputparameters) + "}") + "\n")
