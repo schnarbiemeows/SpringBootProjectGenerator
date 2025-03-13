@@ -54,14 +54,14 @@ class SpringBootProjectGenerator:
         """
         FileMaker.create_base_project_folders(project, self.sourceprojectfolder, self.destinationroot, self.artifactid, Configuration.groupid)
 
-    def parsesqlfile(self):
+    def parseSqlFile(self):
         """
         this method parses the main SQL file
         :return:
         """
         self.tablenames,self.tabledata = self.sqlparser.processSQL(self.sourcesqlfile)
 
-    def parsesqlfileToGroupProjects(self):
+    def parseSqlFileToGroupProjects(self):
         """
         this method checks the Configuration.
         :return:
@@ -364,7 +364,7 @@ class SpringBootProjectGenerator:
     def create__exceptions_test_class(self, table):
         """
         this method creates the exceptions test Java file
-        :param table:
+        :param project:
         :return:
         """
         TestFileMaker.create__exceptions_test_class(table)
@@ -505,8 +505,8 @@ class SpringBootProjectGenerator:
         localprojectdata = []
         if(Configuration.use_docker == True):
             self.initialize_kubernetes_file()
-        self.parsesqlfile()
-        self.parsesqlfileToGroupProjects()
+        self.parseSqlFile()
+        self.parseSqlFileToGroupProjects()
         for project in self.projectsnames:
             currentproject = self.projectdata[project]
             if(Configuration.create_angular_projects == True):
@@ -524,7 +524,7 @@ class SpringBootProjectGenerator:
             self.create_main_method_file(currentproject)
             self.create_main_test_file(currentproject)
             self.create_randomizer_class(currentproject)
-            self.create_swagger_file(currentproject)
+            ##self.create_swagger_file(currentproject)
             self.create_exceptions_file(currentproject)
             self.make_rnf_exc_class(currentproject)
             self.make_spec_eh_class(currentproject)
