@@ -1,13 +1,13 @@
 import java.util.Optional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import $.exceptions.ResourceNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import $.dtos.%DTO;
 import $.pojos.%;
-import $.services.%Repository;
+import $.repositories.%Repository;
 
 /**
  * this class retrieves data from the controller class
@@ -15,8 +15,8 @@ import $.services.%Repository;
  * @author ^
  *
  */
-@Component
-public class %Business {
+@Service
+public class %Service {
 
 
 	/**

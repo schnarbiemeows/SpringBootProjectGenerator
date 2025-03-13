@@ -50,6 +50,8 @@ small tasks:
 - in the SqlParser.parseOutUniqueKeys method, if the word "unique" is inside a comment, this will cause an error
 - postman issue: find by multiple FKs is creating 1 more parameter in the parameter list in the URL for the GET calls
 - main.txt template still has XXX, YYY, etc... markers, need to switch to better markers
+- put a comment in the application.properties file that, if you are using old MySQL(6.7 or earlier) and running from an EC2, you need
+  to append "?enabledTLSProtocols=TLSv1.2" to the end of the jdbc URL
 
 
 functionality added:

@@ -99,7 +99,7 @@ class AngularFileMaker:
             inputfile = open(filename, "r")
             for line in inputfile:
                 linestr = str(line)
-                if linestr.find(Constants.private) > -1 and linestr.find(Constants.serial_uid) == -1 and linestr.find(Constants.logger) == -1:
+                if linestr.find(Constants.privateval) > -1 and linestr.find(Constants.serial_uid) == -1 and linestr.find(Constants.logger) == -1:
                     fieldarray = linestr.split(" ")
                     key = fieldarray[2].replace(";", "").rstrip()
                     print("DTO field name " + key)

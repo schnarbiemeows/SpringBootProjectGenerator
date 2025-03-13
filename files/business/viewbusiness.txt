@@ -1,0 +1,48 @@
+import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import $.exceptions.ResourceNotFoundException;
+LOGGER_IMPORT
+import $.dtos.%DTO;
+import $.pojos.%;
+import $.repositories.%Repository;
+import java.util.List;
+/**
+ * this class retrieves data from the controller class
+ * most business logic should be put in this class
+ * @author ^
+ *
+ */
+@Service
+public class %Service {
+
+    SINGLETON_LOGGER
+
+	/**
+	 * JPA Repository handle
+	 */
+	@Autowired
+	private %Repository service;
+
+	/**
+	 * get all % records
+	 * @return
+	 * @throws Exception
+	 */
+	public List<%DTO> getAll%() throws Exception {
+		Iterable<%> & = service.findAll();
+		Iterator<%> &s = &.iterator();
+		List<%DTO> &dto = new ArrayList();
+		while(&s.hasNext()) {
+			% item = &s.next();
+			&dto.add(item.toDTO());
+		}
+		return &dto;
+	}
+
+}

@@ -5,10 +5,9 @@ import org.springframework.http.HttpStatus;
 import javax.validation.Valid;
 import java.util.*;
 LOGGER_IMPORT
-import $.pojos.ResponseMessage;
-import $.services.%Service;
-import $.proxy.pojos.*;
-import $.proxy.dtos.*;
+import $.services.*;
+import $.dtos.*;
+import $.pojos.*;
 
 /**
  * this class is the main REST controller
@@ -29,14 +28,13 @@ public class %Controller {
 	private %Service service;
 
 	/**
-	 * healthcheck
-	 * @return String
+	 * get all % records
+	 * @return Iterable<%>
 	 */
-	@GetMapping(path = "/health")
-	public ResponseEntity<Object> healthcheck() throws Exception {
-		return ResponseEntity.status(HttpStatus.OK).body("PING!");
+	@GetMapping(path = "/all")
+	public ResponseEntity<List<%DTO>> getAll%() throws Exception {
+		List<%DTO> & = service.getAll%();
+		return ResponseEntity.status(HttpStatus.OK).body(&);
 	}
-
-	REST_CALLS
 
 }
