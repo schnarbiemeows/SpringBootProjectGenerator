@@ -361,21 +361,21 @@ class SpringBootProjectGenerator:
         """
         PojoAndDtoTestGenerator.create_pojo_test_class(table,"dto",self.tabledata)
 
-    def create__exceptions_test_class(self, table):
+    def create__exceptions_test_class(self, project):
         """
         this method creates the exceptions test Java file
         :param project:
         :return:
         """
-        TestFileMaker.create__exceptions_test_class(table)
+        TestFileMaker.create__exceptions_test_class(project)
 
-    def create_randomizer_test_class(self, table):
+    def create_randomizer_test_class(self, project):
         """
         this method creates the randomizer test Java file
         :param table:
         :return:
         """
-        TestFileMaker.create_randomizer_test_class(table)
+        TestFileMaker.create_randomizer_test_class(project)
 
     def create_controller_test_file(self, table):
         """
