@@ -5,6 +5,8 @@ IMPORTS
 
 @Component({
   selector: 'app-&',
+  standalone: true,
+  imports: [],
   templateUrl: './&.component.html',
   styleUrls: ['./&.component.css']
 })
@@ -52,8 +54,7 @@ export class %Component implements OnInit, OnDestroy {
     CREATE_SERVICE
   }
 
-  onSubmit(e) {
-    console.log(123);
+  onSubmit(e: SubmitEvent) {
     e.preventDefault();
   }
 

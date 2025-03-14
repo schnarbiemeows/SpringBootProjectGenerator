@@ -3,7 +3,7 @@ from configuration.Configuration import *
 from distutils.dir_util import *
 import os
 from utilities.JsonUtility import JsonUtility, Utilities
-
+import shutil
 
 class FileMaker:
     
@@ -12,6 +12,21 @@ class FileMaker:
         initilization
         :return: 
         """
+
+    def copy_file(source: str, destination: str):
+        """
+        Copies a file from source to destination using relative or absolute paths.
+
+        Args:
+            source (str): The file to be copied.
+            destination (str): The target location.
+        """
+        try:
+            shutil.copy(source, destination)  # Works with relative paths!
+            print(f"File copied successfully from {source} to {destination}")
+        except Exception as e:
+            print(f"Error copying file: {e}")
+
    
     @staticmethod 
     def make_postman_for_mid_level( project):
@@ -55,11 +70,18 @@ class FileMaker:
         """
         destination_dir_array = Configuration.angular_dest_directory.split("/")
         directory = ''
+        if Configuration.angular_dest_directory.startswith("/"):
+            directory = '/'
+        count = 1
         for items in destination_dir_array:
             if len(items)>0:
-                directory += "/"+items
-            if len(directory) > 1 and not os.path.exists(directory):
-                Utilities.mkdir(directory)
+                if count==1:
+                    directory += items
+                    count = count + 1
+                else:
+                    directory += "/"+items
+                if not os.path.exists(directory):
+                    Utilities.mkdir(directory)
         destinationroot = directory
         if not destinationroot.endswith("/"):
             destinationroot += "/"

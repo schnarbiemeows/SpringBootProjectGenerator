@@ -17,13 +17,13 @@ class Configuration:
     # sourcesqlfile = "configuration/nms-tables.sql"
 
     # location of the SQL file to parse
-    sourcesqlfile = "configuration/input/dashboard.sql"
+    sourcesqlfile = "configuration/input/body-dims-svc.sql"
 
     # test parser only
-    destinationtestfile = "configuration/output/dashboard.sql"
+    destinationtestfile = "configuration/output/body-dims-svc.sql"
     # nutrition_microservices_workspace
 
-    # root detination folder where the new Spring Boot project(s) will go
+    # root destination folder where the new Spring Boot project(s) will go
     destinationroot = "configuration/output"
 
     ##destinationroot = "/Users/dylan/IdeaProjects/nms-monolith"
@@ -45,12 +45,12 @@ class Configuration:
 
     """
     generation_type = 2
-    project_name = "dashboard-svc"
+    project_name = "body-dims-svc"
     """
         beginning_port_num : this is the port # for the first application. numbers are generated consecutively, so if you are generating
         multiple services, the first one will be this number, the next one will be this number +1, etc....
     """
-    beginning_port_num = 8084
+    beginning_port_num = 8087
     """
         make_mid_lvl_services : would you like to make some mid-level SB services that make calls to your CRUD services?
                                 use the file configuration/mid_level.txt to map the mid-level services to the CRUD services you would
@@ -60,7 +60,7 @@ class Configuration:
                                 set = True, otherwise, defaults to False
     """
     make_mid_lvl_services = False
-    mid_lvl_port_num = 8180
+    mid_lvl_port_num = 8080
 
     """
         backup_all_projects :
@@ -144,9 +144,9 @@ class Configuration:
                             files/folders into their Angular projects
     """
     create_angular_projects = True
-    angular_dest_directory = "/temp/generated_angular_code/"
+    angular_dest_directory = "temp/generated_angular_code/"
     # dependencies
-    angular_boostrap = '^5.3.2'
+    angular_boostrap = '^5.3.3'
     angular_core_js = '^14.3.0'
     angular_font_awesome = '^5.8.1'
     angular_jquery = '^3.6.1'
@@ -190,11 +190,11 @@ class Configuration:
 
     app_log = "logging.level.org.springframework=debug"
     app_jpa = "spring.jpa.hibernate.ddl-auto=none"
-    app_hib_dial = "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect"
+    app_hib_dial = "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect"
     app_hib_nmg = "spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl"
     app_hib_seq = "spring.jpa.hibernate.use-new-id-generator-mappings=false"
     # !!!! - when running on an EC2, we need '?enabledTLSProtocols=TLSv1.2' appended to the jdbc URL now
-    app_mysql_conn = "spring.datasource.url=jdbc:mysql://firstmysql-5-7-16.cb5hn7nsfqoo.us-east-1.rds.amazonaws.com:3306/firstmysql_5_7_16?enabledTLSProtocols=TLSv1.2"
+    app_mysql_conn = "spring.datasource.url=jdbc:mysql://restoredmysql.cb5hn7nsfqoo.us-east-1.rds.amazonaws.com:3306/nms-accounts?enabledTLSProtocols=TLSv1.2"
     #app_mysql_conn = "spring.datasource.url=jdbc:mysql://firstmysql-5-7-16.cb5hn7nsfqoo.us-east-1.rds.amazonaws.com:3306/nms-accounts?enabledTLSProtocols=TLSv1.2"
     app_mysql_usr = "spring.datasource.username=schnarbies"
     app_mysql_pwd = "spring.datasource.password=NYCis#1ontoNYC!"

@@ -117,10 +117,10 @@ class PojoAndDtoGenerator:
         """
         if src == "pojo":
             file.write("import " + table.rootpackage + "." + Constants.pckg_dtos + "." + table.dtoname + ";\n")
-            file.write("import javax.persistence.*;\n")
+            file.write("import jakarta.persistence.*;\n")
         else:
             file.write("import " + table.rootpackage + "." + Constants.pckg_pojos + "." + table.camelcasejavaname + ";\n")
-            file.write("import javax.validation.constraints.*;\n")
+            file.write("import jakarta.validation.constraints.*;\n")
         file.write("import java.io.Serializable;\n")
         file.write("import com.google.gson.Gson;\n")
         file.write("import java.math.*;\n")
