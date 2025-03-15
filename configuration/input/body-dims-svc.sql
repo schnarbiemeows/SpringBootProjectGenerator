@@ -5,10 +5,21 @@ phone varchar(10) comment "user's phone number, required for message notificatio
 password varchar(256) not null comment "password should be encrypted",
 age smallint comment "age in years; we don't want to store the user's DOB",
 lst_logd_in	datetime comment "when did the user last log in?");
-create table if not exists body_dimensions(body_dimension_id mediumint not null auto_increment primary key,
+create table if not exists body_measurements(body_meas_id mediumint not null auto_increment primary key,
 user_id mediumint not null comment "FK to the users.user_id field",
-foreign key BLPR2(user_id) references users(user_id)
+foreign key BODM1(user_id) references users(user_id)
 on update cascade on delete cascade,
-calendar_date date not null comment "the calendar date(date only, no time)",
-dimension decimal(6,2) comment "dimension in inches");
-create index body_dimensions_idx on body_dimensions(calendar_date);
+calendar_date datetime not null comment "the calendar date(date only, no time)",
+calf_l decimal(4,2) not null comment "left calf in inches, to the closest 1/4 inch",
+calf_r decimal(4,2) not null comment "right calf in inches, to the closest 1/4 inch",
+thigh_l decimal(4,2) not null comment "left calf in inches, to the closest 1/4 inch",
+thigh_r decimal(4,2) not null comment "right calf in inches, to the closest 1/4 inch",
+waist decimal(4,2) not null comment "left calf in inches, to the closest 1/4 inch",
+chest decimal(4,2) not null comment "left calf in inches, to the closest 1/4 inch",
+bicep_l decimal(4,2) not null comment "left calf in inches, to the closest 1/4 inch",
+bicep_r decimal(4,2) not null comment "right calf in inches, to the closest 1/4 inch",
+forearm_l decimal(4,2) not null comment "left calf in inches, to the closest 1/4 inch",
+forearm_r decimal(4,2) not null comment "right calf in inches, to the closest 1/4 inch",
+shoulders decimal(4,2) not null comment "left calf in inches, to the closest 1/4 inch",
+actv varchar(1) comment "is this record active(Y or N)?");
+create index body_meas_idx on body_measurements(user_id,calendar_date);

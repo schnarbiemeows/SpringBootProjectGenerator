@@ -105,7 +105,7 @@ class Constants:
     ann_table_with_keys = '@Table(name = "*", uniqueConstraints={XXX})'
     ann_unq_id = '@UniqueConstraint( columnNames = {"'
     ann_id = "@Id"
-    ann_autogen = "@GeneratedValue(strategy=GenerationType.AUTO)"
+    ann_autogen = "@GeneratedValue(strategy=GenerationType.INDENTITY)"
     ann_column = '@Column(name = "*")'
     ann_override = "@Override"
     ann_sizemin = '@Size(min = *, message = "* must be at least * characters")'

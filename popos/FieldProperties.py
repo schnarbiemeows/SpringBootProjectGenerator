@@ -221,7 +221,7 @@ class FieldProperties:
         self.canbenull = not_null
         self.comment = comment
         if (auto_increment_found == True):
-            self.primarytype = "@GeneratedValue(strategy=GenerationType.AUTO)"
+            self.primarytype = "@GeneratedValue(strategy=GenerationType.INDENTITY)"
             #self.importset.add(Constants.import_gentype)
             #self.importset.add(Constants.import_genval)
 
