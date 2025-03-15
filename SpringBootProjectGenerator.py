@@ -1,4 +1,5 @@
 from popos.Project import *
+from utilities import ReactFileMaker
 from utilities.SqlParser import *
 from utilities.JsonUtility import *
 from configuration.Configuration import *
@@ -41,6 +42,8 @@ class SpringBootProjectGenerator:
         self.projectdata = {}
         self.ang_proj_names = []
         self.ang_proj_data = {}
+        self.react_proj_names = []
+        self.react_proj_data = {}
         self.ang_root_dir = ''
         self.tablenames = []
         self.tabledata = {}
@@ -443,11 +446,17 @@ class SpringBootProjectGenerator:
 
     def make_angular_projects(self):
         """
-        this method will create the angular 8 project for a given project
+        this method will create the angular 19 project for a given project
         :param project:
         :return:
         """
         AngularFileMaker.make_angular_projects(self.ang_proj_names, self.ang_proj_data)
+
+    def make_react_projects(self):
+        """
+        this method will create the react project for a given project
+        """
+        ReactFileMaker.make_react_projects(self.react_proj_names,self.react_proj_data)
 
     def create_docker_file(self, project):
         """
@@ -512,6 +521,9 @@ class SpringBootProjectGenerator:
             if(Configuration.create_angular_projects == True):
                 self.ang_proj_names.append(project)
                 self.ang_proj_data[project] = currentproject
+            if (Configuration.create_react_projects == True):
+                self.react_proj_names.append(project)
+                self.react_proj_data[project] = currentproject
             if(Configuration.backup_all_projects == True):
                 self.backup_project(currentproject)
             self.create_base_project_folders(currentproject)
@@ -566,6 +578,9 @@ class SpringBootProjectGenerator:
                 if (Configuration.create_angular_projects == True):
                     self.ang_proj_names.append(projectname)
                     self.ang_proj_data[projectname] = currentproject
+                if (Configuration.create_react_projects == True):
+                    self.react_proj_names.append(projectname)
+                    self.react_proj_data[projectname] = currentproject
                 if (Configuration.backup_all_projects == True):
                     self.backup_project(currentproject)
                 self.create_base_project_folders(currentproject)
@@ -598,6 +613,8 @@ class SpringBootProjectGenerator:
                 self.populate_kubernetes_commands_file(currentproject)
         if (Configuration.create_angular_projects == True):
                 self.make_angular_projects()
+        if (Configuration.create_react_projects == True):
+                self.make_react_projects()
         if(Configuration.use_docker == True):
             self.generate_ingress_file(localprojectsnames, localprojectdata)
 
