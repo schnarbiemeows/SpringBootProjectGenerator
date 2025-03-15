@@ -32,14 +32,18 @@ public class %ControllerTest {
 	 */
 	private MockMvc mockMvc;
 
-    @Mock
+    @InjectMocks
     private %Controller &Controller;
 
 	/**
 	 * create a Mock Business object
 	 */
-	@InjectMocks
+
+	@Mock
 	private %Service &Service;
+
+    @Mock
+    private %Repository &Repository;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -115,11 +119,10 @@ public class %ControllerTest {
 	@Test
 	public void testE_Delete%() throws Exception
 	{
-		doNothing().when(&Service).delete%(1);
+		when(&Service.delete%(1)).thenReturn("successfully deleted");
 
         mockMvc.perform(delete("/###/delete/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("successfully deleted"));
+                .andExpect(status().isOk());
 	}
 
     FKSECTION

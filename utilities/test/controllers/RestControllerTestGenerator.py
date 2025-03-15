@@ -22,7 +22,7 @@ class RestControllerTestGenerator:
         for line in test_controller:
             linestr = str(line)
             if(linestr.find("IMPORTS_SECTION"))>-1:
-                resources_file.write("import " + table.rootpackage + "." + Constants.pckg_pojos + "." + table.camelcasejavaname + ";\n")
+                resources_file.write("import " + table.rootpackage + "." + Constants.pckg_repos + "." + table.camelcasejavaname + "Repository;\n")
                 resources_file.write("import " + table.rootpackage + "." + Constants.pckg_dtos + "." + table.dtoname + ";\n")
                 resources_file.write(
                     "import " + table.rootpackage + "." + Constants.pckg_bus + "." + table.camelcasejavaname + "Service;\n")
@@ -38,7 +38,7 @@ class RestControllerTestGenerator:
                 resources_file.write(linestr.replace("%",table.camelcasejavaname)
                                      .replace("&",table.lowercasename)
                                      .replace("^",Configuration.author)
-                                     .replace("###", table.pomname))
+                                     .replace("###", table.lowercasename))
         resources_file.close()
 
     @staticmethod
@@ -152,7 +152,8 @@ class RestControllerTestGenerator:
                     linestr = str(line)
                     resources_file.write(
                         linestr.replace("%", table.camelcasejavaname).replace(
-                            "&", table.lowercasename).replace("$$$", field.gettername))
+                            "&", table.lowercasename).replace("$$$", field.gettername)
+                    .replace("###",table.lowercasename))
                 """    
                 datatypes.append("@PathVariable " + Utilities.translateDataType(field.datatype) + " id" + str(counter))
                 inputparameters.append("1")

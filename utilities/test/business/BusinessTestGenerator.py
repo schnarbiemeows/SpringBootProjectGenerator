@@ -29,9 +29,9 @@ class BusinessTestGenerator:
                 resources_file.write(linestr.replace("%", table.camelcasejavaname)
                                      .replace("&", table.lowercasename).replace("PRIMARY_KEY",text))
             elif linestr.find("RANDOM_DTO_GENERATOR") > -1:
-                PojoAndDtoTestGenerator.create_pojo_and_dto_rand_gen_code(table, resources_file, "dto")
+                PojoAndDtoTestGenerator.create_pojo_and_dto_rand_gen_code(table, resources_file, "dto", True)
             elif linestr.find("RANDOM_POJO_GENERATOR") > -1:
-                PojoAndDtoTestGenerator.create_pojo_and_dto_rand_gen_code(table, resources_file, "pojo")
+                PojoAndDtoTestGenerator.create_pojo_and_dto_rand_gen_code(table, resources_file, "pojo", True)
             elif linestr.find("FKSECTION") > -1:
                 BusinessTestGenerator.create_fk_section(table, resources_file)
             else:

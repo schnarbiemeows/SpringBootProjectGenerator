@@ -93,6 +93,7 @@ class Constants:
 
     pckg_pojos = "pojos"
     pckg_dtos = "dtos"
+    pckg_repos = "repositories"
     import_entity = "import javax.persistence.Entity;"
     import_genval = "import javax.persistence.GeneratedValue;"
     import_gentype = "import javax.persistence.GenerationType;"

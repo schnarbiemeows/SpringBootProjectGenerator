@@ -229,6 +229,7 @@ class PojoAndDtoTestGenerator:
                     file.write(tabs*2 +'stringarray[0] = Randomizer.randomString(3);\n')
                     file.write(tabs*2 + Constants.cut + ".set" + fielddata.gettername + "(stringarray);\n")
                 else:
+                    print(str(tabs + tabs + Constants.cut + ".set" + fielddata.gettername + "("))
                     file.write(tabs + tabs + Constants.cut + ".set" + fielddata.gettername + "(")
                     if (fielddata.datatype == "BigDecimal"):
                         file.write("new BigDecimal(1.00));\n")
@@ -315,7 +316,7 @@ class PojoAndDtoTestGenerator:
             file.write(text)
 
     @staticmethod
-    def create_pojo_and_dto_rand_gen_code(table, file, src):
+    def create_pojo_and_dto_rand_gen_code(table, file, src, businessTest=False):
         """
         this
         :param table:
@@ -369,6 +370,8 @@ class PojoAndDtoTestGenerator:
                                 file.write('Randomizer.randomString(20));\n')
                         else:
                             file.write('Randomizer.randomString(20));\n')
-
+            else:
+                if businessTest:
+                    file.write(tabs + tabs + Constants.record + ".set" + fielddata.gettername + "(1);\n")
         file.write(tabs + tabs + "return " + Constants.record + ";\n")
     

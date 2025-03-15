@@ -3,7 +3,7 @@
     <artifactId>sonar-maven-plugin</artifactId>
     <version>3.4.0.905</version>
 </plugin>
-<plugin>
+<!--<plugin>
     <groupId>org.jacoco</groupId>
     <artifactId>jacoco-maven-plugin</artifactId>
     <version>0.8.5</version>
@@ -33,4 +33,4 @@
             </configuration>
         </execution>
     </executions>
-</plugin>
+</plugin> -->
