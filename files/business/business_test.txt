@@ -1,13 +1,18 @@
-import java.util.Optional;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import $.exceptions.ResourceNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
+import static org.mockito.Mockito.*;
+
+import java.util.*;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import $.dtos.%DTO;
 import $.pojos.%;
 import $.repositories.%Repository;
+import $.exceptions.ResourceNotFoundException;
+import $.utilities.Randomizer;
 
 /**
  * this class retrieves data from the controller class
@@ -15,59 +20,109 @@ import $.repositories.%Repository;
  * @author ^
  *
  */
-@Service
-public class %Service {
+@ExtendWith(MockitoExtension.class)
+class %ServiceTest {
 
+    @Mock
+    private %Repository &Repository;
 
-	/**
-	 * get all % records
-	 * @return
-	 * @throws Exception
-	 */
-	public List<%DTO> getAll%() throws Exception {
-	    System.out.println("Inside Mock Business Class");
-		List<%DTO> &DTO = new ArrayList<%DTO>();
-		return &DTO;
+    @InjectMocks
+    private %Service &Service;
+
+    private % &;
+    private %DTO &DTO;
+
+    @BeforeEach
+    void setUp() {
+        & = generateRandom%Entity();
+        &DTO = generateRandom%();
+    }
+
+    @Test
+    void testGetAll%() throws Exception {
+        when(&Repository.findAll()).thenReturn(Collections.singletonList(&));
+
+        List<%DTO> result = &Service.getAll%();
+
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testFind%ById_Found() throws Exception {
+        when(&Repository.findById(1)).thenReturn(Optional.of(&));
+
+        %DTO result = &Service.find%ById(1);
+
+        assertNotNull(result);
+    }
+
+    @Test
+    void testFind%ById_NotFound() {
+        when(&Repository.findById(1)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
+            &Service.find%ById(1);
+        });
+
+        assertEquals("id = 1 not found", exception.getMessage());
+    }
+
+    @Test
+    void testCreate%() {
+        when(&Repository.save(any(%.class))).thenReturn(&);
+
+        %DTO result = &Service.create%(&DTO);
+
+        assertNotNull(result);
+    }
+
+    @Test
+    void testUpdate%_Found() throws Exception {
+        when(&Repository.findById(1)).thenReturn(Optional.of(&));
+        when(&Repository.save(any(%.class))).thenReturn(&);
+
+        %DTO result = &Service.update%(&DTO);
+
+        assertNotNull(result);
+    }
+
+    @Test
+    void testUpdate%_NotFound() {
+        when(&Repository.findById(1)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
+            &Service.update%(&DTO);
+        });
+
+        assertEquals("id = 1 not found", exception.getMessage());
+    }
+
+    @Test
+    void testDelete%_Found() throws Exception {
+        when(&Repository.findById(1)).thenReturn(Optional.of(&));
+        doNothing().when(&Repository).deleteById(1);
+
+        String result = &Service.delete%(1);
+
+        assertEquals("Successfully Deleted", result);
+    }
+
+    @Test
+    void testDelete%_NotFound() {
+        when(&Repository.findById(1)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
+            &Service.delete%(1);
+        });
+
+        assertEquals("id = 1 not found", exception.getMessage());
+    }
+
+    public static %DTO generateRandom%() {
+		RANDOM_DTO_GENERATOR
 	}
-
-	/**
-	 * get % by primary key
-	 * @param id
-	 * @return
-	 * @throws Exception
-	 */
-	public %DTO find%ById(int id) throws Exception {
-		return new %DTO();
-	}
-
-	/**
-	 * create a new %
-	 * @param data
-	 * @return
-	 */
-	public %DTO create%(%DTO data) {
-        data.setPRIMARY_KEY(1);
-        return data;
-	}
-
-	/**
-	 * update a %
-	 * @param data
-	 * @return
-	 * @throws Exception
-	 */
-	public %DTO update%(%DTO data) throws Exception {
-		return data;
-	}
-
-	/**
-	 * delete a % by primary key
-	 * @param id
-	 * @return
-	 * @throws Exception
-	 */
-	public String delete%(int id) throws Exception {
-		return "Successfully Deleted";
+    public static % generateRandom%Entity() {
+		RANDOM_POJO_GENERATOR
 	}
 
     FKSECTION

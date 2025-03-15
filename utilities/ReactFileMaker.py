@@ -4,14 +4,14 @@ class ReactFileMaker:
         None
 
     @staticmethod
-    def make_react_projects(self,projectnames, projectdata):
+    def make_react_projects(projectnames, projectdata):
 
 
 
         None
 
     @staticmethod
-    def make_main_files(self,projectnames, projectdata):
+    def make_main_files(projectnames, projectdata):
 
         None
 

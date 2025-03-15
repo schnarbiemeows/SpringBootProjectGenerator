@@ -235,7 +235,7 @@ class PojoAndDtoTestGenerator:
                     elif (fielddata.datatype == "BigInteger"):
                         file.write("new BigInteger(1));\n")
                     elif (fielddata.datatype == "Integer"):
-                        file.write("new Integer(1));\n")
+                        file.write("1);\n")
                     elif (fielddata.datatype == "Float"):
                         file.write("1.0f);\n")
                     elif (fielddata.datatype == "Double"):
@@ -287,7 +287,7 @@ class PojoAndDtoTestGenerator:
                     elif (fielddata.datatype == "BigInteger"):
                         file.write("new BigInteger(1));\n")
                     elif (fielddata.datatype == "Integer"):
-                        file.write("new Integer(1));\n")
+                        file.write("1);\n")
                     elif (fielddata.datatype == "Float"):
                         file.write("1.0f);\n")
                     elif (fielddata.datatype == "Double"):
@@ -305,7 +305,7 @@ class PojoAndDtoTestGenerator:
                     elif (fielddata.datatype == "String"):
                         file.write('"a");\n')
                     elif (fielddata.datatype == "Long"):
-                        file.write("new Long(1));\n")
+                        file.write("1l);\n")
                     elif fielddata.datatype == "boolean":
                         file.write("true);\n")
             else:

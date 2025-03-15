@@ -1,4 +1,4 @@
-from configuration import DatabaseConfiguration
+from configuration.DatabaseConfiguration import *
 from configuration.Configuration import *
 from distutils.dir_util import *
 import os
@@ -602,7 +602,7 @@ class FileMaker:
         :param project:
         :return:
         """
-        returnStr = "--from-literal=kub_" + Configuration.app_mysql_pwd.replace("&","\&")
+        returnStr = "--from-literal=kub_" + DatabaseConfiguration.app_mysql_pwd.replace("&","\&")
         return returnStr
 
     @staticmethod

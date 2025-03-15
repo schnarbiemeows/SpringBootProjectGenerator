@@ -35,7 +35,10 @@ class RestControllerTestGenerator:
             elif linestr.find("FKSECTION")>-1:
                 RestControllerTestGenerator.createForeignKeyCallsTests(table,resources_file)
             else:
-                resources_file.write(linestr.replace("%",table.camelcasejavaname).replace("&",table.lowercasename).replace("^",Configuration.author))
+                resources_file.write(linestr.replace("%",table.camelcasejavaname)
+                                     .replace("&",table.lowercasename)
+                                     .replace("^",Configuration.author)
+                                     .replace("###", table.pomname))
         resources_file.close()
 
     @staticmethod
@@ -64,9 +67,10 @@ class RestControllerTestGenerator:
         :return:
         """
         # create the file and open
-        filename = mid_lvl_proj.toptestpackage + "/" + Constants.pckg_contr + "/" + mid_lvl_proj.camelcasejavaname + "ControllerTest.java"
+        filename = (mid_lvl_proj.toptestpackage + "/" + Constants.pckg_contr + "/" + mid_lvl_proj.camelcasejavaname +
+                    "ControllerTest.java")
         resources_file = open(filename, "w")
-        test_controller = open("files/controller/controller_mid_lvl_test.txt", "r")
+        test_controller = open("files/controller/controller_test.txt", "r")
         resources_file.write("package " + mid_lvl_proj.rootpackage + "." + Constants.pckg_contr + ";\n\n")
         for line in test_controller:
             linestr = str(line)
@@ -142,7 +146,14 @@ class RestControllerTestGenerator:
             fklist = table.fksymboldata[symbolname]
             for item in fklist:
                 field = table.fielddata[item[0]]
-                compoundFK.append(field.gettername)
+                #compoundFK.append(field.gettername) - leave out for now
+                template = open("files/controller/controller_fk_tests.txt", "r")
+                for line in template:
+                    linestr = str(line)
+                    resources_file.write(
+                        linestr.replace("%", table.camelcasejavaname).replace(
+                            "&", table.lowercasename).replace("$$$", field.gettername))
+                """    
                 datatypes.append("@PathVariable " + Utilities.translateDataType(field.datatype) + " id" + str(counter))
                 inputparameters.append("1")
                 resources_file.write(tabs + Constants.doc_test_get_fk.replace("z",field.javaname)
@@ -161,6 +172,9 @@ class RestControllerTestGenerator:
                 resources_file.write(tabs * 2 + "assertEquals(200, result.getStatusCodeValue());\n")
                 resources_file.write(tabs + "}\n\n")
                 counter +=1
+                """
+                if template is not None:
+                    template.close()
         if len(compoundFK)>1:
             compoundFKstr = "And".join(compoundFK)
             resources_file.write(tabs + Constants.doc_test_get_by_all_fk.replace("z", compoundFKstr)

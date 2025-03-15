@@ -1,5 +1,7 @@
-<h1 style='color:darkred'>
+<h1>
     TODO - upgrade the Test class makers to use Junit 5 with Mockito
+    TODO - finish refactoring the Junit test cases
+    TODO - change the service and controller generators to use constructor injection
 </h1>
 
 

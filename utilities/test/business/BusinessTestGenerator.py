@@ -2,6 +2,7 @@ from configuration.Constants import *
 from configuration.Configuration import *
 from utilities.Utilities import *
 from utilities.main.business.BusinessGenerator import BusinessGenerator
+from utilities.test.entities.PojoAndDtoTestGenerator import *
 
 
 class BusinessTestGenerator:
@@ -17,7 +18,7 @@ class BusinessTestGenerator:
         :return:
         """
         # create the file and open
-        filename = table.toptestpackage + "/" + Constants.pckg_bus + "/" + table.camelcasejavaname + "Service.java"
+        filename = table.toptestpackage + "/" + Constants.pckg_bus + "/" + table.camelcasejavaname + "ServiceTest.java"
         resources_file = open(filename, "w")
         business_file = open("files/business/business_test.txt")
         resources_file.write("package " + table.rootpackage + "." + Constants.pckg_bus + ";\n\n")
@@ -27,6 +28,10 @@ class BusinessTestGenerator:
                 text = Utilities.create_get_pk_stmt(table, True)
                 resources_file.write(linestr.replace("%", table.camelcasejavaname)
                                      .replace("&", table.lowercasename).replace("PRIMARY_KEY",text))
+            elif linestr.find("RANDOM_DTO_GENERATOR") > -1:
+                PojoAndDtoTestGenerator.create_pojo_and_dto_rand_gen_code(table, resources_file, "dto")
+            elif linestr.find("RANDOM_POJO_GENERATOR") > -1:
+                PojoAndDtoTestGenerator.create_pojo_and_dto_rand_gen_code(table, resources_file, "pojo")
             elif linestr.find("FKSECTION") > -1:
                 BusinessTestGenerator.create_fk_section(table, resources_file)
             else:

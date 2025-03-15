@@ -1,5 +1,5 @@
 from popos.Project import *
-from utilities import ReactFileMaker
+from utilities.ReactFileMaker import *
 from utilities.SqlParser import *
 from utilities.JsonUtility import *
 from configuration.Configuration import *
@@ -390,9 +390,7 @@ class SpringBootProjectGenerator:
 
     def create_controller_test_file_for_mid_level(self, project):
         """
-        this method creates the main test Java file in the project
-        :param project:
-        :return:
+        NO LONGER IN USE
         """
         RestControllerTestGenerator.create_controller_test_class_for_mid_level(project, self.projectsnames, self.projectdata)
 
@@ -607,7 +605,14 @@ class SpringBootProjectGenerator:
                     self.create_business_class_for_mid_lvl(currentproject)
                 if (Configuration.bypass_controllers != True):
                     self.create_controller_class_for_mid_lvl(currentproject)
-                    self.create_controller_test_file_for_mid_level(currentproject)
+                    for name in currentproject.tablenames:
+                        currenttable = currentproject.tabledata[name]
+                        currenttable.projectname = currentproject.pomname
+                        currenttable.rootpackage = currentproject.rootpackage
+                        currenttable.topmainpackage = currentproject.topmainpackage
+                        currenttable.toptestpackage = currentproject.toptestpackage
+                        self.create_controller_test_file(currenttable)
+
                     self.create_business_test_class_for_mid_lvl(currentproject)
                 self.make_postman_for_mid_level(currentproject)
                 self.populate_kubernetes_commands_file(currentproject)
