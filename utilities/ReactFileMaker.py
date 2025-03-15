@@ -10,6 +10,7 @@ class ReactFileMaker:
 
         None
 
+    @staticmethod
     def make_main_files(self,projectnames, projectdata):
 
         None
