@@ -2,4 +2,4 @@ venv/
 .idea/
 temp/
 test/
-*.DatabaseConfiguration.py
+configuration/DatabaseConfiguration.py
