@@ -139,24 +139,32 @@ class Configuration:
     """
     bypass_testing = True
     """
-        create_angular_projects : this will make Angualr 8 UI projects for each of the CRUD projects and mid-level projects
-        angular_directory : this is the directory where you want the angular project files to go in; it is up to the user to manually copy these
-                            files/folders into their Angular projects
+    *******************************************************************************************************************
+                                                        ANGULAR SECTION
+        create_angular_projects : this will make Angular 19 UI projects for each of the CRUD projects and mid-level 
+        projects
+        angular_directory : this is the directory where you want the angular project files to go in; it is up to the 
+        user to manually copy these files/folders into their Angular projects
+        
+        what needs to be installed into an empty project:
+        npm install bootstrap core-js font-awesome jquery rxjs-compat popper.js angular-notifier
+        for the pagination, you need to run this command:
+        npm install ngx-pagination --save
     """
-    create_angular_projects = True
-    angular_dest_directory = "temp/generated_angular_code/"
-    # dependencies
+
+    create_angular_projects = False
+    angular_dest_directory = "output/angular/"
+    # dependencies - OLD
     angular_boostrap = '^5.3.3'
     angular_core_js = '^14.3.0'
     angular_font_awesome = '^5.8.1'
     angular_jquery = '^3.6.1'
     angular_popper_js = '^1.16.1'
     """
-        what needs to be installed into an empty project:
-        npm install bootstrap core-js font-awesome jquery rxjs-compat popper.js angular-notifier
-        for the pagination, you need to run this command:
-        npm install ngx-pagination --save
+        *******************************************************************************************************************
+                                                    REACT SECTION
     """
+    create_react_projects = True
     """
         use_distributed_tracing : this feature will enable spring cloud sleuth to generate a unique transaction ID for each transaction
                                     this is part of distributed central logging functionality
@@ -189,15 +197,6 @@ class Configuration:
     app_port = "server.port="
 
     app_log = "logging.level.org.springframework=debug"
-    app_jpa = "spring.jpa.hibernate.ddl-auto=none"
-    app_hib_dial = "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect"
-    app_hib_nmg = "spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl"
-    app_hib_seq = "spring.jpa.hibernate.use-new-id-generator-mappings=false"
-    # !!!! - when running on an EC2, we need '?enabledTLSProtocols=TLSv1.2' appended to the jdbc URL now
-    app_mysql_conn = "spring.datasource.url=jdbc:mysql://locahost:3306/<schemaname>"
-    app_mysql_usr = "spring.datasource.username=username"
-    app_mysql_pwd = "spring.datasource.password=password"
-    app_jpa_show = "spring.jpa.show-sql=true"
     app_actu_conf = "management.endpoints.web.exposure.include=*"
     app_sec_usr = "spring.security.user.name=test"
     app_sec_pwd = "spring.security.user.password=GYI%*&#^%G^#SHGWTRR@&^TRR23tr2fegge8"
