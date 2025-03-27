@@ -1,7 +1,7 @@
 <h1>
-    TODO - upgrade the Test class makers to use Junit 5 with Mockito
-    TODO - finish refactoring the Junit test cases
     TODO - change the service and controller generators to use constructor injection
+    TODO - the service class tester generator, for tables that have foreign keys, is putting
+            the controller code for calling "findBy..." in the foreign key section. fix this
 </h1>
 
 

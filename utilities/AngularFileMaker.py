@@ -1,4 +1,6 @@
 import glob
+
+from configuration.Constants import Constants
 from popos.AngularObject import *
 from utilities.FileMaker import *
 """
@@ -12,7 +14,7 @@ class AngularFileMaker:
     @staticmethod
     def make_angular_projects(projectnames, projectdata):
         """
-        this method will create the angular 10 code for a given project
+        this method will create the angular 19 code for a given project
         :param projectnames:
         :param projectdata:
         :return:

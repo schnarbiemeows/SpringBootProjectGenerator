@@ -64,7 +64,13 @@ class PojoAndDtoTestGenerator:
         resources_file.write("import " + table.rootpackage + "." + Constants.pckg_util + ".Randomizer;\n")
         for line in test_pojo:
             linestr = str(line)
-            if (linestr.find("SETTER_STMT")) > -1:
+            if linestr.find("IMPORTS_SECTION") > -1:
+                if src == "pojo":
+                    resources_file.write("import " + table.rootpackage + "." + Constants.pckg_entities + "." + table.camelcasejavaname + ";\n")
+                else:
+                    resources_file.write(
+                        "import " + table.rootpackage + "." + Constants.pckg_entities + "." + table.camelcasejavaname + "DTO;\n")
+            elif (linestr.find("SETTER_STMT")) > -1:
                 PojoAndDtoTestGenerator.create_pojo_setters_stmt(table, resources_file, "Y",tabledata)
             elif linestr.find("GETTER_STMT") > -1:
                 PojoAndDtoTestGenerator.create_pojo_setters_stmt(table, resources_file, "N",tabledata)

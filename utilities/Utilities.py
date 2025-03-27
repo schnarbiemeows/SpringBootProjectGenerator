@@ -65,7 +65,7 @@ class Utilities:
         else:
             gettername = Utilities.capitalize(dbname)
             javaname = dbname
-        print("making javaname = " + javaname + " getter name = " + gettername + " from db name = " + dbname)
+        #print("making javaname = " + javaname + " getter name = " + gettername + " from db name = " + dbname)
         return (javaname, gettername)
 
     @staticmethod

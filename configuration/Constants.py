@@ -92,6 +92,7 @@ class Constants:
 # pojos and dtos classes
 
     pckg_pojos = "pojos"
+    pckg_entities = "entities"
     pckg_dtos = "dtos"
     pckg_repos = "repositories"
     import_entity = "import javax.persistence.Entity;"

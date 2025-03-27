@@ -30,7 +30,9 @@ class RestControllerGenerator:
         resources_file.write("package " + table.rootpackage + "." + Constants.pckg_contr + ";\n\n")
         for line in controller_file:
             linestr = str(line)
-            if linestr.find("FKSECTION")>-1:
+            if linestr.find("RESPONSE_MESSAGE") > -1:
+                resources_file.write("import " + table.rootpackage + "." + Constants.pckg_entities + ".ResponseMessage;\n\n")
+            elif linestr.find("FKSECTION")>-1:
                 if len(table.fksymbolnames)>0:
                     RestControllerGenerator.createForeignKeyCalls(table,resources_file)
             elif linestr.find("LOGGER_IMPORT") > -1:

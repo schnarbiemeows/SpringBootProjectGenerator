@@ -492,7 +492,7 @@ class SqlParser:
             first = i[0].upper()
             rest = i[1:]
             camelcase = first+rest.lower()
-            input = input.replace(i.upper,"").replace(i.lower(),"").replace(camelcase,"")
+            input = input.replace(i.upper(),"").replace(i.lower(),"").replace(camelcase,"")
         return input
 
     def parseOutUniqueKeys(self, input):
@@ -521,7 +521,7 @@ class SqlParser:
                 fieldnames[i] = fieldnames[i].strip()
             totaluniquekeys.append((tablename, fieldnames, symbolname))
         elif input.lower().find("create table") > -1:
-            while input.lower().find("unique") > -1:
+            while input.lower().find("unique ") > -1 or input.lower().find("unique(") > -1:
                 fieldnames = []
                 symbolname = ''
                 # we have to first find any comma right before the next instance of "unique"
@@ -566,6 +566,9 @@ class SqlParser:
         return tablename, indexname
 
     def getTableName(self, input):
+        tablename = ''
+        if input.lower().find("create or replace view") > -1 or input.lower().find("create view") > -1:
+            print("here!")
         if input.lower().find("create table") > -1:
             tablename = self.getCreateTableTableName(input)
         elif input.lower().find("alter table") > -1:

@@ -13,6 +13,7 @@ class FileMaker:
         :return: 
         """
 
+    @staticmethod
     def copy_file(source: str, destination: str):
         """
         Copies a file from source to destination using relative or absolute paths.
@@ -90,6 +91,29 @@ class FileMaker:
             Utilities.mkdir(destinationroot+project.pomname)
         return destinationroot+project.pomname
 
+    @staticmethod
+    def make_base_react_project(project):
+        destination_dir_array = Configuration.react_dest_directory.split("/")
+        directory = ''
+        if Configuration.react_dest_directory.startswith("/"):
+            directory = '/'
+        count = 1
+        for items in destination_dir_array:
+            if len(items) > 0:
+                if count == 1:
+                    directory += items
+                    count = count + 1
+                else:
+                    directory += "/" + items
+                if not os.path.exists(directory):
+                    Utilities.mkdir(directory)
+        destinationroot = directory
+        if not destinationroot.endswith("/"):
+            destinationroot += "/"
+        if not os.path.exists(destinationroot + project.pomname):
+            print("creating React project : " + project.pomname)
+            Utilities.mkdir(destinationroot + project.pomname)
+        return destinationroot + project.pomname
     @staticmethod
     def create_base_project_folders(project, sourceprojectfolder, destinationroot, artifactid, groupid):
         """

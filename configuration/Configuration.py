@@ -17,7 +17,7 @@ class Configuration:
     # sourcesqlfile = "configuration/nms-tables.sql"
 
     # location of the SQL file to parse
-    sourcesqlfile = "configuration/input/body-dims-svc.sql"
+    sourcesqlfile = "configuration/input/nms-monolith.sql"
 
     # test parser only
     destinationtestfile = "configuration/output/body-dims-svc.sql"
@@ -45,7 +45,7 @@ class Configuration:
 
     """
     generation_type = 2
-    project_name = "body-dims-svc"
+    project_name = "nms-monolith"
     """
         beginning_port_num : this is the port # for the first application. numbers are generated consecutively, so if you are generating
         multiple services, the first one will be this number, the next one will be this number +1, etc....
@@ -165,6 +165,7 @@ class Configuration:
                                                     REACT SECTION
     """
     create_react_projects = True
+    react_dest_directory = "output/react/"
     """
         use_distributed_tracing : this feature will enable spring cloud sleuth to generate a unique transaction ID for each transaction
                                     this is part of distributed central logging functionality

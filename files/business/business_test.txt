@@ -124,6 +124,4 @@ class %ServiceTest {
     public static % generateRandom%Entity() {
 		RANDOM_POJO_GENERATOR
 	}
-
-    FKSECTION
 }

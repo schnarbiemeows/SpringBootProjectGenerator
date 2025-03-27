@@ -139,7 +139,7 @@ class FieldProperties:
         else:
             gettername = self.capitalize(self.correctedtablename)
             javaname = self.correctedtablename
-        print("making javaname = " + javaname + " getter name = " + gettername + " from db name = ")
+        #print("making javaname = " + javaname + " getter name = " + gettername + " from db name = ")
         return (javaname, gettername)
 
     def translate_datatype(self,datatype,signed):
@@ -151,7 +151,7 @@ class FieldProperties:
         """
         if(signed == True):
             self.datatype = FieldProperties.mysql_to_java_conv_signed[datatype]
-            print("converting data type : " + datatype + " to --> " + self.datatype)
+            #print("converting data type : " + datatype + " to --> " + self.datatype)
             if (datatype.find("integer") > -1 or datatype.find("mediumint") > -1 or
                 datatype.find("bigint") > -1 or datatype.find("smallint") > -1 or
                 datatype.find("int") > -1):
@@ -162,7 +162,7 @@ class FieldProperties:
                 self.max = FieldProperties.number_signed_limits[datatype][1]
         else:
             self.datatype = FieldProperties.mysql_to_java_conv_unsigned[datatype]
-            print("converting data type : " + datatype + " to --> " + self.datatype)
+            #print("converting data type : " + datatype + " to --> " + self.datatype)
             if (datatype.find("integer") > -1 or datatype.find("mediumint") > -1 or
                     datatype.find("bigint") > -1 or datatype.find("smallint") > -1 or
                     datatype.find("int") > -1):
