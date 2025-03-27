@@ -1,6 +1,6 @@
 # grouping format is:
 # <project name> : <comma separated list of lower level project names>
 #
-#nms-admin:nms-accounts,nms-types,nms-ingr,nms-daily-diet,nms-events,nms-goals,nms-exer,nms-img,nms-pay
-#nms-client:nms-accounts,nms-types,nms-ingr,nms-daily-diet,nms-events,nms-goals,nms-exer,nms-img,nms-pay
-interview:question,answer,question_category,question_level
+nms-admin:nms-accounts,nms-types,nms-ingr,nms-daily-diet,nms-events,nms-goals,nms-exer,nms-img,nms-pay
+nms-client:nms-accounts,nms-types,nms-ingr,nms-daily-diet,nms-events,nms-goals,nms-exer,nms-img,nms-pay
+#interview:question,answer,question_category,question_level

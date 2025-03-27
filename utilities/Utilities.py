@@ -65,7 +65,7 @@ class Utilities:
         else:
             gettername = Utilities.capitalize(dbname)
             javaname = dbname
-        print("making javaname = " + javaname + " getter name = " + gettername + " from db name = " + dbname)
+        #print("making javaname = " + javaname + " getter name = " + gettername + " from db name = " + dbname)
         return (javaname, gettername)
 
     @staticmethod
@@ -203,13 +203,14 @@ class Utilities:
         return (projectnames,projecttables)
 
     @staticmethod
-    def remove_datatypes_from_string( inputstring):
+    def remove_datatypes_from_string(inputstring):
         """
         this method is for the mid-level business classes; it will remove the data types from an input parameter string
         :param inputstring:
         :return:
         """
-        tempstring = inputstring[inputstring.find("public ResponseEntity<Object>") + 30:]
+        tempstring1 = inputstring.replace("public ResponseEntity","")
+        tempstring = tempstring1[tempstring1.find(" ") + 1:]
         methodname = tempstring[0:tempstring.find("(")]
         parameterlist = tempstring[tempstring.find("("):tempstring.find(")")]
         paramsstring = ''
@@ -313,3 +314,42 @@ class Utilities:
                     return fielddata.gettername
                 else:
                     return "get" + fielddata.gettername+"()"
+
+    @staticmethod
+    def does_table_have_primary_key(table):
+        """
+        this method tells us if the table has a primary key
+        :param table:
+        :return:
+        """
+        for fieldname in table.fieldnames:
+            field = table[fieldname]
+            if field.isprimary == True:
+                return True
+        return False
+
+    @staticmethod
+    def does_table_have_foreign_key(table):
+        """
+        this method tells us if the table has a primary key
+        :param table:
+        :return:
+        """
+        for fieldname in table.fieldnames:
+            field = table[fieldname]
+            if field.isforeignkey == True:
+                return True
+        return False
+
+    @staticmethod
+    def does_table_have_unique_key(table):
+        """
+        this method tells us if the table has a primary key
+        :param table:
+        :return:
+        """
+        for fieldname in table.fieldnames:
+            field = table[fieldname]
+            if field.unique == True:
+                return True
+        return False

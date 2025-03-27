@@ -3,24 +3,36 @@ class Configuration:
         set these configuration variables
     """
 
-    author = "< your name >"
-    website = "< your website >"
-    email = "< your email >"
-    groupid = "< group ID >"
-    version = "< version >"
+    author = "Dylan I. Kessler"
+    website = "www.schnarbiesnmeowers.com"
+    email = "email@email.com"
+    groupid = "com.schnarbiesnmeowers"
+    version = "0.0.1-SNAPSHOT"
 
     """
         main source and destination folder location
     """
     # source project to clone
     sourceprojectfolder = "files/demo"
-    sourcesqlfile = "configuration/SQL_file.sql"
-	destinationtestfile = "temp/sql_output/testing.sql"
-    destinationroot = "<where you want your Spring Boot projects to go>"
+    # sourcesqlfile = "configuration/nms-tables.sql"
 
+    # location of the SQL file to parse
+    sourcesqlfile = "configuration/input/nms-monolith.sql"
+
+    # test parser only
+    destinationtestfile = "configuration/output/body-dims-svc.sql"
+    # nutrition_microservices_workspace
+
+    # root destination folder where the new Spring Boot project(s) will go
+    destinationroot = "configuration/output"
+
+    ##destinationroot = "/Users/dylan/IdeaProjects/nms-monolith"
+    #"/eclipse_workspaces/sbg-java-workspace"
+    #test_fk = True
     """
-        hostname : primarily for the postman generation functionality, it represents the ipaddress that each project will be using. leave as localhost if testing locally,
-                    otherwise, specify the ipaddress where each of these projects will be run
+        hostname : primarily for the postman generation functionality, it represents the ipaddress that each project 
+        will be using. leave as localhost if testing locally
+        otherwise, specify the ipaddress where each of these projects will be run
     """
     hostname = "http://localhost"
 
@@ -32,14 +44,14 @@ class Configuration:
         3 - manually specify the table grouping using a text file called groupings.txt(located in the files folder in this project)
 
     """
-    generation_type = <1,2, or 3>
-    project_name = "<give a project name if 2 is selected>"
+    generation_type = 2
+    project_name = "nms-monolith"
     """
         beginning_port_num : this is the port # for the first application. numbers are generated consecutively, so if you are generating
         multiple services, the first one will be this number, the next one will be this number +1, etc....
     """
-    beginning_port_num = 8010
-	"""
+    beginning_port_num = 8087
+    """
         make_mid_lvl_services : would you like to make some mid-level SB services that make calls to your CRUD services?
                                 use the file configuration/mid_level.txt to map the mid-level services to the CRUD services you would
                                 like each service to have proxies for.
@@ -47,14 +59,15 @@ class Configuration:
                                 will have no repository interface, but will have proxies to the CRUD services, with DTOs and POJOs
                                 set = True, otherwise, defaults to False
     """
-    make_mid_lvl_services = True
-    mid_lvl_port_num = 8182
+    make_mid_lvl_services = False
+    mid_lvl_port_num = 8080
+
     """
         backup_all_projects :
     """
     backup_all_projects = False
-
-    backup_directory = "< where you want to backup your projects to >"
+    # "/eclipse_workspaces/nutrition_microservices_workspace/backup"
+    backup_directory = "/eclipse_workspaces/nutrition_microservices_workspace/backup"
     """
         these options below must be set to True ; otherwise they default to False
 
@@ -72,12 +85,16 @@ class Configuration:
         spring_cloud_config_uri : url to the configuration server
     """
     use_config_server = False
-    spring_cloud_config_uri = "spring.cloud.config.uri=< config server uri >"
+    config_server_git = "/Users/dylan/git/server-config"
+    spring_cloud_config_uri = "spring.cloud.config.uri=http://100.26.104.131:8888/"
+    """
+        100.26.104.131
+    """
     """
         use_sonar_jacoco : do you want to include sonarQube code analysis functionality and Jaccoco code coverage functionality?
                             set = True, otherwise, defaults to False
     """
-    use_sonar_jacoco = False
+    use_sonar_jacoco = True
     """
         use_naming_server : do you want to use Netflix's Eureka naming server, in conjunction with SB Feign and Ribbon technologies, to implement
                             load balancing for your microservices
@@ -91,7 +108,7 @@ class Configuration:
                             project
     """
     use_naming_server = False
-    naming_server_url = "eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/"
+    naming_server_url = "eureka.client.serviceUrl.defaultZone=http://54.167.34.201:8761/eureka/"
     naming_server_proxy_mode = 2
     """
         use_gateway_server : do you want to use a netflix zuul gateway server. must be used in conjunction with using both a config and a naming server
@@ -99,7 +116,8 @@ class Configuration:
         gateway_server_url : url to the gateways server, including the port #
     """
     use_gateway_server = False
-    gateway_server_url = "http://localhost:8765"
+    #gateway_server_url = "http://localhost:8765"
+    gateway_server_url = "http://100.26.104.131:8765"
     """
         bypass_business   : True or False. If True, the program will NOT remake the business classes for each project. Use this feature if you
                             don't want the program to overwrite any business logic that you might be working on. defaults to False.
@@ -108,7 +126,7 @@ class Configuration:
     """
     bypass_business = False
     bypass_controllers = False
-	"""
+    """
         use_logging : this will add log4j2 logging into the project
     """
     use_logging = True
@@ -121,24 +139,33 @@ class Configuration:
     """
     bypass_testing = True
     """
-        create_angular_projects : this will make Angualr 8 UI projects for each of the CRUD projects and mid-level projects
-        angular_directory : this is the directory where you want the angular project files to go in; it is up to the user to manually copy these
-                            files/folders into their Angular projects
-    """
-    create_angular_projects = False
-    angular_dest_directory = "<where do you want the generated angular code to go>"
-    # dependencies
-    angular_boostrap = '4.0.0-beta.2'
-    angular_core_js = '^3.6.5'
-    angular_font_awesome = '^4.7.0'
-    angular_jquery = '^3.5.0'
-    angular_popper_js = '^1.16.1'
-	"""
+    *******************************************************************************************************************
+                                                        ANGULAR SECTION
+        create_angular_projects : this will make Angular 19 UI projects for each of the CRUD projects and mid-level 
+        projects
+        angular_directory : this is the directory where you want the angular project files to go in; it is up to the 
+        user to manually copy these files/folders into their Angular projects
+        
         what needs to be installed into an empty project:
-        npm install bootstrap core-js font-awesome jquery rxjs-compat popper.js
+        npm install bootstrap core-js font-awesome jquery rxjs-compat popper.js angular-notifier
         for the pagination, you need to run this command:
         npm install ngx-pagination --save
     """
+
+    create_angular_projects = False
+    angular_dest_directory = "output/angular/"
+    # dependencies - OLD
+    angular_boostrap = '^5.3.3'
+    angular_core_js = '^14.3.0'
+    angular_font_awesome = '^5.8.1'
+    angular_jquery = '^3.6.1'
+    angular_popper_js = '^1.16.1'
+    """
+        *******************************************************************************************************************
+                                                    REACT SECTION
+    """
+    create_react_projects = True
+    react_dest_directory = "output/react/"
     """
         use_distributed_tracing : this feature will enable spring cloud sleuth to generate a unique transaction ID for each transaction
                                     this is part of distributed central logging functionality
@@ -153,35 +180,27 @@ class Configuration:
         docker_localhost_url    : If docker_needs_192 == True, this value is the results from running the command "docker-machine ip"
                                     in the docker command line((don't include "http://"). if localhost works, just put "localhost"(no "http://")
     """
-    use_docker = True
-    docker_remote_repo_name = "< your docker hub repo name >"
+    use_docker = False
+    docker_remote_repo_name = "schnarbies"
     docker_needs_192 = True
     docker_localhost_url = "192.168.99.100"
     kubernetes_use_detailed_deployment_specs = False
-    kubernetes_complete_file_location = "<where you want your complete kubernetes file to go>"
-	"""
+    kubernetes_complete_file_location = "/eclipse_workspaces/interview_workspace/kubernetes"
+    """
         postmandirectory    :   generate postman JSON files for each microservice that can be imported as a 
                                 collection in postman,
                                 will include all of the servive calls for each service
     """
-    postmandirectory = "<where you want your Postman collections to go>"
+    postmandirectory = "/Users/dylan/postman_collections"
 
     # for the application.properties file - this is for local testing
     app_name = "spring.application.name="
     app_port = "server.port="
 
     app_log = "logging.level.org.springframework=debug"
-    app_jpa = "spring.jpa.hibernate.ddl-auto=none"
-    app_hib_dial = "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect"
-    app_hib_nmg = "spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl"
-    app_hib_seq = "spring.jpa.hibernate.use-new-id-generator-mappings=false"
-    app_mysql_conn = "spring.datasource.url=jdbc:mysql://locahost:3306/<schemaname>"
-    app_mysql_usr = "spring.datasource.username=<username>"
-    app_mysql_pwd = "spring.datasource.password=<password>"
-    app_jpa_show = "spring.jpa.show-sql=true"
     app_actu_conf = "management.endpoints.web.exposure.include=*"
-    app_sec_usr = "spring.security.user.name=<username>"
-    app_sec_pwd = "spring.security.user.password=<password>"
+    app_sec_usr = "spring.security.user.name=test"
+    app_sec_pwd = "spring.security.user.password=GYI%*&#^%G^#SHGWTRR@&^TRR23tr2fegge8"
 
     # for the Kubernetes global configuration
     kub_app_log = "logging.level.org.springframework=debug"
@@ -194,6 +213,6 @@ class Configuration:
     kub_app_mysql_pwd = "spring.datasource.password=<password>"
     kub_app_jpa_show = "spring.jpa.show-sql=true"
     kub_app_actu_conf = "management.endpoints.web.exposure.include=*"
-    kub_app_sec_usr = "spring.security.user.name=<username>"
-    kub_app_sec_pwd = "spring.security.user.password=<password>"
+    kub_app_sec_usr = "spring.security.user.name=test"
+    kub_app_sec_pwd = "spring.security.user.password=GYI%*&#^%G^#SHGWTRR@&^TRR23tr2fegge8"
 

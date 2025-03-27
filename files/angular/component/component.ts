@@ -1,10 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {Subscription} from 'rxjs';
-import { ResponseMessage } from '../../models/ResponseMessage';
+import {CommonModule} from "@angular/common";
+import {FormsModule} from "@angular/forms";
+import {NgxPaginationModule} from "ngx-pagination";
 IMPORTS
 
 @Component({
   selector: 'app-&',
+  standalone: true,
+  imports: [CommonModule, FormsModule,NgxPaginationModule],
   templateUrl: './&.component.html',
   styleUrls: ['./&.component.css']
 })
@@ -52,8 +56,7 @@ export class %Component implements OnInit, OnDestroy {
     CREATE_SERVICE
   }
 
-  onSubmit(e) {
-    console.log(123);
+  onSubmit(e: SubmitEvent) {
     e.preventDefault();
   }
 

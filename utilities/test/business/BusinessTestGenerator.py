@@ -2,6 +2,7 @@ from configuration.Constants import *
 from configuration.Configuration import *
 from utilities.Utilities import *
 from utilities.main.business.BusinessGenerator import BusinessGenerator
+from utilities.test.entities.PojoAndDtoTestGenerator import *
 
 
 class BusinessTestGenerator:
@@ -17,7 +18,7 @@ class BusinessTestGenerator:
         :return:
         """
         # create the file and open
-        filename = table.toptestpackage + "/" + Constants.pckg_bus + "/" + table.camelcasejavaname + "Business.java"
+        filename = table.toptestpackage + "/" + Constants.pckg_bus + "/" + table.camelcasejavaname + "ServiceTest.java"
         resources_file = open(filename, "w")
         business_file = open("files/business/business_test.txt")
         resources_file.write("package " + table.rootpackage + "." + Constants.pckg_bus + ";\n\n")
@@ -27,6 +28,10 @@ class BusinessTestGenerator:
                 text = Utilities.create_get_pk_stmt(table, True)
                 resources_file.write(linestr.replace("%", table.camelcasejavaname)
                                      .replace("&", table.lowercasename).replace("PRIMARY_KEY",text))
+            elif linestr.find("RANDOM_DTO_GENERATOR") > -1:
+                PojoAndDtoTestGenerator.create_pojo_and_dto_rand_gen_code(table, resources_file, "dto", True)
+            elif linestr.find("RANDOM_POJO_GENERATOR") > -1:
+                PojoAndDtoTestGenerator.create_pojo_and_dto_rand_gen_code(table, resources_file, "pojo", True)
             elif linestr.find("FKSECTION") > -1:
                 BusinessTestGenerator.create_fk_section(table, resources_file)
             else:
@@ -57,7 +62,7 @@ class BusinessTestGenerator:
         """
         # create the file and open
         filename = mid_lvl_proj.toptestpackage + "/" + Constants.pckg_bus + "/" + \
-                   mid_lvl_proj.camelcasejavaname + "Business.java"
+                   mid_lvl_proj.camelcasejavaname + "Service.java"
         resources_file = open(filename, "w")
         business_file = open("files/business/business_mid_lvl.txt")
         resources_file.write("package " + mid_lvl_proj.rootpackage + "." + Constants.pckg_bus + ";\n\n")
@@ -66,6 +71,13 @@ class BusinessTestGenerator:
             if (linestr.find("MAIN_SECTION")) > -1:
                 BusinessTestGenerator.create_business_service_proxy_calls(mid_lvl_proj,
                                         crud_proj_names, crud_proj_data,resources_file)
+            elif linestr.find("LOGGER_IMPORT") > -1:
+                if Configuration.use_logging:
+                    resources_file.write(Constants.import_logger_1 + "\n")
+                    resources_file.write(Constants.import_logger_2 + "\n")
+            elif linestr.find("SINGLETON_LOGGER") > -1:
+                if Configuration.use_logging:
+                    resources_file.write(Constants.tab + Constants.logger_singleton + "\n")
             else:
                 resources_file.write(linestr.replace("%", mid_lvl_proj.camelcasejavaname)
                                      .replace("&", mid_lvl_proj.lowercasename)
@@ -97,16 +109,18 @@ class BusinessTestGenerator:
                 utilities = Utilities()
                 for line in source_file:
                     linestr = str(line)
-                    if(linestr.find("public ResponseEntity<Object>")) > -1:
+                    if(linestr.find("public ResponseEntity")) > -1:
+                        templine = linestr.replace("public ResponseEntity<","").strip()
+                        return_type = templine[0:templine.find(" ")-1]
                         method_name = utilities.remove_datatypes_from_string(linestr)
                         resources_file.write(Constants.doc_proxy)
                         resources_file.write(utilities.remove_annotations_from_string(linestr)
                                              .replace(";","{")+"\n")
                         if(linestr.find("create")>-1):
                             resources_file.write(
-                                tabs + tabs + "return new ResponseEntity<Object>(HttpStatus.CREATED);\n" +
+                                tabs + tabs + "return new ResponseEntity<" + return_type + ">(HttpStatus.CREATED);\n" +
                                 tabs + "}\n\n")
                         else:
                             resources_file.write(tabs+tabs+
-                                "return new ResponseEntity<Object>(HttpStatus.OK);\n"+tabs+"}\n\n")
+                                "return new ResponseEntity<" + return_type + ">(HttpStatus.OK);\n"+tabs+"}\n\n")
                 source_file.close()

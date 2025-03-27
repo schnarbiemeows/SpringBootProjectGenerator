@@ -117,7 +117,7 @@ class FieldProperties:
         """
         javaname = ''
         gettername = ''
-        self.correctedtablename = self.name.replace("`","").replace("~|*", "_")
+        self.correctedtablename = self.name.replace("`","").replace("~|*", "_").lower()
         if (self.correctedtablename.find("_") > -1):
             index = 0
             convertedjavaname = ''
@@ -139,7 +139,7 @@ class FieldProperties:
         else:
             gettername = self.capitalize(self.correctedtablename)
             javaname = self.correctedtablename
-        print("making javaname = " + javaname + " getter name = " + gettername + " from db name = ")
+        #print("making javaname = " + javaname + " getter name = " + gettername + " from db name = ")
         return (javaname, gettername)
 
     def translate_datatype(self,datatype,signed):
@@ -151,10 +151,10 @@ class FieldProperties:
         """
         if(signed == True):
             self.datatype = FieldProperties.mysql_to_java_conv_signed[datatype]
-            print("converting data type : " + datatype + " to --> " + self.datatype)
-            if (datatype.lower().find("integer") > -1 or datatype.lower().find("mediumint") > -1 or
-                datatype.lower().find("bigint") > -1 or datatype.lower().find("smallint") > -1 or
-                datatype.lower().find("int") > -1):
+            #print("converting data type : " + datatype + " to --> " + self.datatype)
+            if (datatype.find("integer") > -1 or datatype.find("mediumint") > -1 or
+                datatype.find("bigint") > -1 or datatype.find("smallint") > -1 or
+                datatype.find("int") > -1):
                 if self.isprimary == True or self.isforeignkey == True:
                     self.min = 0
                 else:
@@ -162,10 +162,10 @@ class FieldProperties:
                 self.max = FieldProperties.number_signed_limits[datatype][1]
         else:
             self.datatype = FieldProperties.mysql_to_java_conv_unsigned[datatype]
-            print("converting data type : " + datatype + " to --> " + self.datatype)
-            if (datatype.lower().find("integer") > -1 or datatype.lower().find("mediumint") > -1 or
-                    datatype.lower().find("bigint") > -1 or datatype.lower().find("smallint") > -1 or
-                    datatype.lower().find("int") > -1):
+            #print("converting data type : " + datatype + " to --> " + self.datatype)
+            if (datatype.find("integer") > -1 or datatype.find("mediumint") > -1 or
+                    datatype.find("bigint") > -1 or datatype.find("smallint") > -1 or
+                    datatype.find("int") > -1):
                 if self.isprimary == True or self.isforeignkey == True:
                     self.min = 0
                 else:
@@ -221,7 +221,7 @@ class FieldProperties:
         self.canbenull = not_null
         self.comment = comment
         if (auto_increment_found == True):
-            self.primarytype = "@GeneratedValue(strategy=GenerationType.AUTO)"
+            self.primarytype = "@GeneratedValue(strategy=GenerationType.IDENTITY)"
             #self.importset.add(Constants.import_gentype)
             #self.importset.add(Constants.import_genval)
 

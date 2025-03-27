@@ -64,7 +64,13 @@ class PojoAndDtoTestGenerator:
         resources_file.write("import " + table.rootpackage + "." + Constants.pckg_util + ".Randomizer;\n")
         for line in test_pojo:
             linestr = str(line)
-            if (linestr.find("SETTER_STMT")) > -1:
+            if linestr.find("IMPORTS_SECTION") > -1:
+                if src == "pojo":
+                    resources_file.write("import " + table.rootpackage + "." + Constants.pckg_entities + "." + table.camelcasejavaname + ";\n")
+                else:
+                    resources_file.write(
+                        "import " + table.rootpackage + "." + Constants.pckg_entities + "." + table.camelcasejavaname + "DTO;\n")
+            elif (linestr.find("SETTER_STMT")) > -1:
                 PojoAndDtoTestGenerator.create_pojo_setters_stmt(table, resources_file, "Y",tabledata)
             elif linestr.find("GETTER_STMT") > -1:
                 PojoAndDtoTestGenerator.create_pojo_setters_stmt(table, resources_file, "N",tabledata)
@@ -229,13 +235,14 @@ class PojoAndDtoTestGenerator:
                     file.write(tabs*2 +'stringarray[0] = Randomizer.randomString(3);\n')
                     file.write(tabs*2 + Constants.cut + ".set" + fielddata.gettername + "(stringarray);\n")
                 else:
+                    print(str(tabs + tabs + Constants.cut + ".set" + fielddata.gettername + "("))
                     file.write(tabs + tabs + Constants.cut + ".set" + fielddata.gettername + "(")
                     if (fielddata.datatype == "BigDecimal"):
                         file.write("new BigDecimal(1.00));\n")
                     elif (fielddata.datatype == "BigInteger"):
                         file.write("new BigInteger(1));\n")
                     elif (fielddata.datatype == "Integer"):
-                        file.write("new Integer(1));\n")
+                        file.write("1);\n")
                     elif (fielddata.datatype == "Float"):
                         file.write("1.0f);\n")
                     elif (fielddata.datatype == "Double"):
@@ -287,7 +294,7 @@ class PojoAndDtoTestGenerator:
                     elif (fielddata.datatype == "BigInteger"):
                         file.write("new BigInteger(1));\n")
                     elif (fielddata.datatype == "Integer"):
-                        file.write("new Integer(1));\n")
+                        file.write("1);\n")
                     elif (fielddata.datatype == "Float"):
                         file.write("1.0f);\n")
                     elif (fielddata.datatype == "Double"):
@@ -305,7 +312,7 @@ class PojoAndDtoTestGenerator:
                     elif (fielddata.datatype == "String"):
                         file.write('"a");\n')
                     elif (fielddata.datatype == "Long"):
-                        file.write("new Long(1));\n")
+                        file.write("1l);\n")
                     elif fielddata.datatype == "boolean":
                         file.write("true);\n")
             else:
@@ -315,7 +322,7 @@ class PojoAndDtoTestGenerator:
             file.write(text)
 
     @staticmethod
-    def create_pojo_and_dto_rand_gen_code(table, file, src):
+    def create_pojo_and_dto_rand_gen_code(table, file, src, businessTest=False):
         """
         this
         :param table:
@@ -369,6 +376,8 @@ class PojoAndDtoTestGenerator:
                                 file.write('Randomizer.randomString(20));\n')
                         else:
                             file.write('Randomizer.randomString(20));\n')
-
+            else:
+                if businessTest:
+                    file.write(tabs + tabs + Constants.record + ".set" + fielddata.gettername + "(1);\n")
         file.write(tabs + tabs + "return " + Constants.record + ";\n")
     

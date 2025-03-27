@@ -44,16 +44,16 @@ class TestFileMaker:
                 return fielddata.gettername
 
     @staticmethod
-    def create__exceptions_test_class( table):
+    def create__exceptions_test_class( project):
         """
         create the ExceptionResponseTest class
         :param table:
         :return:
         """
         # create the file and open
-        filename = table.toptestpackage + "/" + Constants.pckg_exc + "/ExceptionResponseTest.java"
+        filename = project.toptestpackage + "/" + Constants.pckg_exc + "/ExceptionResponseTest.java"
         resources_file = open(filename, "w")
-        resources_file.write("package " + table.rootpackage + "." + Constants.pckg_exc + ";\n\n")
+        resources_file.write("package " + project.rootpackage + "." + Constants.pckg_exc + ";\n\n")
         test_exc = open("files/base_exception_test.txt")
         for line in test_exc:
             linestr = str(line)
@@ -61,17 +61,17 @@ class TestFileMaker:
         resources_file.close()
 
     @staticmethod
-    def create_randomizer_test_class( table):
+    def create_randomizer_test_class( project):
         """
         create the RandomizerTest class
-        :param table:
+        :param project:
         :return:
         """
         # create the file and open
-        filename = table.toptestpackage + "/" + Constants.pckg_util + "/RandomizerTest.java"
+        filename = project.toptestpackage + "/" + Constants.pckg_util + "/RandomizerTest.java"
         resources_file = open(filename, "w")
-        resources_file.write("package " + table.rootpackage + "." + Constants.pckg_util + ";\n\n")
-        resources_file.write("import " + table.rootpackage + "." + Constants.pckg_util + ".Randomizer;\n")
+        resources_file.write("package " + project.rootpackage + "." + Constants.pckg_util + ";\n\n")
+        resources_file.write("import " + project.rootpackage + "." + Constants.pckg_util + ".Randomizer;\n")
         test_exc = open("files/rand_test.txt")
         for line in test_exc:
             linestr = str(line)

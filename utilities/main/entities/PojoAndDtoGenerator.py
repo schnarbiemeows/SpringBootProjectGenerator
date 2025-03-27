@@ -119,20 +119,36 @@ class PojoAndDtoGenerator:
         create the imports
         :param table:
         :param file:
+        :param src:
         :return:
         """
+        hastimefield = False
+        hasdatefield = False
+        hastimestampfield = False;
+        for field in table.fieldnames:
+            fielddata = table.fielddata[field]
+            if fielddata.datatype == "Time":
+                hastimefield = True
+            if fielddata.datatype == "Date":
+                hasdatefield = True
+            if fielddata.datatype == "Timestamp":
+                hastimestampfield = True
         if src == "pojo":
             file.write("import " + table.rootpackage + "." + Constants.pckg_dtos + "." + table.dtoname + ";\n")
-            file.write("import javax.persistence.*;\n")
+            file.write("import jakarta.persistence.*;\n")
         else:
             file.write("import " + table.rootpackage + "." + Constants.pckg_pojos + "." + table.camelcasejavaname + ";\n")
-            file.write("import javax.validation.constraints.*;\n")
+            file.write("import jakarta.validation.constraints.*;\n")
         file.write("import java.io.Serializable;\n")
         file.write("import com.google.gson.Gson;\n")
         file.write("import java.math.*;\n")
-        #file.write("import java.sql.*;\n")
-        file.write("import java.util.*;\n\n")
-        if Configuration.use_logging == True:
+        if hastimefield:
+            file.write("import java.sql.Time;\n")
+        if hastimestampfield:
+            file.write("import java.sql.Timestamp;\n")
+        if hasdatefield:
+            file.write("import java.util.*;\n\n")
+        if Configuration.use_logging:
             file.write(Constants.import_logger_1 + "\n")
             file.write(Constants.import_logger_2 + "\n")
 
@@ -800,3 +816,55 @@ class PojoAndDtoGenerator:
                 else:
                     file.write(tabs*2 + "hash = hash * prime + this." + fielddata.javaname + ".hashCode();\n")
         file.write(tabs*2 + "return hash;\n" + tabs + "}\n")
+
+    @staticmethod
+    def create_pojo_response_class(project):
+        """
+        this method creates a ResponseMessage object that is needed by the DELETE REST calls
+        :param table:
+        :return:
+        """
+        tabs = Constants.tab
+        filename = project.topmainpackage + "/" + Constants.pckg_pojos + "/ResponseMessage.java"
+        main_file = open("files/response_message.txt", "r")
+        resources_file = open(filename, "w")
+        resources_file.write("package " + project.rootpackage + "." + Constants.pckg_pojos + ";\n\n")
+        for line in main_file:
+            linestr = str(line)
+            if linestr.find("LOGGER_IMPORT") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(Constants.import_logger_1 + "\n")
+                    resources_file.write(Constants.import_logger_2 + "\n")
+            elif linestr.find("SINGLETON_LOGGER") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(tabs + Constants.logger_singleton + "\n")
+            else:
+                resources_file.write(linestr)
+        resources_file.close()
+        main_file.close()
+
+    @staticmethod
+    def create_pojo_response_class_for_mid_level(project):
+        """
+        this method creates a ResponseMessage object that is needed by the DELETE REST calls
+        :param table:
+        :return:
+        """
+        tabs = Constants.tab
+        filename = project.topmainpackage + "/" + Constants.pckg_pojos + "/ResponseMessage.java"
+        main_file = open("files/response_message.txt", "r")
+        resources_file = open(filename, "w")
+        resources_file.write("package " + project.rootpackage + "." + Constants.pckg_pojos + ";\n\n")
+        for line in main_file:
+            linestr = str(line)
+            if linestr.find("LOGGER_IMPORT") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(Constants.import_logger_1 + "\n")
+                    resources_file.write(Constants.import_logger_2 + "\n")
+            elif linestr.find("SINGLETON_LOGGER") > -1:
+                if Configuration.use_logging == True:
+                    resources_file.write(tabs + Constants.logger_singleton + "\n")
+            else:
+                resources_file.write(linestr)
+        resources_file.close()
+        main_file.close()

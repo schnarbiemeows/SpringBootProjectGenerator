@@ -1,5 +1,5 @@
 makeFIELD_NAMEPositiveDecimalOnly() {
-    var str = this.TABLE_NAME.FIELD_NAME.toString();
+    var str = this.TABLE_NAME.FIELD_NAME!.toString();
     var first = str.substring(0, 1);
     var first_is_num;
     var second_is_num;
@@ -69,7 +69,7 @@ makeFIELD_NAMEPositiveDecimalOnly() {
           last = str.substring(str.length-1);
         } while(last == ".")
       }
-      if(str.length==0 || isNaN(this.TABLE_NAME.FIELD_NAME)) {
+      if(str.length==0 || isNaN(this.TABLE_NAME.FIELD_NAME!)) {
         this.TABLE_NAME.FIELD_NAME = null;
       } else {
         this.TABLE_NAME.FIELD_NAME = parseFloat(str);

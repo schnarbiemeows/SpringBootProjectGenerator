@@ -1,0 +1,13 @@
+/**
+ * test getting a single % by field $$$
+ * @throws
+ */
+@Test
+public void testC_findBy$$$() throws Exception
+{
+    List<%DTO> & = Arrays.asList(generateRandom%());
+    when(&Service.find%By$$$(1)).thenReturn(&);
+
+    mockMvc.perform(get("/###/findBy$$$/1"))
+            .andExpect(status().isOk());
+}

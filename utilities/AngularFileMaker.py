@@ -1,8 +1,10 @@
 import glob
+
+from configuration.Constants import Constants
 from popos.AngularObject import *
 from utilities.FileMaker import *
 """
-    this class will create the angular 10 project for a given project
+    this class will create the angular 19 project for a given project
 """
 class AngularFileMaker:
 
@@ -12,7 +14,7 @@ class AngularFileMaker:
     @staticmethod
     def make_angular_projects(projectnames, projectdata):
         """
-        this method will create the angular 10 code for a given project
+        this method will create the angular 19 code for a given project
         :param projectnames:
         :param projectdata:
         :return:
@@ -38,18 +40,28 @@ class AngularFileMaker:
             AngularFileMaker.make_components(projectnames, projectdata, project, root_directory)
             # make the navigation bar
             AngularFileMaker.make_navigation_bar(project, root_directory)
+
             # make the app-routing.module.ts file
             AngularFileMaker.make_app_routing_module(project, root_directory)
             # make the app.module.ts file
-            AngularFileMaker.make_app_modules_ts_file(project, angular_object, root_directory)
+            # OLD - AngularFileMaker.make_app_modules_ts_file(project, angular_object, root_directory)
             # make the config files
             AngularFileMaker.make_angularjson_file(project, root_directory)
-            AngularFileMaker.make_packagejson_file(root_directory)
+            AngularFileMaker.make_packagejson_file(root_directory,project.pomname)
             # make the index.html files
-            AngularFileMaker.make_app_component_file(root_directory)
+            # OLD - AngularFileMaker.make_app_component_file(root_directory)
             AngularFileMaker.make_index_html_file(project, root_directory)
             AngularFileMaker.make_style_css_file(root_directory)
-
+            FileMaker.copy_file("files/angular/app.component.css",root_directory+"/src/app/app.component.css")
+            FileMaker.copy_file("files/angular/app.component.ts", root_directory + "/src/app/app.component.ts")
+            FileMaker.copy_file("files/angular/app.component.html", root_directory + "/src/app/app.component.html")
+            FileMaker.copy_file("files/angular/app.component.spec.ts", root_directory + "/src/app/app.component.spec.ts")
+            FileMaker.copy_file("files/angular/app.config.ts", root_directory + "/src/app/app.config.ts")
+            FileMaker.copy_file("files/angular/tsconfig.json", root_directory + "/tsconfig.json")
+            FileMaker.copy_file("files/angular/tsconfig.spec.json", root_directory + "/tsconfig.spec.json")
+            FileMaker.copy_file("files/angular/tsconfig.app.json", root_directory + "/tsconfig.app.json")
+            FileMaker.copy_file("files/angular/src/polyfills.ts", root_directory + "/src/polyfills.ts")
+            FileMaker.copy_file("files/angular/src/main.ts", root_directory + "/src/main.ts")
     @staticmethod
     def translateDataType(input):
         """
@@ -95,15 +107,19 @@ class AngularFileMaker:
             outputfile = open(root_directory + "/src/app/models/" + dtoname + ".ts", "w")
             outputfile.write("export interface " + dtoname + "{\n")
             inputfile.close()
+            print("making the Angular DTO for : " + dtoname)
             inputfile = open(filename, "r")
             for line in inputfile:
                 linestr = str(line)
-                if linestr.find(Constants.private) > -1 and linestr.find(Constants.serial_uid) == -1 and linestr.find(Constants.logger) == -1:
+                if linestr.find(Constants.privateval) > -1 and linestr.find(Constants.serial_uid) == -1 and linestr.find(Constants.logger) == -1:
                     fieldarray = linestr.split(" ")
                     key = fieldarray[2].replace(";", "").rstrip()
-                    print("field name " + key)
+                    print("DTO field name " + key)
                     fieldtype = AngularFileMaker.translateDataType(fieldarray[1])
-                    outputfile.write(tabs + key + "?: " + fieldtype + ";\n")
+                    if fieldtype == 'string':
+                        outputfile.write(tabs + key + ": " + fieldtype + ";\n")
+                    else:
+                        outputfile.write(tabs + key + ": " + fieldtype + " | null;\n")
             outputfile.write("}")
             inputfile.close()
             outputfile.close()
@@ -148,12 +164,15 @@ class AngularFileMaker:
                         outputfile.write("export interface " + dtoname + "{\n")
                         for line in inputfile:
                             linestr = str(line)
-                            if linestr.find("private") > -1 and linestr.find(Constants.serial_uid) == -1:
+                            if linestr.find("private") > -1 and linestr.find(Constants.serial_uid) == -1 and linestr.find(Constants.logger) == -1:
                                 fieldarray = linestr.split(" ")
                                 key = fieldarray[2].replace(";", "").rstrip()
                                 print("field name " + key)
                                 fieldtype = AngularFileMaker.translateDataType(fieldarray[1])
-                                outputfile.write(tabs + key + "?: " + fieldtype + ";\n")
+                                if fieldtype == 'string':
+                                    outputfile.write(tabs + key + ": " + fieldtype + ";\n")
+                                else:
+                                    outputfile.write(tabs + key + ": " + fieldtype + " | null;\n")
                         outputfile.write("}")
                         inputfile.close()
                         outputfile.close()
@@ -198,7 +217,8 @@ class AngularFileMaker:
                     linestr = str(line)
                     if requestmappingfound == True:
                         if requestfound == True:
-                            linestr = linestr.replace("public ResponseEntity<Object> ","")
+                            linestrtemp = linestr.replace(">>",">")
+                            linestr = linestrtemp[linestr.find(">")+1:]
                             rest_call_name = linestr[0:linestr.find("(")].lstrip()
                             print("Which has a rest-call-name of : " + rest_call_name)
                             print("Which we are attempting to put into key = : " + currentdto)
@@ -265,10 +285,8 @@ class AngularFileMaker:
         app_routing_input = None
         app_routing_output = None
         try:
-            app_routing_input = open("files/angular/app-routing.module.ts", "r")
-            app_routing_output = open(
-                root_directory + "/src/app/app-routing.module.ts",
-                "w")
+            app_routing_input = open("files/angular/app.routes.ts", "r")
+            app_routing_output = open(root_directory + "/src/app/app.routes.ts","w")
             for line in app_routing_input:
                 linestr = str(line)
                 if (linestr.find("IMPORTS") > -1):
@@ -323,7 +341,7 @@ class AngularFileMaker:
 
                 # make the html file
 
-                component_html_file = open("files/angular/component.html", "r")
+                component_html_file = open("files/angular/component/component.html", "r")
                 if not os.path.exists(root_directory + "/src/app/components/" + lowercasename):
                     os.mkdir(root_directory + "/src/app/components/" + lowercasename)
                 output_html_file = open(
@@ -349,7 +367,7 @@ class AngularFileMaker:
 
                 # make the typescript file
 
-                component_ts_file = open("files/angular/component.ts", "r")
+                component_ts_file = open("files/angular/component/component.ts", "r")
                 output_ts_file = open(
                     root_directory + "/src/app/components/" + lowercasename + "/" + lowercasename + ".component.ts",
                     "w")
@@ -363,9 +381,9 @@ class AngularFileMaker:
                         AngularFileMaker.create_component_constructor(tabledata, javaname, lowercasename, output_ts_file, tabs)
                     elif (linestr.find("LIST_ITEM_DTO") > -1):
                         AngularFileMaker.initialize_ts_object(tabledata, output_ts_file, True)
-                        output_ts_file.write(tabs+ lowercasename + "list: " + dtoname + "[];\n")
+                        output_ts_file.write(tabs+ lowercasename + "list: " + dtoname + "[] = [];\n")
                         # a full list needed by the search feature
-                        output_ts_file.write(tabs + "full" + lowercasename + "list: " + dtoname + "[];\n")
+                        output_ts_file.write(tabs + "full" + lowercasename + "list: " + dtoname + "[] = [];\n")
                     elif (linestr.find("FK_DTO_LISTS") > -1):
                         AngularFileMaker.create_fk_dto_lists(tabledata, output_ts_file)
                     elif (linestr.find("INIT_FK_LISTS") > -1):
@@ -536,7 +554,7 @@ class AngularFileMaker:
         output_ts_file.write(tabs * 3 + "this." + lowercasename + "service." +
                              project.rest_call_names[dtoname][
                                  4] + "(this." + lowercasename + "list[i]." + fielddata.javaname +
-                             ").subscribe(response => {\n")
+                             "!).subscribe(response => {\n")
         output_ts_file.write(tabs * 3 + "this.reload();\n")
         output_ts_file.write(tabs * 3 + "this.paginationDisabled = false;\n")
         output_ts_file.write(tabs * 3 + "})\n")
@@ -573,7 +591,7 @@ class AngularFileMaker:
         output_ts_file.write(tabs * 2 + "this.subscriptions.push(\n")
         output_ts_file.write(tabs * 3 + "this." + lowercasename + "service." +
                              project.rest_call_names[dtoname][
-                                 2] + "(this." + lowercasename + ").subscribe(" + lowercasename + " => {\n")
+                                 2] + "(this." + lowercasename + "!).subscribe(" + lowercasename + " => {\n")
         output_ts_file.write(
             tabs * 3 + "this." + lowercasename + " = " + lowercasename + ";\n")
         output_ts_file.write(tabs * 2 + "this.reload();\n")
@@ -586,7 +604,7 @@ class AngularFileMaker:
         output_ts_file.write(tabs * 2 + "this.subscriptions.push(\n")
         output_ts_file.write(tabs * 3 + "this." + lowercasename + "service." +
                              project.rest_call_names[dtoname][
-                                 3] + "(this." + lowercasename + ").subscribe(" + lowercasename + " => {\n")
+                                 3] + "(this." + lowercasename + "!).subscribe(" + lowercasename + " => {\n")
         output_ts_file.write(
             tabs * 3 + "this." + lowercasename + " = " + lowercasename + ";\n")
         output_ts_file.write(tabs * 3 + "this.reload();\n")
@@ -604,11 +622,11 @@ class AngularFileMaker:
             fielddata = tabledata.fielddata[name]
             fieldtype = AngularFileMaker.translateDataType(fielddata.datatype)
             if fieldtype.find("[]") > -1:
-                output_ts_file.write(tabs * 2 + "this." + lowercasename + "." + fielddata.javaname + " = [];\n")
+                output_ts_file.write(tabs * 2 + "this." + lowercasename + "!." + fielddata.javaname + " = [];\n")
             elif (fieldtype == 'number' or fieldtype == 'Date' or fieldtype == 'boolean'):
-                output_ts_file.write(tabs * 2 + "this." + lowercasename + "." + fielddata.javaname + " = null;\n")
+                output_ts_file.write(tabs * 2 + "this." + lowercasename + "!." + fielddata.javaname + " = null;\n")
             else:
-                output_ts_file.write(tabs * 2 + "this." + lowercasename + "." + fielddata.javaname + " = '';\n")
+                output_ts_file.write(tabs * 2 + "this." + lowercasename + "!." + fielddata.javaname + " = '';\n")
 
     @staticmethod
     def make_search(tabledata, output_ts_file):
@@ -631,18 +649,18 @@ class AngularFileMaker:
             if count == number_of_fields:
                 if fielddata.datatype == "String":
                     liststr += "!this.isNullOrUndefined(" + lowercasename + "." + fielddata.javaname + ") && "
-                    liststr += lowercasename + "." + fielddata.javaname + ".toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {\n"
+                    liststr += lowercasename + "." + fielddata.javaname + "!.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {\n"
                 else:
                     liststr += "!this.isNullOrUndefined(" + lowercasename + "." + fielddata.javaname + ") && "
-                    liststr += lowercasename + "." + fielddata.javaname + ".toString().toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {\n"
+                    liststr += lowercasename + "." + fielddata.javaname + "!.toString().toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {\n"
             else:
                 count += 1
                 if fielddata.datatype == "String":
                     liststr += "!this.isNullOrUndefined(" + lowercasename + "." + fielddata.javaname + ") && "
-                    liststr += lowercasename + "." + fielddata.javaname + ".toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||\n" + tabs * 4
+                    liststr += lowercasename + "." + fielddata.javaname + "!.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||\n" + tabs * 4
                 else:
                     liststr += "!this.isNullOrUndefined(" + lowercasename + "." + fielddata.javaname + ") && "
-                    liststr += lowercasename + "." + fielddata.javaname + ".toString().toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||\n" + tabs * 4
+                    liststr += lowercasename + "." + fielddata.javaname + "!.toString().toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||\n" + tabs * 4
         output_ts_file.write(liststr)
         output_ts_file.write(tabs * 4 + "results.push(" + lowercasename + ");\n")
         output_ts_file.write(tabs * 3 + "}\n")
@@ -936,7 +954,8 @@ class AngularFileMaker:
                     inputfile = open("files/angular/component/makeFieldPositiveDecimalOnly.ts","r")
                     for line in inputfile:
                         linestr = str(line)
-                        output_ts_file.write(linestr.replace("FIELD_NAME",fielddata.javaname).replace("TABLE_NAME",tabledata.tablename))
+                        output_ts_file.write(linestr.replace("FIELD_NAME",fielddata.javaname)
+                                             .replace("TABLE_NAME",tabledata.lowercasename))
                     inputfile.close()
 
     @staticmethod
@@ -1020,7 +1039,7 @@ class AngularFileMaker:
                 output_file.write(tabs * 2 + "this.subscriptions.push(\n")
                 output_file.write(
                     tabs * 3 + 'this.' + tabledata.lowercasename + 'service.find' + tabledata.camelcasejavaname + 'By' + field.gettername +
-                    '(this.' + tabledata.lowercasename + '.' + field.javaname + ').subscribe(response => {\n')
+                    '(this.' + tabledata.lowercasename + '.' + field.javaname + '!).subscribe(response => {\n')
                 output_file.write(tabs * 4 + 'console.log("back from findBy' + field.gettername + '");\n' +
                                 tabs * 4 + 'console.log("array size = " + response.length );\n' +
                                   tabs * 4 + "this.reload();\n" + tabs * 3 + "})\n")
@@ -1264,12 +1283,12 @@ class AngularFileMaker:
             scriptsfound = False
             for line in angularjsonfile:
                 linestr = str(line)
-                if(stylesfound == False and linestr.find('"src/styles.css"')>-1):
+                if stylesfound == False and linestr.find('"src/styles.css"')>-1:
                     altered_aj_file.write(linestr.replace('"src/styles.css"','"src/styles.css",'))
                     altered_aj_file.write(tabs+tabs+tabs+'"node_modules/font-awesome/css/font-awesome.css",\n')
                     altered_aj_file.write(tabs + tabs + tabs +'"node_modules/bootstrap/dist/css/bootstrap.css"\n')
                     stylesfound = True
-                elif(scriptsfound == False and linestr.find('"scripts": []')>-1):
+                elif scriptsfound == False and linestr.find('"scripts": []')>-1:
                     altered_aj_file.write(linestr.replace('"scripts": []', '"scripts": ['))
                     altered_aj_file.write(tabs + tabs + tabs +'"node_modules/jquery/dist/jquery.js",\n')
                     altered_aj_file.write(tabs + tabs + tabs +'"node_modules/popper.js/dist/umd/popper.js",\n')
@@ -1281,13 +1300,13 @@ class AngularFileMaker:
         except:
             print("something went wrong inside the AngularFileMaker.make_angularjson_file method")
         finally:
-            if(angularjsonfile is not None):
+            if angularjsonfile is not None:
                 angularjsonfile.close()
-            if (altered_aj_file is not None):
+            if altered_aj_file is not None:
                 altered_aj_file
 
     @staticmethod
-    def make_packagejson_file(root_directory):
+    def make_packagejson_file(root_directory, projectname):
         """
         this method generates the package.json file
         :param root_directory:
@@ -1301,13 +1320,15 @@ class AngularFileMaker:
             altered_pj_file = open(root_directory+"/package.json","w")
             for line in packagejsonfile:
                 linestr = str(line)
-                if(linestr.find('"zone.js"')>-1):
-                    altered_pj_file.write(tabs + tabs + tabs + '"bootstrap": "xxx",'.replace('xxx',Configuration.angular_boostrap)+"\n")
-                    altered_pj_file.write(tabs + tabs + tabs + '"core-js": "xxx",'.replace('xxx',Configuration.angular_core_js)+"\n")
-                    altered_pj_file.write(tabs + tabs + tabs + '"font-awesome": "xxx",'.replace('xxx',Configuration.angular_font_awesome ) + "\n")
-                    altered_pj_file.write(tabs + tabs + tabs + '"jquery": "xxx",'.replace('xxx',Configuration.angular_jquery ) + "\n")
-                    altered_pj_file.write(tabs + tabs + tabs + '"popper.js": "xxx",'.replace('xxx',Configuration.angular_popper_js ) + "\n")
-                    altered_pj_file.write(linestr)
+                if linestr.find('XYZ')>-1:
+                    altered_pj_file.write(tabs + '"name": "' + projectname + '",')
+                #if(linestr.find('"zone.js"')>-1):
+                #    altered_pj_file.write(tabs + tabs + tabs + '"bootstrap": "xxx",'.replace('xxx',Configuration.angular_boostrap)+"\n")
+                #    altered_pj_file.write(tabs + tabs + tabs + '"core-js": "xxx",'.replace('xxx',Configuration.angular_core_js)+"\n")
+                #    altered_pj_file.write(tabs + tabs + tabs + '"font-awesome": "xxx",'.replace('xxx',Configuration.angular_font_awesome ) + "\n")
+                #    altered_pj_file.write(tabs + tabs + tabs + '"jquery": "xxx",'.replace('xxx',Configuration.angular_jquery ) + "\n")
+                #    altered_pj_file.write(tabs + tabs + tabs + '"popper.js": "xxx",'.replace('xxx',Configuration.angular_popper_js ) + "\n")
+                #    altered_pj_file.write(linestr)
                 else:
                     altered_pj_file.write(linestr)
         except:

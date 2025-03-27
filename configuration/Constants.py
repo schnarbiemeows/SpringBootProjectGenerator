@@ -31,7 +31,7 @@ class Constants:
     import_list = "import java.util.List;"
     import_utils = "import java.util.*;"
     import_optional = "import java.util.Optional;"
-    import_valid = "import javax.validation.Valid;"
+    import_valid = "import jakarta.validation.Valid;"
     import_uri = "import java.net.URI;"
     import_date = "import java.util.Date;"
     import_ts = "import java.sql.Timestamp;"
@@ -57,15 +57,15 @@ class Constants:
     doc_emp = "/**\n * ^\n */\n"
     doc_get_all = "/**\n\t * get all ^ records\n\t * @return Iterable<^>\n\t */\n"
     doc_get_pk = "/**\n\t * get ^ by primary key\n\t * @param id\n\t * @return ^\n\t */\n"
-    doc_get_fk = "/**\n\t * get List<^DTO> by foreign key : z\n\t * @param z\n\t * @return List<^>\n\t * @throws Exception\n\t*/\n"
+    doc_get_fk = "/**\n\t * get List<^DTO> by foreign key : z\n\t * @param id\n\t * @return List<^>\n\t * @throws Exception\n\t*/\n"
     doc_get_all_fk = "/**\n\t * get ^ by all foreign keys\n\t * @param id\n\t * @return ^\n\t */\n"
-    doc_query_fk = "/**\n\t * get Iterable<^> by foreign key : z\n\t * @param z\n\t * @return Iterable<^>\n\t*/\n"
+    doc_query_fk = "/**\n\t * get Iterable<^> by foreign key : z\n\t * @param id\n\t * @return Iterable<^>\n\t*/\n"
     doc_query_all_fk = "/**\n\t * get Iterable<^> by all foreign keys\n\t * @return Iterable<^>\n\t*/\n"
     doc_create = "/**\n\t * create a new ^\n\t * @param ^\n\t * @return ^\n\t */\n"
     doc_update = "/**\n\t * update a ^\n\t * @param ^\n\t * @return ^\n\t */\n"
     doc_delete = "/**\n\t * delete a ^ by primary key\n\t * @param id\n\t */\n"
     doc_proxy = "\t/**\n"+"\t *\n"+"\t * @param\n"+"\t * @return\n"+"\t **/\n"
-    doc_test_get_fk = "/**\n\t * test getting all ^ by foreign key z\n\t * @throws URISyntaxException\n\t*/"
+    doc_test_get_fk = "/**\n\t * test getting all ^ by foreign key \n\t * @throws URISyntaxException\n\t*/"
     doc_test_get_by_all_fk = "/**\n\t * test getting all ^ by all foreign keys\n\t * @throws URISyntaxException\n\t*/"
 # pom file
 
@@ -76,7 +76,7 @@ class Constants:
     import_sampler = "import brave.sampler.Sampler;"
     import_logger_1 = "import org.apache.logging.log4j.LogManager;"
     import_logger_2 = "import org.apache.logging.log4j.Logger;"
-    logger_singleton = 'private static final Logger logger = LogManager.getLogger("FileAppender");'
+    logger_singleton = '//private static final Logger applicationLogger = LogManager.getLogger("FileAppender");'
     ann_feign = '@EnableFeignClients("RIBBON_CLIENT_ANN")'
     ann_dc = "@EnableDiscoveryClient"
 # Swagger file
@@ -92,20 +92,22 @@ class Constants:
 # pojos and dtos classes
 
     pckg_pojos = "pojos"
+    pckg_entities = "entities"
     pckg_dtos = "dtos"
+    pckg_repos = "repositories"
     import_entity = "import javax.persistence.Entity;"
     import_genval = "import javax.persistence.GeneratedValue;"
     import_gentype = "import javax.persistence.GenerationType;"
     import_id = "import javax.persistence.Id;"
-    import_past = "import javax.validation.constraints.Past;"
-    import_size = "import javax.validation.constraints.Size;"
-    import_notnull = "import javax.validation.constraints.NotNull"
+    import_past = "import jakarta.validation.constraints.Past;"
+    import_size = "import jakarta.validation.constraints.Size;"
+    import_notnull = "import jakarta.validation.constraints.NotNull"
     ann_entity = "@Entity"
     ann_table = '@Table(name = "*")'
     ann_table_with_keys = '@Table(name = "*", uniqueConstraints={XXX})'
     ann_unq_id = '@UniqueConstraint( columnNames = {"'
     ann_id = "@Id"
-    ann_autogen = "@GeneratedValue(strategy=GenerationType.AUTO)"
+    ann_autogen = "@GeneratedValue(strategy=GenerationType.IDENTITY)"
     ann_column = '@Column(name = "*")'
     ann_override = "@Override"
     ann_sizemin = '@Size(min = *, message = "* must be at least * characters")'
@@ -144,18 +146,18 @@ class Constants:
 
 # business classes
 
-    pckg_bus = "business"
+    pckg_bus = "services"
     import_comp = "import org.springframework.stereotype.Component;"
     ann_comp = "@Component"
 
 # repository classes
 
-    pckg_services = "services"
-    import_repo = "import org.springframework.data.repository.CrudRepository;"
+    pckg_services = "repositories"
+    import_repo = "import org.springframework.data.jpa.repository.JpaRepository;"
     import_query = "import org.springframework.data.jpa.repository.Query;"
     import_param = "import org.springframework.data.repository.query.Param;"
     import_pojo = "import %;"
-    class_decl_repo = "public interface *Repository extends CrudRepository<*, Integer>{\n\n"
+    class_decl_repo = "public interface *Repository extends JpaRepository<*, Integer>{\n\n"
     query = "@Query"
     tilde_l_star = "~|*"
 
@@ -170,6 +172,6 @@ class Constants:
 
 # Angular stuff
     serial_uid = "serialVersionUID"
-    private = "private"
+    privateval = "private"
     logger = "Logger"
 

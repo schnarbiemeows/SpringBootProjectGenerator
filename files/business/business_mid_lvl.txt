@@ -3,10 +3,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import com.schnarbiesnmeowers.&.exceptions.ResourceNotFoundException;
-LOGGER_IMPORT
-import $.proxy.services.*;
+import java.util.List;
+import $.pojos.ResponseMessage;
+import $.proxy.repositories.*;
 import $.proxy.pojos.*;
 import $.proxy.dtos.*;
 
@@ -16,10 +17,8 @@ import $.proxy.dtos.*;
  * @author ^
  *
  */
-@Component
-public class %Business {
-
-    SINGLETON_LOGGER
+@Service
+public class %Service {
 
     MAIN_SECTION
 

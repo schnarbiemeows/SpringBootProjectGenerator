@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs/observable/of';
+import { Observable } from 'rxjs';
+import { of } from 'rxjs';
 
 import { ResponseMessage } from '../models/ResponseMessage';
 IMPORTS
@@ -10,7 +10,9 @@ const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
 }
 
-@Injectable()
+@Injectable({
+	providedIn: "root"
+})
 export class _TBL_NM_Service {
     URLS
 

@@ -1,11 +1,12 @@
+RESPONSE_MESSAGE
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.*;
 LOGGER_IMPORT
-import $.business.*;
+import $.services.*;
 import $.dtos.*;
 import $.pojos.*;
 
@@ -25,15 +26,15 @@ public class %Controller {
 	 * JPA Repository handle
 	 */
 	@Autowired
-	private %Business businessService;;
+	private %Service service;
 
 	/**
 	 * get all % records
 	 * @return Iterable<%>
 	 */
 	@GetMapping(path = "/all")
-	public ResponseEntity<Object> getAll%() throws Exception {
-		Iterable<%DTO> & = businessService.getAll%();
+	public ResponseEntity<List<%DTO>> getAll%() throws Exception {
+		List<%DTO> & = service.getAll%();
 		return ResponseEntity.status(HttpStatus.OK).body(&);
 	}
 
@@ -43,20 +44,20 @@ public class %Controller {
 	 * @return %
 	 */
 	@GetMapping(path = "/findById/{id}")
-	public ResponseEntity<Object> find%ById(@PathVariable int id) throws Exception {
-		%DTO results = businessService.find%ById(id);
+	public ResponseEntity<%DTO> find%ById(@PathVariable int id) throws Exception {
+		%DTO results = service.find%ById(id);
 		return ResponseEntity.status(HttpStatus.OK).body(results);
 	}
 
 	/**
 	 * create a new %
-	 * @param %DTO
+	 * @param data
 	 * @return %
 	 */
 	@PostMapping(path = "/create")
-	public ResponseEntity<Object> create%(@Valid @RequestBody %DTO data) {
+	public ResponseEntity<%DTO> create%(@Valid @RequestBody %DTO data) throws Exception {
 		try {
-		    %DTO createdData = businessService.create%(data);
+		    %DTO createdData = service.create%(data);
 		    return ResponseEntity.status(HttpStatus.CREATED).body(createdData);
 		} catch (Exception e) {
 			throw e;
@@ -65,12 +66,12 @@ public class %Controller {
 
 	/**
 	 * update a %
-	 * @param %DTO
+	 * @param data
 	 * @return %
 	 */
 	@PostMapping(path = "/update")
-	public ResponseEntity<Object> update%(@Valid @RequestBody %DTO data) throws Exception {
-		%DTO updatedData = businessService.update%(data);
+	public ResponseEntity<%DTO> update%(@Valid @RequestBody %DTO data) throws Exception {
+		%DTO updatedData = service.update%(data);
 		return ResponseEntity.status(HttpStatus.OK).body(updatedData);
 	}
 
@@ -79,8 +80,8 @@ public class %Controller {
 	 * @param id
 	 */
 	@DeleteMapping(path = "/delete/{id}")
-	public ResponseEntity<Object> delete%(@PathVariable int id) throws Exception {
-		businessService.delete%(id);
+	public ResponseEntity<ResponseMessage> delete%(@PathVariable int id) throws Exception {
+		service.delete%(id);
 		ResponseMessage rb = new ResponseMessage("successfully deleted");
 		return ResponseEntity.status(HttpStatus.OK).body(rb);
 	}

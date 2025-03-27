@@ -50,7 +50,7 @@ public class SpecializedExceptionHandler extends ResponseEntityExceptionHandler 
 	/**
 	 * handle validation fail for a given parameter
 	 */
-	@Override
+
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), "Validation Failed",

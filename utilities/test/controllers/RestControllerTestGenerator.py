@@ -22,10 +22,10 @@ class RestControllerTestGenerator:
         for line in test_controller:
             linestr = str(line)
             if(linestr.find("IMPORTS_SECTION"))>-1:
-                resources_file.write("import " + table.rootpackage + "." + Constants.pckg_pojos + "." + table.camelcasejavaname + ";\n")
+                resources_file.write("import " + table.rootpackage + "." + Constants.pckg_repos + "." + table.camelcasejavaname + "Repository;\n")
                 resources_file.write("import " + table.rootpackage + "." + Constants.pckg_dtos + "." + table.dtoname + ";\n")
                 resources_file.write(
-                    "import " + table.rootpackage + "." + Constants.pckg_bus + "." + table.camelcasejavaname + "Business;\n")
+                    "import " + table.rootpackage + "." + Constants.pckg_bus + "." + table.camelcasejavaname + "Service;\n")
                 resources_file.write("import " + table.rootpackage + "." + Constants.pckg_util + ".Randomizer;\n")
             elif linestr.find("RANDOM_DTO_GENERATOR")>-1:
                 PojoAndDtoTestGenerator.create_pojo_and_dto_rand_gen_code(table, resources_file, "dto")
@@ -35,7 +35,10 @@ class RestControllerTestGenerator:
             elif linestr.find("FKSECTION")>-1:
                 RestControllerTestGenerator.createForeignKeyCallsTests(table,resources_file)
             else:
-                resources_file.write(linestr.replace("%",table.camelcasejavaname).replace("&",table.lowercasename).replace("^",Configuration.author))
+                resources_file.write(linestr.replace("%",table.camelcasejavaname)
+                                     .replace("&",table.lowercasename)
+                                     .replace("^",Configuration.author)
+                                     .replace("###", table.lowercasename))
         resources_file.close()
 
     @staticmethod
@@ -64,9 +67,10 @@ class RestControllerTestGenerator:
         :return:
         """
         # create the file and open
-        filename = mid_lvl_proj.toptestpackage + "/" + Constants.pckg_contr + "/" + mid_lvl_proj.camelcasejavaname + "ControllerTest.java"
+        filename = (mid_lvl_proj.toptestpackage + "/" + Constants.pckg_contr + "/" + mid_lvl_proj.camelcasejavaname +
+                    "ControllerTest.java")
         resources_file = open(filename, "w")
-        test_controller = open("files/controller/controller_mid_lvl_test.txt", "r")
+        test_controller = open("files/controller/controller_test.txt", "r")
         resources_file.write("package " + mid_lvl_proj.rootpackage + "." + Constants.pckg_contr + ";\n\n")
         for line in test_controller:
             linestr = str(line)
@@ -78,7 +82,7 @@ class RestControllerTestGenerator:
                 resources_file.write(
                     "import " + mid_lvl_proj.rootpackage + "." + Constants.pckg_util + ".Randomizer;\n")
                 resources_file.write(
-                    "import " + mid_lvl_proj.rootpackage + "." + Constants.pckg_bus + "." + mid_lvl_proj.camelcasejavaname + "Business;\n")
+                    "import " + mid_lvl_proj.rootpackage + "." + Constants.pckg_bus + "." + mid_lvl_proj.camelcasejavaname + "Service;\n")
             elif (linestr.find("BUSINESS_CALLS") > -1):
                 RestControllerTestGenerator.create_controller_business_calls_for_mid_level(mid_lvl_proj,
                         crud_proj_names, crud_proj_data,resources_file)
@@ -112,11 +116,13 @@ class RestControllerTestGenerator:
             if currentproject.referencename in mid_lvl_map:
                 for tablename in currentproject.tablenames:
                     tabledata = currentproject.tabledata[tablename]
-                    tablefile = test_controller = open("files/controller/controller_test_inner.txt", "r")
+                    tablefile = open("files/controller/controller_test_inner.txt", "r")
                     for line in tablefile:
                         linestr = str(line)
                         if linestr.find("RANDOM_DTO_GENERATOR") > -1:
                             PojoAndDtoTestGenerator.create_pojo_and_dto_rand_gen_code(tabledata, resources_file, "dto")
+                        elif linestr.find("FKSECTION") > -1:
+                            RestControllerTestGenerator.createForeignKeyCallsTests(tabledata, resources_file)
                         else:
                             resources_file.write(
                             linestr.replace("%",tabledata.camelcasejavaname).replace(
@@ -140,13 +146,21 @@ class RestControllerTestGenerator:
             fklist = table.fksymboldata[symbolname]
             for item in fklist:
                 field = table.fielddata[item[0]]
-                compoundFK.append(field.gettername)
+                #compoundFK.append(field.gettername) - leave out for now
+                template = open("files/controller/controller_fk_tests.txt", "r")
+                for line in template:
+                    linestr = str(line)
+                    resources_file.write(
+                        linestr.replace("%", table.camelcasejavaname).replace(
+                            "&", table.lowercasename).replace("$$$", field.gettername)
+                    .replace("###",table.lowercasename))
+                """    
                 datatypes.append("@PathVariable " + Utilities.translateDataType(field.datatype) + " id" + str(counter))
                 inputparameters.append("1")
                 resources_file.write(tabs + Constants.doc_test_get_fk.replace("z",field.javaname)
                                      .replace("^",table.camelcasejavaname)+"\n")
                 resources_file.write(tabs + "@Test\n")
-                resources_file.write(tabs + "public void testGetBy" + field.gettername +
+                resources_file.write(tabs + "public void testGet"+table.camelcasejavaname +"By" + field.gettername +
                     "() throws URISyntaxException {\n")
                 resources_file.write(tabs*2 + "int num = 1;\n")
                 resources_file.write(tabs*2 +
@@ -159,12 +173,15 @@ class RestControllerTestGenerator:
                 resources_file.write(tabs * 2 + "assertEquals(200, result.getStatusCodeValue());\n")
                 resources_file.write(tabs + "}\n\n")
                 counter +=1
+                """
+                if template is not None:
+                    template.close()
         if len(compoundFK)>1:
             compoundFKstr = "And".join(compoundFK)
             resources_file.write(tabs + Constants.doc_test_get_by_all_fk.replace("z", compoundFKstr)
                                  .replace("^", table.camelcasejavaname)+"\n")
             resources_file.write(tabs + "@Test\n")
-            text = tabs + "public void testGetBy" + compoundFKstr +"() throws URISyntaxException {\n"
+            text = tabs + "public void testGet"+table.camelcasejavaname +"By" + compoundFKstr +"() throws URISyntaxException {\n"
             resources_file.write(text)
             # resources_file.write(tabs + Constants.ann_get_mult_fk_maps.replace("^", compoundFKstr)
             # .replace("X", "{" + "}/{".join(inputparameters) + "}") + "\n")
